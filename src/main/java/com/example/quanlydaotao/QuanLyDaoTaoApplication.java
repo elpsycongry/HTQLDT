@@ -8,6 +8,7 @@ public class QuanLyDaoTaoApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(QuanLyDaoTaoApplication.class, args);
+
     }
 
 }
