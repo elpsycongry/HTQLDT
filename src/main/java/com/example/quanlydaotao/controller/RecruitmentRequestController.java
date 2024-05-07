@@ -36,7 +36,7 @@ public class RecruitmentRequestController {
         recruitmentRequest1.setDemandOriginator(userRecruitmentAction);
         return new ResponseEntity<>(recruitmentRequest1, HttpStatus.OK);
     }
-    @GetMapping("/detail/{1}")
+    @GetMapping("/detail/{id}")
     public ResponseEntity<RecruitmentRequestDetail> getRecruitmentRequestDetail(@PathVariable long id) {
         Optional<RecruitmentRequestDetail> recruitmentRequestDetail = recruitmentRequestDetailService.findByRecruitmentId(id);
         if (recruitmentRequestDetail.isPresent()) {
