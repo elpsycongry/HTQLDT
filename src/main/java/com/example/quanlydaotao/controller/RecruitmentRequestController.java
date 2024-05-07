@@ -1,7 +1,6 @@
 package com.example.quanlydaotao.controller;
 
 import com.example.quanlydaotao.dto.RecruitmentFormDTO;
-import com.example.quanlydaotao.model.RecruitmentRequest;
 import com.example.quanlydaotao.repository.IRecruitmentRequestRepository;
 import com.example.quanlydaotao.service.impl.RecruitmentRequestService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,5 +20,4 @@ public class RecruitmentRequestController {
         recruitmentRequestService.createRecruitmentRequest(recruitmentFormDTO);
         return new ResponseEntity<>(HttpStatus.OK);
     }
-
 }

@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RecruitmentFormDTO {
+    private Long idUser;
     private RecruitmentRequest recruitmentRequest;
     private List<RecruitmentRequestDetail> details;
 
@@ -25,6 +26,15 @@ public class RecruitmentFormDTO {
 
     public RecruitmentFormDTO setDetails(List<RecruitmentRequestDetail> details) {
         this.details = details;
+        return this;
+    }
+
+    public Long getIdUser() {
+        return idUser;
+    }
+
+    public RecruitmentFormDTO setIdUser(Long id) {
+        this.idUser = id;
         return this;
     }
 }
