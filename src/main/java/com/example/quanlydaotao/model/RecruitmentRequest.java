@@ -1,10 +1,10 @@
 package com.example.quanlydaotao.model;
 
-
+import com.example.quanlydaotao.dto.UserAction;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
-import java.util.Date;
+
 
 @Entity
 public class RecruitmentRequest {
@@ -12,22 +12,12 @@ public class RecruitmentRequest {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "demand_originator_id", referencedColumnName = "id")
-    private UserRecruitmentAction demandOriginator;
 
     private LocalDate dateStart;
     private boolean active;
     private LocalDate dateEnd;
     private String name;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "demand_confirmer_id", referencedColumnName = "id")
-    private UserRecruitmentAction demandConfirmer;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "plan_originator_id", referencedColumnName = "id")
-    private UserRecruitmentAction planOriginator;
 
     private String reason;
     private String division;
@@ -39,15 +29,6 @@ public class RecruitmentRequest {
 
     public RecruitmentRequest setId(Long id) {
         this.id = id;
-        return this;
-    }
-
-    public UserRecruitmentAction getDemandOriginator() {
-        return demandOriginator;
-    }
-
-    public RecruitmentRequest setDemandOriginator(UserRecruitmentAction demandOriginator) {
-        this.demandOriginator = demandOriginator;
         return this;
     }
 
@@ -69,6 +50,7 @@ public class RecruitmentRequest {
         return this;
     }
 
+
     public LocalDate getDateEnd() {
         return dateEnd;
     }
@@ -84,24 +66,6 @@ public class RecruitmentRequest {
 
     public RecruitmentRequest setName(String name) {
         this.name = name;
-        return this;
-    }
-
-    public UserRecruitmentAction getDemandConfirmer() {
-        return demandConfirmer;
-    }
-
-    public RecruitmentRequest setDemandConfirmer(UserRecruitmentAction demandConfirmer) {
-        this.demandConfirmer = demandConfirmer;
-        return this;
-    }
-
-    public UserRecruitmentAction getPlanOriginator() {
-        return planOriginator;
-    }
-
-    public RecruitmentRequest setPlanOriginator(UserRecruitmentAction planOriginator) {
-        this.planOriginator = planOriginator;
         return this;
     }
 
