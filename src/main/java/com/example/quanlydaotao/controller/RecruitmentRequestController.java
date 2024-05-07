@@ -11,6 +11,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -24,7 +26,11 @@ public class RecruitmentRequestController {
     @GetMapping()
     public ResponseEntity<Iterable<RecruitmentRequest>> getAllRecruitmentRequest() {
         Iterable<RecruitmentRequest> recruitmentRequestIterable = recruitmentRequestService.getAllRecruitmentRequests();
-      return new ResponseEntity<>( recruitmentRequestIterable, HttpStatus.OK);
+        List<RecruitmentRequest> recruitmentRequests = new ArrayList<>();
+        for (RecruitmentRequest recruitmentRequest : recruitmentRequestIterable){
+            recruitmentRequests.add(recruitmentRequest);
+        }
+        return new ResponseEntity<>(recruitmentRequests, HttpStatus.OK);
     }
     @GetMapping("/{id}")
     public ResponseEntity<RecruitmentRequest> getRecruitmentRequestById(@PathVariable long id) {
