@@ -3,7 +3,6 @@ package com.example.quanlydaotao.model;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "RecruitmentRequests")
 public class UserRecruitmentAction {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -13,9 +12,6 @@ public class UserRecruitmentAction {
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private Users user;
 
-    @ManyToOne
-    @JoinColumn(name = "recruitment_request_id", referencedColumnName = "id")
-    private RecruitmentRequest recruitmentRequest;
 
     public void setId(Long id) {
         this.id = id;
@@ -34,12 +30,4 @@ public class UserRecruitmentAction {
         return this;
     }
 
-    public RecruitmentRequest getRecruitmentRequest() {
-        return recruitmentRequest;
-    }
-
-    public UserRecruitmentAction setRecruitmentRequest(RecruitmentRequest recruitmentRequest) {
-        this.recruitmentRequest = recruitmentRequest;
-        return this;
-    }
 }
