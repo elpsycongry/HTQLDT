@@ -3,7 +3,6 @@ package com.example.quanlydaotao.model;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "RecruitmentRequests")
 public class UserRecruitmentAction {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

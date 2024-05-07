@@ -2,11 +2,13 @@ package com.example.quanlydaotao.model;
 
 
 import jakarta.persistence.*;
+import org.springframework.boot.context.properties.bind.DefaultValue;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Entity
-@Table(name = "UserInRecruitmentRequest")
 public class RecruitmentRequest {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -16,16 +18,17 @@ public class RecruitmentRequest {
     @JoinColumn(name = "demand_originator_id", referencedColumnName = "id")
     private UserRecruitmentAction demandOriginator;
 
-    private Date dateStart;
-    private boolean active;
-    private Date dateEnd;
+    private LocalDate dateStart;
+
+    private boolean active ;
+    private LocalDate dateEnd;
     private String name;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "demand_confirmer_id", referencedColumnName = "id")
     private UserRecruitmentAction demandConfirmer;
 
-    @ManyToOne
+    @ManyToOne()
     @JoinColumn(name = "plan_originator_id", referencedColumnName = "id")
     private UserRecruitmentAction planOriginator;
 
@@ -51,11 +54,11 @@ public class RecruitmentRequest {
         return this;
     }
 
-    public Date getDateStart() {
+    public LocalDate getDateStart() {
         return dateStart;
     }
 
-    public RecruitmentRequest setDateStart(Date dateStart) {
+    public RecruitmentRequest setDateStart(LocalDate dateStart) {
         this.dateStart = dateStart;
         return this;
     }
@@ -69,11 +72,11 @@ public class RecruitmentRequest {
         return this;
     }
 
-    public Date getDateEnd() {
+    public LocalDate getDateEnd() {
         return dateEnd;
     }
 
-    public RecruitmentRequest setDateEnd(Date dateEnd) {
+    public RecruitmentRequest setDateEnd(LocalDate dateEnd) {
         this.dateEnd = dateEnd;
         return this;
     }

@@ -1,17 +1,25 @@
 package com.example.quanlydaotao.controller;
 
 import com.example.quanlydaotao.dto.RecruitmentFormDTO;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.function.EntityResponse;
+import com.example.quanlydaotao.model.RecruitmentRequest;
+import com.example.quanlydaotao.repository.IRecruitmentRequestRepository;
+import com.example.quanlydaotao.service.impl.RecruitmentRequestService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/recruitmentRequests")
 public class RecruitmentRequestController {
-    public EntityResponse createRecruitmentRequest(@RequestBody RecruitmentFormDTO recruitmentFormDTO) {
+    @Autowired
+    private RecruitmentRequestService recruitmentRequestService;
 
-
+    @PostMapping
+    public ResponseEntity createRecruitmentRequest(@RequestBody RecruitmentFormDTO recruitmentFormDTO) {
+        RecruitmentFormDTO request = recruitmentFormDTO;
+        recruitmentRequestService.createRecruitmentRequest(recruitmentFormDTO);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
 }
