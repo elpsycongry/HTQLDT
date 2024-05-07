@@ -1,5 +1,6 @@
 package com.example.quanlydaotao.controller;
 
+import com.example.quanlydaotao.model.RecruitmentPlanDetail;
 import com.example.quanlydaotao.model.RecruitmentRequest;
 import com.example.quanlydaotao.model.RecruitmentRequestDetail;
 import com.example.quanlydaotao.model.UserRecruitmentAction;
@@ -34,5 +35,14 @@ public class RecruitmentRequestController {
         userRecruitmentAction.setUser(recruitmentRequest1.getDemandOriginator().getUser());
         recruitmentRequest1.setDemandOriginator(userRecruitmentAction);
         return new ResponseEntity<>(recruitmentRequest1, HttpStatus.OK);
+    }
+    @GetMapping("/detail/{1}")
+    public ResponseEntity<RecruitmentRequestDetail> getRecruitmentRequestDetail(@PathVariable long id) {
+        Optional<RecruitmentRequestDetail> recruitmentRequestDetail = recruitmentRequestDetailService.findByRecruitmentId(id);
+        if (recruitmentRequestDetail.isPresent()) {
+            return new ResponseEntity<>(recruitmentRequestDetail.get(), HttpStatus.OK);
+        }else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 }

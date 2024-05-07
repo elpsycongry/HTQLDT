@@ -5,6 +5,6 @@ import com.example.quanlydaotao.model.RecruitmentRequestDetail;
 import java.util.Optional;
 
 public interface IRecruitmentRequestDetailService {
-    Optional<RecruitmentRequestDetail> findById(long id);
+    Optional<RecruitmentRequestDetail> findByRecruitmentId(long id);
     Iterable<RecruitmentRequestDetail> findAll();
 }
