@@ -14,7 +14,6 @@ public class RecruitmentRequest {
 
 
     private LocalDate dateStart;
-    private boolean active;
     private LocalDate dateEnd;
     private String name;
 
@@ -41,14 +40,6 @@ public class RecruitmentRequest {
         return this;
     }
 
-    public boolean isActive() {
-        return active;
-    }
-
-    public RecruitmentRequest setActive(boolean active) {
-        this.active = active;
-        return this;
-    }
 
 
     public LocalDate getDateEnd() {

@@ -16,10 +16,12 @@ import java.util.List;
 import java.util.Optional;
 @Repository
 public interface IRecruitmentRequestRepository extends JpaRepository<RecruitmentRequest, Long> {
-    @Query("select rr.id,rr.name,rr.dateStart,rr.active,rr.status from RecruitmentRequest rr ")
+    @Query("select rr.id,rr.name,rr.dateStart,rr.status from RecruitmentRequest rr ")
     Iterable<RecruitmentRequest> getAll();
 
     @Query("SELECT r.id, r.dateStart, r.dateEnd, r.name, r.reason, r.division, r.status FROM RecruitmentRequest r WHERE r.id =:id")
     Object[] findNonForeignKeyFields(@Param("id") Long id);
+    @Query("DELETE FROM RecruitmentRequest r WHERE r.id =:value")
+    void deleteAllExceptLinked(@Param("value") long id);
 
 }

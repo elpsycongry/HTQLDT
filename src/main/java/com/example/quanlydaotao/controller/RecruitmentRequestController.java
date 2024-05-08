@@ -22,34 +22,50 @@ import java.util.Optional;
 
 
 @RestController
-@RequestMapping("/api/recruitmentRequest")
+@RequestMapping("/api/recruitmentRequests")
 @CrossOrigin(value = "*")
 public class RecruitmentRequestController {
     @Autowired
     private RecruitmentRequestService recruitmentRequestService;
     @Autowired
     private RecruitmentRequestDetailService recruitmentRequestDetailService;
+
     @GetMapping()
     public ResponseEntity<Iterable<RecruitmentRequest>> getAllRecruitmentRequest() {
         Iterable<RecruitmentRequest> recruitmentRequestIterable = recruitmentRequestService.getAllRecruitmentRequests();
         return new ResponseEntity<>(recruitmentRequestIterable, HttpStatus.OK);
     }
+
     @GetMapping("/{id}")
-    public ResponseEntity<RecruitmentRequest> getRecruitmentRequestById(@PathVariable long id) {
+    public ResponseEntity<Optional<RecruitmentRequest>> getRecruitmentRequestById(@PathVariable long id) {
         Optional<RecruitmentRequest> recruitmentRequest = recruitmentRequestService.findRecruitmentRequestById(id);
-        RecruitmentRequest recruitmentRequest1 = recruitmentRequest.get();
-        return new ResponseEntity<>(recruitmentRequest1, HttpStatus.OK);
+        return new ResponseEntity<>(recruitmentRequest, HttpStatus.OK);
     }
+
     @GetMapping("/detail/{id}")
     public ResponseEntity<Iterable<RecruitmentRequestDetail>> getRecruitmentRequestDetail(@PathVariable long id) {
         Iterable<RecruitmentRequestDetail> recruitmentRequestDetail = recruitmentRequestDetailService.findByRecruitmentId(id);
         return new ResponseEntity<>(recruitmentRequestDetail, HttpStatus.OK);
     }
+
     @PostMapping
     public ResponseEntity createRecruitmentRequest(@RequestBody RecruitmentFormDTO recruitmentFormDTO) {
         RecruitmentFormDTO request = recruitmentFormDTO;
         recruitmentRequestService.createRecruitmentRequest(recruitmentFormDTO);
         return new ResponseEntity<>(HttpStatus.OK);
+
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<String> updateRecruitmentRequest(@PathVariable long id, @RequestBody RecruitmentFormDTO request) {
+        RecruitmentFormDTO recruitmentFormDTO = request;
+        try {
+            request.getRecruitmentRequest().setId(id);
+            recruitmentRequestService.updateRecruitmentRequest(recruitmentFormDTO, id);
+            return new ResponseEntity<>("Update recruitment success!",HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>("Update recruitment false!",HttpStatus.EXPECTATION_FAILED);
+        }
 
     }
 }
