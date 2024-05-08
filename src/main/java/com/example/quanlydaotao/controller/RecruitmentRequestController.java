@@ -21,6 +21,7 @@ public class RecruitmentRequestController {
         return new ResponseEntity<>(recruitmentRequestIterable, HttpStatus.OK);
     }
 
+
     @PostMapping
     public ResponseEntity createRecruitmentRequest(@RequestBody RecruitmentFormDTO recruitmentFormDTO) {
         RecruitmentFormDTO request = recruitmentFormDTO;
@@ -32,5 +33,17 @@ public class RecruitmentRequestController {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PutMapping("/{id}/users/{idUser}")
+    public ResponseEntity updateRecruitmentStatus(@RequestBody RecruitmentFormDTO recruitmentFormDTO, @PathVariable("id") Long idRecruitment, @PathVariable Long idUser) {
+        String action = recruitmentFormDTO.getRecruitmentRequest().getStatus();
+        try {
+            recruitmentRequestService.updateStatusRecruitment(idRecruitment, idUser, action);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>("Đã từ chối", HttpStatus.OK);
+
     }
 }

@@ -45,26 +45,36 @@ public class RecruitmentRequestService implements IRecruitmentRequestService {
         return recruitmentRequest;
     }
 
-
-
     public void createRecruitmentRequest(RecruitmentFormDTO recruitmentFormDTO) {
         RecruitmentRequest request = recruitmentFormDTO.getRecruitmentRequest();
         request.setStatus("Đang chờ");
         request = iRecruitmentRequestRepository.save(request);
 
-        Users user = usersService.findById(recruitmentFormDTO.getIdUser()).get();
-        UserRecruitmentAction userAction = new UserRecruitmentAction();
-        userAction.setUser(user)
-                        .setRecruitmentRequest(request)
-                                .setUser(user)
-                                        .setAction(UserAction.Demand.toString());
-        userActionService.save(userAction);
+        createUserRecruitmentAction(recruitmentFormDTO.getIdUser(), request, UserAction.Demand.toString());
 
         List<RecruitmentRequestDetail> requestDetails = recruitmentFormDTO.getDetails();
         for (RecruitmentRequestDetail detail : requestDetails) {
             detail.setRecruitmentRequest(request);
             iRecruitmentRequestDetailService.saveDetail(detail);
         }
+    }
 
+    public void updateStatusRecruitment(long idRecruitment, long idUser, String status) {
+        RecruitmentRequest recruitmentRequest = recruitmentRequestRepository.findById(idRecruitment).get();
+        recruitmentRequest.setStatus(status);
+        recruitmentRequest = recruitmentRequestRepository.save(recruitmentRequest);
+
+        String action = UserAction.Denied.toString();
+        createUserRecruitmentAction(idUser, recruitmentRequest, action);
+    }
+
+    private void createUserRecruitmentAction(long idUser, RecruitmentRequest recruitmentRequest, String action) {
+        Users user = usersService.findById(idUser).get();
+        UserRecruitmentAction userAction = new UserRecruitmentAction();
+        userAction.setUser(user)
+                .setRecruitmentRequest(recruitmentRequest)
+                .setUser(user)
+                .setAction(action);
+        userActionService.save(userAction);
     }
 }
