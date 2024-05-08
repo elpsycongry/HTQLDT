@@ -29,6 +29,8 @@ public class RecruitmentRequestController {
     private RecruitmentRequestService recruitmentRequestService;
     @Autowired
     private RecruitmentRequestDetailService recruitmentRequestDetailService;
+    @Autowired
+    private IRecruitmentRequestRepository recruitmentRequestRepository;
 
     @GetMapping()
     public ResponseEntity<Iterable<RecruitmentRequest>> getAllRecruitmentRequest() {
@@ -65,14 +67,23 @@ public class RecruitmentRequestController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<String> updateRecruitmentRequest(@PathVariable long id, @RequestBody RecruitmentFormDTO request) {
+    public ResponseEntity<String> updateRecruitmentRequest(@PathVariable long id, @RequestBody RecruitmentFormDTO request) throws Exception {
         RecruitmentFormDTO recruitmentFormDTO = request;
+        Iterable<RecruitmentRequest> recruitmentRequests = recruitmentRequestRepository.findAll();
         try {
+            for (RecruitmentRequest recruitmentRequest : recruitmentRequests){
+                if (recruitmentFormDTO.getRecruitmentRequest().getName().equals(recruitmentRequest.getName())) {
+                    if (id != recruitmentRequest.getId()) {
+                        return new ResponseEntity<>("cập nhật dữ liệu thất bại!",HttpStatus.EXPECTATION_FAILED);
+                    }
+                }
+            }
             request.getRecruitmentRequest().setId(id);
             recruitmentRequestService.updateRecruitmentRequest(recruitmentFormDTO, id);
-            return new ResponseEntity<>("cập nhật dữ liệu thành công!",HttpStatus.OK);
+
         } catch (Exception e) {
             return new ResponseEntity<>("cập nhật dữ liệu thất bại!",HttpStatus.EXPECTATION_FAILED);
         }
+        return new ResponseEntity<>("cập nhật dữ liệu thành công!",HttpStatus.OK);
     }
 }
