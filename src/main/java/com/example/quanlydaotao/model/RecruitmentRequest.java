@@ -2,21 +2,21 @@ package com.example.quanlydaotao.model;
 
 
 import jakarta.persistence.*;
-import org.springframework.boot.context.properties.bind.DefaultValue;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.Date;
 
 @Entity
 public class RecruitmentRequest {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
+    @Column(nullable = false)
     private LocalDate dateStart;
+    @Column(nullable = false)
     private LocalDate dateEnd;
+    @Column(unique = true, nullable = false)
     private String name;
+    @Column(nullable = false)
     private String reason;
     private String division;
     private String status;

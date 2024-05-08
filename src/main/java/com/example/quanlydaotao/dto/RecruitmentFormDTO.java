@@ -3,7 +3,6 @@ package com.example.quanlydaotao.dto;
 import com.example.quanlydaotao.model.RecruitmentRequest;
 import com.example.quanlydaotao.model.RecruitmentRequestDetail;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class RecruitmentFormDTO {
