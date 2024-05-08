@@ -9,4 +9,6 @@ import java.util.Optional;
 @Repository
 public interface IRecruitmentRequestDetailRepository extends JpaRepository<RecruitmentRequestDetail, Long> {
     Optional<RecruitmentRequestDetail> findByRecruitmentRequestId(Long id);
+
+
 }

@@ -21,4 +21,8 @@ public class RecruitmentRequestDetailService implements IRecruitmentRequestDetai
     public Iterable<RecruitmentRequestDetail> findAll() {
         return recruitmentRequestDetailRepository.findAll();
     }
+
+    public void saveDetail(RecruitmentRequestDetail requestDetail) {
+            recruitmentRequestDetailRepository.save(requestDetail);
+    }
 }
