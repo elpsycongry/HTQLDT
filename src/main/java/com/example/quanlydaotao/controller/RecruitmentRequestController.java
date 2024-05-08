@@ -1,9 +1,7 @@
 package com.example.quanlydaotao.controller;
 
-import com.example.quanlydaotao.model.RecruitmentPlanDetail;
 import com.example.quanlydaotao.model.RecruitmentRequest;
 import com.example.quanlydaotao.model.RecruitmentRequestDetail;
-import com.example.quanlydaotao.model.UserRecruitmentAction;
 import com.example.quanlydaotao.service.impl.RecruitmentRequestDetailService;
 
 import com.example.quanlydaotao.dto.RecruitmentFormDTO;
@@ -15,9 +13,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 
@@ -49,7 +44,6 @@ public class RecruitmentRequestController {
         Iterable<RecruitmentRequestDetail> recruitmentRequestDetail = recruitmentRequestDetailService.findByRecruitmentId(id);
         return new ResponseEntity<>(recruitmentRequestDetail, HttpStatus.OK);
     }
-
 
     @PostMapping
     public ResponseEntity createRecruitmentRequest(@RequestBody RecruitmentFormDTO recruitmentFormDTO) {
@@ -85,5 +79,18 @@ public class RecruitmentRequestController {
             return new ResponseEntity<>("cập nhật dữ liệu thất bại!",HttpStatus.EXPECTATION_FAILED);
         }
         return new ResponseEntity<>("cập nhật dữ liệu thành công!",HttpStatus.OK);
+    }
+
+    @PutMapping("/{id}/users/{idUser}")
+    public ResponseEntity updateRecruitmentStatus(@RequestBody RecruitmentFormDTO recruitmentFormDTO, @PathVariable("id") Long idRecruitment, @PathVariable Long idUser) {
+        String action = recruitmentFormDTO.getRecruitmentRequest().getStatus();
+        String reason = recruitmentFormDTO.getRecruitmentRequest().getReason();
+        try {
+            recruitmentRequestService.updateStatusRecruitment(idRecruitment, idUser, action,reason);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>("Đã từ chối", HttpStatus.OK);
+
     }
 }
