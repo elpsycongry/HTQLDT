@@ -59,9 +59,10 @@ public class RecruitmentRequestService implements IRecruitmentRequestService {
         }
     }
 
-    public void updateStatusRecruitment(long idRecruitment, long idUser, String status) {
+    public void updateStatusRecruitment(long idRecruitment, long idUser, String status, String reason) {
         RecruitmentRequest recruitmentRequest = recruitmentRequestRepository.findById(idRecruitment).get();
         recruitmentRequest.setStatus(status);
+        recruitmentRequest.setReason(reason);
         recruitmentRequest = recruitmentRequestRepository.save(recruitmentRequest);
 
         String action = UserAction.Denied.toString();

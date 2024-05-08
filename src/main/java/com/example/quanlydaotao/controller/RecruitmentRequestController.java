@@ -38,8 +38,9 @@ public class RecruitmentRequestController {
     @PutMapping("/{id}/users/{idUser}")
     public ResponseEntity updateRecruitmentStatus(@RequestBody RecruitmentFormDTO recruitmentFormDTO, @PathVariable("id") Long idRecruitment, @PathVariable Long idUser) {
         String action = recruitmentFormDTO.getRecruitmentRequest().getStatus();
+        String reason = recruitmentFormDTO.getRecruitmentRequest().getReason();
         try {
-            recruitmentRequestService.updateStatusRecruitment(idRecruitment, idUser, action);
+            recruitmentRequestService.updateStatusRecruitment(idRecruitment, idUser, action,reason);
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }
