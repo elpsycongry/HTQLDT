@@ -7,16 +7,11 @@ import com.example.quanlydaotao.repository.IRecruitmentRequestRepository;
 import com.example.quanlydaotao.repository.IUserRecruitmentActionRepository;
 import com.example.quanlydaotao.dto.RecruitmentFormDTO;
 import com.example.quanlydaotao.dto.UserAction;
-import com.example.quanlydaotao.model.RecruitmentRequest;
 import com.example.quanlydaotao.model.RecruitmentRequestDetail;
-import com.example.quanlydaotao.model.UserRecruitmentAction;
 import com.example.quanlydaotao.model.Users;
-import com.example.quanlydaotao.repository.IRecruitmentRequestRepository;
-
 import com.example.quanlydaotao.service.IRecruitmentRequestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -35,6 +30,7 @@ public class RecruitmentRequestService implements IRecruitmentRequestService {
     private IRecruitmentRequestRepository iRecruitmentRequestRepository;
     @Autowired
     private RecruitmentRequestDetailService iRecruitmentRequestDetailService;
+
     @Override
     public Iterable<RecruitmentRequest> getAllRecruitmentRequests() {
         Iterable<RecruitmentRequest> recruitmentRequests = recruitmentRequestRepository.getAll();
@@ -77,7 +73,7 @@ public class RecruitmentRequestService implements IRecruitmentRequestService {
 
     public void updateRecruitmentRequest(RecruitmentFormDTO recruitmentFormDTO, long id) throws Exception {
         Iterable<RecruitmentRequest> recruitmentRequests = recruitmentRequestRepository.findAll();
-        for (RecruitmentRequest recruitmentRequest : recruitmentRequests){
+        for (RecruitmentRequest recruitmentRequest : recruitmentRequests) {
             if (recruitmentFormDTO.getRecruitmentRequest().getName().equals(recruitmentRequest.getName())) {
                 if (id != recruitmentRequest.getId()) {
                     throw new Exception();
@@ -87,10 +83,10 @@ public class RecruitmentRequestService implements IRecruitmentRequestService {
         Iterable<RecruitmentRequestDetail> recruitmentRequestDetails = iRecruitmentRequestDetailRepository.findByRecruitmentRequestId(recruitmentFormDTO.getRecruitmentRequest().getId());
         Optional<UserRecruitmentAction> userRecruitmentAction = iUserRecruitmentActionRepository.findByRecruitmentRequestId(id);
         DeleteAllRecruitment(id, userRecruitmentAction);
-        SaveRecruitment(recruitmentFormDTO , recruitmentRequestDetails);
+        SaveRecruitment(recruitmentFormDTO, recruitmentRequestDetails);
     }
 
-    private void SaveRecruitment(RecruitmentFormDTO recruitmentFormDTO , Iterable<RecruitmentRequestDetail> recruitmentRequestDetails ) {
+    private void SaveRecruitment(RecruitmentFormDTO recruitmentFormDTO, Iterable<RecruitmentRequestDetail> recruitmentRequestDetails) {
         RecruitmentRequest request = recruitmentFormDTO.getRecruitmentRequest();
         iRecruitmentRequestRepository.saveAndFlush(request);
         Users user = usersService.findById(recruitmentFormDTO.getIdUser()).get();
@@ -99,7 +95,7 @@ public class RecruitmentRequestService implements IRecruitmentRequestService {
         iUserRecruitmentActionRepository.save(userAction);
         List<RecruitmentRequestDetail> requestDetailsOld = new ArrayList<>();
         for (RecruitmentRequestDetail detail : recruitmentRequestDetails) {
-             requestDetailsOld.add(detail);
+            requestDetailsOld.add(detail);
         }
         List<RecruitmentRequestDetail> requestDetails = recruitmentFormDTO.getDetails();
         for (RecruitmentRequestDetail detail : requestDetails) {

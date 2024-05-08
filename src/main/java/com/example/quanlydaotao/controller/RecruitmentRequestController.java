@@ -1,9 +1,6 @@
 package com.example.quanlydaotao.controller;
-
-import com.example.quanlydaotao.model.RecruitmentPlanDetail;
 import com.example.quanlydaotao.model.RecruitmentRequest;
 import com.example.quanlydaotao.model.RecruitmentRequestDetail;
-import com.example.quanlydaotao.model.UserRecruitmentAction;
 import com.example.quanlydaotao.service.impl.RecruitmentRequestDetailService;
 
 import com.example.quanlydaotao.dto.RecruitmentFormDTO;
@@ -14,10 +11,6 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 
