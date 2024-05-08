@@ -8,9 +8,9 @@ import com.example.quanlydaotao.service.impl.RecruitmentRequestDetailService;
 
 import com.example.quanlydaotao.dto.RecruitmentFormDTO;
 import com.example.quanlydaotao.repository.IRecruitmentRequestRepository;
-
 import com.example.quanlydaotao.service.impl.RecruitmentRequestService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -48,11 +48,19 @@ public class RecruitmentRequestController {
         return new ResponseEntity<>(recruitmentRequestDetail, HttpStatus.OK);
     }
 
+
     @PostMapping
     public ResponseEntity createRecruitmentRequest(@RequestBody RecruitmentFormDTO recruitmentFormDTO) {
         RecruitmentFormDTO request = recruitmentFormDTO;
-        recruitmentRequestService.createRecruitmentRequest(recruitmentFormDTO);
+        try {
+            recruitmentRequestService.createRecruitmentRequest(recruitmentFormDTO);
+        } catch (DataAccessException e) {
+            return new ResponseEntity<>("Tên của yêu cầu nhân sự đã tồn tại!", HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
         return new ResponseEntity<>(HttpStatus.OK);
+
 
     }
 
@@ -62,10 +70,9 @@ public class RecruitmentRequestController {
         try {
             request.getRecruitmentRequest().setId(id);
             recruitmentRequestService.updateRecruitmentRequest(recruitmentFormDTO, id);
-            return new ResponseEntity<>("Update recruitment success!",HttpStatus.OK);
+            return new ResponseEntity<>("cập nhật dữ liệu thành công!",HttpStatus.OK);
         } catch (Exception e) {
-            return new ResponseEntity<>("Update recruitment false!",HttpStatus.EXPECTATION_FAILED);
+            return new ResponseEntity<>("cập nhật dữ liệu thất bại!",HttpStatus.EXPECTATION_FAILED);
         }
-
     }
 }

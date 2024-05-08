@@ -5,7 +5,6 @@ import jakarta.persistence.*;
 
 import java.time.LocalDate;
 
-
 @Entity
 public class RecruitmentRequest {
     @Id
@@ -13,10 +12,13 @@ public class RecruitmentRequest {
     private Long id;
 
 
+    @Column(nullable = false)
     private LocalDate dateStart;
+    @Column(nullable = false)
     private LocalDate dateEnd;
+    @Column(unique = true, nullable = false)
     private String name;
-
+    @Column(nullable = false)
 
     private String reason;
     private String division;
@@ -39,8 +41,6 @@ public class RecruitmentRequest {
         this.dateStart = dateStart;
         return this;
     }
-
-
 
     public LocalDate getDateEnd() {
         return dateEnd;

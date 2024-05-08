@@ -6,7 +6,6 @@ import com.example.quanlydaotao.service.IRecruitmentRequestDetailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-
 import java.util.Optional;
 
 @Service
@@ -22,10 +21,12 @@ public class RecruitmentRequestDetailService implements IRecruitmentRequestDetai
     public Iterable<RecruitmentRequestDetail> findAll() {
         return recruitmentRequestDetailRepository.findAll();
     }
+
     @Autowired
     private IRecruitmentRequestDetailRepository detailRepository;
     public void saveDetail(RecruitmentRequestDetail requestDetail) {
         detailRepository.save(requestDetail);
+
 
     }
 }

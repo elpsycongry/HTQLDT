@@ -2,7 +2,7 @@ package com.example.quanlydaotao.repository;
 import com.example.quanlydaotao.model.UserRecruitmentAction;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.example.quanlydaotao.model.RecruitmentRequest;
+
 import com.example.quanlydaotao.model.UserRecruitmentAction;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -18,3 +18,5 @@ public interface IUserRecruitmentActionRepository extends CrudRepository<UserRec
     Optional<UserRecruitmentAction> findByRecruitmentRequestId(long id);
 
 }
+
+
