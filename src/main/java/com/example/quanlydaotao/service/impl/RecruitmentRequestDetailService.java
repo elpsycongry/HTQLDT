@@ -12,8 +12,8 @@ import java.util.Optional;
 public class RecruitmentRequestDetailService implements IRecruitmentRequestDetailService {
     @Autowired
     private IRecruitmentRequestDetailRepository recruitmentRequestDetailRepository;
-    @Override
-    public Optional<RecruitmentRequestDetail> findById(long id) {
+
+    public Iterable<RecruitmentRequestDetail> findByRecruitmentId(long id) {
         return recruitmentRequestDetailRepository.findByRecruitmentRequestId(id);
     }
 
@@ -22,7 +22,11 @@ public class RecruitmentRequestDetailService implements IRecruitmentRequestDetai
         return recruitmentRequestDetailRepository.findAll();
     }
 
+    @Autowired
+    private IRecruitmentRequestDetailRepository detailRepository;
     public void saveDetail(RecruitmentRequestDetail requestDetail) {
-            recruitmentRequestDetailRepository.save(requestDetail);
+        detailRepository.save(requestDetail);
+
+
     }
 }

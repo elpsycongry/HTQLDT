@@ -35,7 +35,6 @@ public class UserRecruitmentAction {
         return this;
     }
 
-
     public RecruitmentRequest getRecruitmentRequest() {
         return recruitmentRequest;
     }

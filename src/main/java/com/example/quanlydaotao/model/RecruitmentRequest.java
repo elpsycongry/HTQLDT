@@ -1,6 +1,6 @@
 package com.example.quanlydaotao.model;
 
-
+import com.example.quanlydaotao.dto.UserAction;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
@@ -10,6 +10,8 @@ public class RecruitmentRequest {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+
     @Column(nullable = false)
     private LocalDate dateStart;
     @Column(nullable = false)
@@ -17,6 +19,7 @@ public class RecruitmentRequest {
     @Column(unique = true, nullable = false)
     private String name;
     @Column(nullable = false)
+
     private String reason;
     private String division;
     private String status;
