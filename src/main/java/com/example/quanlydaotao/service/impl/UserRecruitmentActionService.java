@@ -12,6 +12,5 @@ public class UserRecruitmentActionService {
 
     public void save(UserRecruitmentAction userAction) {
         userActionRepository.save(userAction);
-
     }
 }

@@ -9,19 +9,19 @@ import com.example.quanlydaotao.dto.RecruitmentFormDTO;
 import com.example.quanlydaotao.dto.UserAction;
 import com.example.quanlydaotao.model.RecruitmentRequestDetail;
 import com.example.quanlydaotao.model.Users;
+import com.example.quanlydaotao.repository.IUserRepository;
 import com.example.quanlydaotao.service.IRecruitmentRequestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 public class RecruitmentRequestService implements IRecruitmentRequestService {
-    @Autowired
-    private IRecruitmentRequestRepository recruitmentRequestRepository;
-    @Autowired
-    private IUserRecruitmentActionRepository userRecruitmentActionRepository;
     @Autowired
     private UsersService usersService;
     @Autowired
@@ -30,50 +30,86 @@ public class RecruitmentRequestService implements IRecruitmentRequestService {
     private IRecruitmentRequestRepository iRecruitmentRequestRepository;
     @Autowired
     private RecruitmentRequestDetailService iRecruitmentRequestDetailService;
+    @Autowired
+    private IUserRecruitmentActionRepository iUserRecruitmentActionRepository;
+    @Autowired
+    private IRecruitmentRequestDetailRepository iRecruitmentRequestDetailRepository;
+    @Autowired
+    private IUserRepository userRepository;
 
     @Override
     public Iterable<RecruitmentRequest> getAllRecruitmentRequests() {
-        Iterable<RecruitmentRequest> recruitmentRequests = recruitmentRequestRepository.getAll();
+        Iterable<RecruitmentRequest> recruitmentRequests = iRecruitmentRequestRepository.getAll();
         return recruitmentRequests;
     }
 
     @Override
     public Optional<RecruitmentRequest> findRecruitmentRequestById(long id) {
-        Optional<RecruitmentRequest> recruitmentRequest = recruitmentRequestRepository.findById(id);
+        Optional<RecruitmentRequest> recruitmentRequest = iRecruitmentRequestRepository.findById(id);
         return recruitmentRequest;
     }
 
-    @Autowired
-    private IRecruitmentRequestDetailRepository recruitmentRequestDetailRepository;
-    @Autowired
-    private IUserRecruitmentActionRepository iUserRecruitmentActionRepository;
-    @Autowired
-    private IRecruitmentRequestDetailRepository iRecruitmentRequestDetailRepository;
+
 
 
     public void createRecruitmentRequest(RecruitmentFormDTO recruitmentFormDTO) {
         RecruitmentRequest request = recruitmentFormDTO.getRecruitmentRequest();
         request.setStatus("Đang chờ");
+        Optional<Users> users = userRepository.findById(recruitmentFormDTO.getIdUser());
+        request.setUsers(users.get());
+        LocalDateTime localDateTime = LocalDateTime.now();
+        int day = localDateTime.getDayOfMonth();
+        int month = localDateTime.getMonthValue();
+        int year = localDateTime.getYear();
+        int hour = localDateTime.getHour();
+        int minute = localDateTime.getMinute();
+
+        LocalDateTime dateTime = LocalDateTime.of(year, month, day, hour, minute);
+        request.setDateStart(dateTime);
         request = iRecruitmentRequestRepository.save(request);
 
-        Users user = usersService.findById(recruitmentFormDTO.getIdUser()).get();
-        UserRecruitmentAction userAction = new UserRecruitmentAction();
-        userAction.setUser(user).setRecruitmentRequest(request)
-                .setUser(user)
-                .setAction(UserAction.Demand.toString());
-        userActionService.save(userAction);
+        createUserRecruitmentAction(recruitmentFormDTO.getIdUser(), request, UserAction.Demand.toString());
 
         List<RecruitmentRequestDetail> requestDetails = recruitmentFormDTO.getDetails();
+
         for (RecruitmentRequestDetail detail : requestDetails) {
             detail.setRecruitmentRequest(request);
             iRecruitmentRequestDetailService.saveDetail(detail);
         }
+    }
 
+    public void updateStatusRecruitment(long idRecruitment, long idUser, String status, String reason) {
+        RecruitmentRequest recruitmentRequest = iRecruitmentRequestRepository.findById(idRecruitment).get();
+        recruitmentRequest.setStatus(status);
+        recruitmentRequest.setReason(reason);
+        LocalDateTime localDateTime = LocalDateTime.now();
+        int day = localDateTime.getDayOfMonth();
+        int month = localDateTime.getMonthValue();
+        int year = localDateTime.getYear();
+        int hour = localDateTime.getHour();
+        int minute = localDateTime.getMinute();
+
+        LocalDateTime dateTime = LocalDateTime.of(year, month, day, hour, minute);
+        recruitmentRequest.setDateStart(dateTime);
+        recruitmentRequest = iRecruitmentRequestRepository.save(recruitmentRequest);
+
+        String action = UserAction.Denied.toString();
+        createUserRecruitmentAction(idUser, recruitmentRequest, action);
+    }
+
+    private void createUserRecruitmentAction(long idUser, RecruitmentRequest recruitmentRequest, String action) {
+        Users user = usersService.findById(idUser).get();
+        UserRecruitmentAction userAction = new UserRecruitmentAction();
+        userAction.setUser(user)
+                .setRecruitmentRequest(recruitmentRequest)
+                .setUser(user)
+                .setAction(action);
+        userActionService.save(userAction);
     }
 
     public void updateRecruitmentRequest(RecruitmentFormDTO recruitmentFormDTO, long id) throws Exception {
-        Iterable<RecruitmentRequest> recruitmentRequests = recruitmentRequestRepository.findAll();
-        for (RecruitmentRequest recruitmentRequest : recruitmentRequests) {
+       Iterable<RecruitmentRequest> recruitmentRequests = iRecruitmentRequestRepository.findAll();
+        for (RecruitmentRequest recruitmentRequest : recruitmentRequests){
             if (recruitmentFormDTO.getRecruitmentRequest().getName().equals(recruitmentRequest.getName())) {
                 if (id != recruitmentRequest.getId()) {
                     throw new Exception();
@@ -88,6 +124,17 @@ public class RecruitmentRequestService implements IRecruitmentRequestService {
 
     private void SaveRecruitment(RecruitmentFormDTO recruitmentFormDTO, Iterable<RecruitmentRequestDetail> recruitmentRequestDetails) {
         RecruitmentRequest request = recruitmentFormDTO.getRecruitmentRequest();
+        Optional<Users> users = userRepository.findById(recruitmentFormDTO.getIdUser());
+        request.setUsers(users.get());
+        LocalDateTime localDateTime = LocalDateTime.now();
+        int day = localDateTime.getDayOfMonth();
+        int month = localDateTime.getMonthValue();
+        int year = localDateTime.getYear();
+        int hour = localDateTime.getHour();
+        int minute = localDateTime.getMinute();
+
+        LocalDateTime dateTime = LocalDateTime.of(year, month, day, hour, minute);
+        request.setDateStart(dateTime);
         iRecruitmentRequestRepository.saveAndFlush(request);
         Users user = usersService.findById(recruitmentFormDTO.getIdUser()).get();
         UserRecruitmentAction userAction = new UserRecruitmentAction();
