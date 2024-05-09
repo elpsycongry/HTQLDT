@@ -12,20 +12,23 @@ public class RecruitmentRequest {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-
-    @Column(nullable = false)
-    private LocalDateTime dateStart;
-    @Column(nullable = false)
-    private LocalDate dateEnd;
-    @Column(unique = true, nullable = false)
-    private String name;
-    @Column(nullable = false)
-    private String reason;
-    private String division;
-    private String status;
     @ManyToOne
     @JoinColumn(name = "id_user")
     private Users users;
+
+    @Column(nullable = false)
+    private LocalDateTime dateStart;
+
+    @Column(nullable = false)
+    private LocalDate dateEnd;
+
+    @Column(unique = true, nullable = false)
+    private String name;
+
+    private String reason;
+    private String division;
+    private String status;
+
 
     public Users getUsers() {
         return users;

@@ -50,8 +50,6 @@ public class RecruitmentRequestService implements IRecruitmentRequestService {
     }
 
 
-
-
     public void createRecruitmentRequest(RecruitmentFormDTO recruitmentFormDTO) {
         RecruitmentRequest request = recruitmentFormDTO.getRecruitmentRequest();
         request.setStatus("Đang chờ");
@@ -82,15 +80,6 @@ public class RecruitmentRequestService implements IRecruitmentRequestService {
         RecruitmentRequest recruitmentRequest = iRecruitmentRequestRepository.findById(idRecruitment).get();
         recruitmentRequest.setStatus(status);
         recruitmentRequest.setReason(reason);
-        LocalDateTime localDateTime = LocalDateTime.now();
-        int day = localDateTime.getDayOfMonth();
-        int month = localDateTime.getMonthValue();
-        int year = localDateTime.getYear();
-        int hour = localDateTime.getHour();
-        int minute = localDateTime.getMinute();
-
-        LocalDateTime dateTime = LocalDateTime.of(year, month, day, hour, minute);
-        recruitmentRequest.setDateStart(dateTime);
         recruitmentRequest = iRecruitmentRequestRepository.save(recruitmentRequest);
 
         String action = UserAction.Denied.toString();
@@ -108,8 +97,8 @@ public class RecruitmentRequestService implements IRecruitmentRequestService {
     }
 
     public void updateRecruitmentRequest(RecruitmentFormDTO recruitmentFormDTO, long id) throws Exception {
-       Iterable<RecruitmentRequest> recruitmentRequests = iRecruitmentRequestRepository.findAll();
-        for (RecruitmentRequest recruitmentRequest : recruitmentRequests){
+        Iterable<RecruitmentRequest> recruitmentRequests = iRecruitmentRequestRepository.findAll();
+        for (RecruitmentRequest recruitmentRequest : recruitmentRequests) {
             if (recruitmentFormDTO.getRecruitmentRequest().getName().equals(recruitmentRequest.getName())) {
                 if (id != recruitmentRequest.getId()) {
                     throw new Exception();
@@ -126,15 +115,6 @@ public class RecruitmentRequestService implements IRecruitmentRequestService {
         RecruitmentRequest request = recruitmentFormDTO.getRecruitmentRequest();
         Optional<Users> users = userRepository.findById(recruitmentFormDTO.getIdUser());
         request.setUsers(users.get());
-        LocalDateTime localDateTime = LocalDateTime.now();
-        int day = localDateTime.getDayOfMonth();
-        int month = localDateTime.getMonthValue();
-        int year = localDateTime.getYear();
-        int hour = localDateTime.getHour();
-        int minute = localDateTime.getMinute();
-
-        LocalDateTime dateTime = LocalDateTime.of(year, month, day, hour, minute);
-        request.setDateStart(dateTime);
         iRecruitmentRequestRepository.saveAndFlush(request);
         Users user = usersService.findById(recruitmentFormDTO.getIdUser()).get();
         UserRecruitmentAction userAction = new UserRecruitmentAction();
