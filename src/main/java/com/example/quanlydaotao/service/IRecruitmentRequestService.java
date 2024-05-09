@@ -8,7 +8,7 @@ import java.util.Optional;
 public interface IRecruitmentRequestService {
     Iterable<RecruitmentRequest> getAllRecruitmentRequests();
     Optional<RecruitmentRequest> findRecruitmentRequestById(long id);
-    List<Object[]> findByName(String name);
-    List<Object[]> statusFilter(String status);
-    List<Object[]> getStatus();
+    Iterable<Object[]> findByName(String name);
+    Iterable<Object[]> statusFilter(String status);
+    Iterable<Object[]> getStatus();
 }

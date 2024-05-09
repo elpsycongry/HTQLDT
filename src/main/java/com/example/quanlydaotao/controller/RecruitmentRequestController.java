@@ -96,7 +96,7 @@ public class RecruitmentRequestController {
     }
     @GetMapping("/search")
     public ResponseEntity findAllName(@RequestParam String name) {
-        List<Object[]> recruitmentRequestList = recruitmentRequestService.findByName(name);
+        Iterable<Object[]> recruitmentRequestList = recruitmentRequestService.findByName(name);
         try{
             return new ResponseEntity<>(recruitmentRequestList, HttpStatus.OK);
         }catch (Exception e){
@@ -106,12 +106,12 @@ public class RecruitmentRequestController {
 
     @GetMapping("/filter")
     public ResponseEntity statusFilter(@RequestParam String status){
-        List<Object[]> recruitmentRequests = recruitmentRequestService.statusFilter(status);
+        Iterable<Object[]> recruitmentRequests = recruitmentRequestService.statusFilter(status);
         return new ResponseEntity<>(recruitmentRequests, HttpStatus.OK);
     }
     @GetMapping("/status")
     public ResponseEntity getStatus(){
-        List<Object[]> recruitmentRequests = recruitmentRequestService.getStatus();
+        Iterable<Object[]> recruitmentRequests = recruitmentRequestService.getStatus();
         return new ResponseEntity<>(recruitmentRequests, HttpStatus.OK);
     }
 }

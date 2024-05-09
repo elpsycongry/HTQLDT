@@ -15,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -137,7 +136,7 @@ public class RecruitmentRequestService implements IRecruitmentRequestService {
         iRecruitmentRequestDetailRepository.deleteAllByRecruitmentRequestId(id);
     }
     @Override
-    public List<Object[]> findByName(String name) {
+    public Iterable<Object[]> findByName(String name) {
         if (name == null || name.isEmpty()) {
             return iRecruitmentRequestRepository.finAllRR();
         }
@@ -145,12 +144,12 @@ public class RecruitmentRequestService implements IRecruitmentRequestService {
     }
 
     @Override
-    public List<Object[]> statusFilter(String status) {
+    public Iterable<Object[]> statusFilter(String status) {
         return iRecruitmentRequestRepository.statusFilter(status);
     }
 
     @Override
-    public List<Object[]> getStatus() {
+    public Iterable<Object[]> getStatus() {
         return iRecruitmentRequestRepository.statusList();
     }
 }
