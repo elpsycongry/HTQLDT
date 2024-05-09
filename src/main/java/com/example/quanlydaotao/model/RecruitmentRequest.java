@@ -4,6 +4,7 @@ import com.example.quanlydaotao.dto.UserAction;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 public class RecruitmentRequest {
@@ -11,17 +12,31 @@ public class RecruitmentRequest {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @ManyToOne
+    @JoinColumn(name = "id_user")
+    private Users users;
 
     @Column(nullable = false)
-    private LocalDate dateStart;
+    private LocalDateTime dateStart;
+
     @Column(nullable = false)
     private LocalDate dateEnd;
+
     @Column(unique = true, nullable = false)
     private String name;
-    @Column(nullable = false)
+
     private String reason;
     private String division;
     private String status;
+
+
+    public Users getUsers() {
+        return users;
+    }
+
+    public void setUsers(Users users) {
+        this.users = users;
+    }
 
     public Long getId() {
         return id;
@@ -32,22 +47,20 @@ public class RecruitmentRequest {
         return this;
     }
 
-    public LocalDate getDateStart() {
+    public LocalDateTime getDateStart() {
         return dateStart;
     }
 
-    public RecruitmentRequest setDateStart(LocalDate dateStart) {
+    public void setDateStart(LocalDateTime dateStart) {
         this.dateStart = dateStart;
-        return this;
     }
 
     public LocalDate getDateEnd() {
         return dateEnd;
     }
 
-    public RecruitmentRequest setDateEnd(LocalDate dateEnd) {
+    public void setDateEnd(LocalDate dateEnd) {
         this.dateEnd = dateEnd;
-        return this;
     }
 
     public String getName() {
