@@ -23,5 +23,20 @@ public interface IRecruitmentRequestRepository extends JpaRepository<Recruitment
     Object[] findNonForeignKeyFields(@Param("id") Long id);
     @Query("DELETE FROM RecruitmentRequest r WHERE r.id =:value")
     void deleteAllExceptLinked(@Param("value") long id);
+    @Query("select rr, ura.user from RecruitmentRequest rr " +
+            "inner join UserRecruitmentAction ura ON rr.id = ura.recruitmentRequest.id " +
+            "where rr.name LIKE %:value%")
+    List<Object[]> findRecruitmentRequestsByNameContaining(@Param("value") String name);
+    @Query("select rr, ura.user from RecruitmentRequest rr " +
+            "inner join UserRecruitmentAction ura ON rr.id = ura.recruitmentRequest.id ")
+    List<Object[]> finAllRR();
+    @Query("select rr, ura.user from RecruitmentRequest rr " +
+            "inner join UserRecruitmentAction ura ON rr.id = ura.recruitmentRequest.id " +
+            "where rr.status =:value")
+    List<Object[]> statusFilter(@Param("value") String name);
+    @Query("select rr, ura.user from RecruitmentRequest rr " +
+            "inner join UserRecruitmentAction ura ON rr.id = ura.recruitmentRequest.id ")
+    List<Object[]> statusList();
+
 
 }

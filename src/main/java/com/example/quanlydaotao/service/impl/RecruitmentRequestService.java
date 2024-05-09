@@ -136,4 +136,21 @@ public class RecruitmentRequestService implements IRecruitmentRequestService {
         iUserRecruitmentActionRepository.delete(userRecruitmentAction.get());
         iRecruitmentRequestDetailRepository.deleteAllByRecruitmentRequestId(id);
     }
+    @Override
+    public List<Object[]> findByName(String name) {
+        if (name == null || name.isEmpty()) {
+            return iRecruitmentRequestRepository.finAllRR();
+        }
+        return iRecruitmentRequestRepository.findRecruitmentRequestsByNameContaining(name);
+    }
+
+    @Override
+    public List<Object[]> statusFilter(String status) {
+        return iRecruitmentRequestRepository.statusFilter(status);
+    }
+
+    @Override
+    public List<Object[]> getStatus() {
+        return iRecruitmentRequestRepository.statusList();
+    }
 }
