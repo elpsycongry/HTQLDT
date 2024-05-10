@@ -3,6 +3,7 @@ package com.example.quanlydaotao.controller;
 import com.example.quanlydaotao.dto.ReasonDTO;
 import com.example.quanlydaotao.model.RecruitmentRequest;
 import com.example.quanlydaotao.model.RecruitmentRequestDetail;
+import com.example.quanlydaotao.repository.IUserRepository;
 import com.example.quanlydaotao.service.impl.RecruitmentRequestDetailService;
 
 import com.example.quanlydaotao.dto.RecruitmentFormDTO;
@@ -14,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,6 +30,8 @@ public class RecruitmentRequestController {
     private RecruitmentRequestDetailService recruitmentRequestDetailService;
     @Autowired
     private IRecruitmentRequestRepository recruitmentRequestRepository;
+    @Autowired
+    private IUserRepository userRepository;
 
     @GetMapping()
     public ResponseEntity<Iterable<RecruitmentRequest>> getAllRecruitmentRequest() {
@@ -36,10 +40,24 @@ public class RecruitmentRequestController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Optional<RecruitmentRequest>> getRecruitmentRequestById(@PathVariable long id) {
+    public ResponseEntity<RecruitmentFormDTO> getRecruitmentRequestById(@PathVariable long id) {
         Optional<RecruitmentRequest> recruitmentRequest = recruitmentRequestService.findRecruitmentRequestById(id);
-        return new ResponseEntity<>(recruitmentRequest, HttpStatus.OK);
+        Iterable<RecruitmentRequestDetail> recruitmentRequestDetails = recruitmentRequestDetailService.findByRecruitmentId(recruitmentRequest.get().getId());
+        List<RecruitmentRequestDetail> requestDetails = new ArrayList<>();
+        for (RecruitmentRequestDetail recruitmentRequestDetail : recruitmentRequestDetails) {
+            RecruitmentRequestDetail recruitmentRequestDetailNew = new RecruitmentRequestDetail();
+            recruitmentRequestDetailNew.setQuantity(recruitmentRequestDetail.getQuantity())
+                    .setId(recruitmentRequestDetail.getId())
+                    .setType(recruitmentRequestDetail.getType());
+            requestDetails.add(recruitmentRequestDetailNew);
+        }
+        RecruitmentFormDTO recruitmentFormDTO = new RecruitmentFormDTO();
+        recruitmentFormDTO.setIdUser(recruitmentRequest.get().getUsers().getId())
+                .setRecruitmentRequest(recruitmentRequest.get())
+                .setDetails(requestDetails);
+        return new ResponseEntity<>(recruitmentFormDTO, HttpStatus.OK);
     }
+
 
     @GetMapping("/detail/{id}")
     public ResponseEntity<Iterable<RecruitmentRequestDetail>> getRecruitmentRequestDetail(@PathVariable long id) {
@@ -67,10 +85,10 @@ public class RecruitmentRequestController {
         RecruitmentFormDTO recruitmentFormDTO = request;
         Iterable<RecruitmentRequest> recruitmentRequests = recruitmentRequestRepository.findAll();
         try {
-            for (RecruitmentRequest recruitmentRequest : recruitmentRequests){
+            for (RecruitmentRequest recruitmentRequest : recruitmentRequests) {
                 if (recruitmentFormDTO.getRecruitmentRequest().getName().equals(recruitmentRequest.getName())) {
                     if (id != recruitmentRequest.getId()) {
-                        return new ResponseEntity<>("cập nhật dữ liệu thất bại!",HttpStatus.EXPECTATION_FAILED);
+                        return new ResponseEntity<>("cập nhật dữ liệu thất bại!", HttpStatus.EXPECTATION_FAILED);
                     }
                 }
             }
@@ -78,9 +96,9 @@ public class RecruitmentRequestController {
             recruitmentRequestService.updateRecruitmentRequest(recruitmentFormDTO, id);
 
         } catch (Exception e) {
-            return new ResponseEntity<>("cập nhật dữ liệu thất bại!",HttpStatus.EXPECTATION_FAILED);
+            return new ResponseEntity<>("cập nhật dữ liệu thất bại!", HttpStatus.EXPECTATION_FAILED);
         }
-        return new ResponseEntity<>("cập nhật dữ liệu thành công!",HttpStatus.OK);
+        return new ResponseEntity<>("cập nhật dữ liệu thành công!", HttpStatus.OK);
     }
 
     @PostMapping("/{id}/users/{idUser}")
@@ -88,7 +106,7 @@ public class RecruitmentRequestController {
         String reason = reasonDTO.getReason();
         String action = "Bị từ chối bởi DET";
         try {
-            recruitmentRequestService.updateStatusRecruitment(idRecruitment, idUser, action,reason);
+            recruitmentRequestService.updateStatusRecruitment(idRecruitment, idUser, action, reason);
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }
