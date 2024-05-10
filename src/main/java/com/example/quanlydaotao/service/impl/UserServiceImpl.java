@@ -1,8 +1,9 @@
 package com.example.quanlydaotao.service.impl;
 
+import com.example.quanlydaotao.model.Role;
 import com.example.quanlydaotao.model.User;
 import com.example.quanlydaotao.model.UserPrinciple;
-import com.example.quanlydaotao.respository.UserRepository;
+import com.example.quanlydaotao.repository.UserRepository;
 import com.example.quanlydaotao.service.UserService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,6 +49,24 @@ public class UserServiceImpl implements UserService {
     @Override
     public Iterable<User> findAll() {
         return userRepository.findAll();
+    }
+
+    @Override
+    public Page<User> findAllUserWithRoles(Pageable pageable) {
+        Page<User> userPage = userRepository.findAll(pageable);
+        return userPage;
+    }
+
+    @Override
+    public Page<User> findAllByNameOrEmail(Pageable pageable, String keyword) {
+        Page<User> userPage = userRepository.findAllUserByNameContainingIgnoreCaseOrEmailContainingIgnoreCase(keyword, keyword, pageable);
+        return userPage;
+    }
+
+    @Override
+    public Page<User> findUsersByRoles(Pageable pageable, Role role) {
+        Page<User> userPage = userRepository.findUsersByRoles(role, pageable);
+        return userPage;
     }
 
     @Override

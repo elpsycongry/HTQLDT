@@ -21,6 +21,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -99,15 +100,55 @@ public class Controller {
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
 
-    @GetMapping("/admin/users")
-    public ResponseEntity<Iterable<User>> showAllUserByAdmin() {
-        Iterable<User> users = userService.findAll();
-        return new ResponseEntity<>(users, HttpStatus.OK);
-    }
+//    @GetMapping("/admin/users")
+//    public ResponseEntity<Iterable<User>> showAllUserByAdmin() {
+//        Iterable<User> users = userService.findAll();
+//        return new ResponseEntity<>(users, HttpStatus.OK);
+//    }
 
     @GetMapping("/users/{id}")
     public ResponseEntity<User> getProfile(@PathVariable Long id) {
         Optional<User> userOptional = this.userService.findById(id);
         return userOptional.map(user -> new ResponseEntity<>(user, HttpStatus.OK)).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
+
+    @GetMapping("/admin/users")
+    public ResponseEntity<Page<User>> getListUserWithRole(
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int limit) {
+        Pageable pageable = PageRequest.of(page - 1, limit);
+        Page<User> userPage = userService.findAllUserWithRoles(pageable);
+        if (userPage.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(userPage, HttpStatus.OK);
+    }
+    @GetMapping("/admin/users/search")
+    public ResponseEntity<Page<User>> searchUserWithNameOrEmail(@RequestParam("keyword") String keyword) {
+        Pageable pageable = PageRequest.of(0, 10);
+        Page<User> userPage;
+        if (StringUtils.isEmpty(keyword)) {
+            userPage = userService.findAllUserWithRoles(pageable);
+        } else {
+            userPage = userService.findAllByNameOrEmail(pageable, keyword);
+        }
+        if (userPage.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(userPage, HttpStatus.OK);
+    }
+    @GetMapping("/admin/users/filter/{role_id}")
+    public ResponseEntity<Page<User>> filterUserByRole(@PathVariable Long role_id) {
+        Optional<Role> role = roleService.findById(role_id);
+        Pageable pageable = PageRequest.of(0, 10);
+        if (role.isPresent()) {
+            Page<User> userPage = userService.findUsersByRoles(pageable, role.get());
+            if (userPage.isEmpty()) {
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
+            return new ResponseEntity<>(userPage, HttpStatus.OK);
+        } else {
+            return getListUserWithRole(1, 10);
+        }
     }
 }
