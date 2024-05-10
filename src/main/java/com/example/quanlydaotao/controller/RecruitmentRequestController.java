@@ -1,8 +1,8 @@
 package com.example.quanlydaotao.controller;
 
+import com.example.quanlydaotao.dto.ReasonDTO;
 import com.example.quanlydaotao.model.RecruitmentRequest;
 import com.example.quanlydaotao.model.RecruitmentRequestDetail;
-import com.example.quanlydaotao.model.Users;
 import com.example.quanlydaotao.repository.IUserRepository;
 import com.example.quanlydaotao.service.impl.RecruitmentRequestDetailService;
 
@@ -101,10 +101,10 @@ public class RecruitmentRequestController {
         return new ResponseEntity<>("cập nhật dữ liệu thành công!", HttpStatus.OK);
     }
 
-    @PutMapping("/{id}/users/{idUser}")
-    public ResponseEntity updateRecruitmentStatus(@RequestBody RecruitmentFormDTO recruitmentFormDTO, @PathVariable("id") Long idRecruitment, @PathVariable Long idUser) {
-        String action = recruitmentFormDTO.getRecruitmentRequest().getStatus();
-        String reason = recruitmentFormDTO.getRecruitmentRequest().getReason();
+    @PostMapping("/{id}/users/{idUser}")
+    public ResponseEntity updateRecruitmentStatus(@RequestBody ReasonDTO reasonDTO, @PathVariable("id") Long idRecruitment, @PathVariable Long idUser) {
+        String reason = reasonDTO.getReason();
+        String action = "Bị từ chối bởi DET";
         try {
             recruitmentRequestService.updateStatusRecruitment(idRecruitment, idUser, action, reason);
         } catch (Exception e) {
@@ -112,5 +112,25 @@ public class RecruitmentRequestController {
         }
         return new ResponseEntity<>("Đã từ chối", HttpStatus.OK);
 
+    }
+    @GetMapping("/search")
+    public ResponseEntity findAllName(@RequestParam String name) {
+        Iterable<Object[]> recruitmentRequestList = recruitmentRequestService.findByName(name);
+        try{
+            return new ResponseEntity<>(recruitmentRequestList, HttpStatus.OK);
+        }catch (Exception e){
+            return new ResponseEntity<>("No Content", HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @GetMapping("/filter")
+    public ResponseEntity statusFilter(@RequestParam String status){
+        Iterable<Object[]> recruitmentRequests = recruitmentRequestService.statusFilter(status);
+        return new ResponseEntity<>(recruitmentRequests, HttpStatus.OK);
+    }
+    @GetMapping("/status")
+    public ResponseEntity getStatus(){
+        Iterable<Object[]> recruitmentRequests = recruitmentRequestService.getStatus();
+        return new ResponseEntity<>(recruitmentRequests, HttpStatus.OK);
     }
 }
