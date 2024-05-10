@@ -51,7 +51,7 @@ public class RecruitmentRequestService implements IRecruitmentRequestService {
 
     public void createRecruitmentRequest(RecruitmentFormDTO recruitmentFormDTO) {
         RecruitmentRequest request = recruitmentFormDTO.getRecruitmentRequest();
-        request.setStatus("Đang chờ");
+        request.setStatus("Đã gửi");
         Optional<Users> users = userRepository.findById(recruitmentFormDTO.getIdUser());
         request.setUsers(users.get());
         LocalDateTime localDateTime = LocalDateTime.now();
