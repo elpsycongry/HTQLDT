@@ -81,10 +81,10 @@ public class RecruitmentRequestController {
         return new ResponseEntity<>("cập nhật dữ liệu thành công!",HttpStatus.OK);
     }
 
-    @PutMapping("/{id}/users/{idUser}")
+    @PostMapping("/{id}/users/{idUser}")
     public ResponseEntity updateRecruitmentStatus(@RequestBody ReasonDTO reasonDTO, @PathVariable("id") Long idRecruitment, @PathVariable Long idUser) {
         String reason = reasonDTO.getReason();
-        String action = "Đã hủy";
+        String action = "Bị từ chối bởi DET";
         try {
             recruitmentRequestService.updateStatusRecruitment(idRecruitment, idUser, action,reason);
         } catch (Exception e) {
