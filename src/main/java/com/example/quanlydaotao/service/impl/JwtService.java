@@ -1,10 +1,16 @@
 package com.example.quanlydaotao.service.impl;
 
+import com.example.quanlydaotao.model.JwtToken;
+import com.example.quanlydaotao.model.User;
 import com.example.quanlydaotao.model.UserPrinciple;
+import com.example.quanlydaotao.respository.JwtTokenRepository;
+import com.example.quanlydaotao.respository.UserRepository;
+import com.example.quanlydaotao.service.UserService;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
@@ -13,6 +19,11 @@ import java.util.Date;
 
 @Service
 public class JwtService {
+    @Autowired
+    private JwtTokenRepository tokenRepository;
+
+    @Autowired
+    UserService userService;
 
     private static final SecretKey SECRET_KEY = Keys.secretKeyFor(SignatureAlgorithm.HS512);
     private static final long EXPIRE_TIME = 86400000000L;
@@ -20,6 +31,23 @@ public class JwtService {
 
     public String generateTokenLogin(Authentication authentication) {
         UserPrinciple userPrincipal = (UserPrinciple) authentication.getPrincipal();
+        User user = userService.findById(((UserPrinciple) authentication.getPrincipal()).getId()).get();
+        JwtToken jwtToken = tokenRepository.findByUser(user);
+        if (jwtToken != null) {
+            tokenRepository.save(new JwtToken(jwtToken.getId(), user, Jwts.builder()
+                    .setSubject((userPrincipal.getUsername()))
+                    .setIssuedAt(new Date())
+                    .setExpiration(new Date((new Date()).getTime() + EXPIRE_TIME * 1000))
+                    .signWith(SECRET_KEY, SignatureAlgorithm.HS512)
+                    .compact(), true));
+        }else {
+            tokenRepository.save(new JwtToken(user, Jwts.builder()
+                    .setSubject((userPrincipal.getUsername()))
+                    .setIssuedAt(new Date())
+                    .setExpiration(new Date((new Date()).getTime() + EXPIRE_TIME * 1000))
+                    .signWith(SECRET_KEY, SignatureAlgorithm.HS512)
+                    .compact(), true));
+        }
         return Jwts.builder()
                 .setSubject((userPrincipal.getUsername()))
                 .setIssuedAt(new Date())
@@ -27,6 +55,7 @@ public class JwtService {
                 .signWith(SECRET_KEY, SignatureAlgorithm.HS512)
                 .compact();
     }
+
 
     public boolean validateJwtToken(String authToken) {
         try {

@@ -73,21 +73,13 @@ public class SecurityConfig {
         return http.csrf(csrf -> csrf.disable())
                 .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/login", "/register").permitAll()
+                        .requestMatchers("/login", "/register", "/logoutUser").permitAll()
                         .requestMatchers("/users/**").hasAnyAuthority("ROLE_USER")
                         .requestMatchers("/admin/**").hasAnyAuthority("ROLE_ADMIN")
-                ).logout(logout-> logout.
-                        logoutUrl("/logout") // Đường dẫn để thực hiện logout
-                        .logoutSuccessHandler(logoutSuccessHandler()) // Xử lý sau khi logout thành công
-                        .invalidateHttpSession(true) // Hủy phiên HTTP sau khi logout
-                        .deleteCookies("JSESSIONID", "jwtToken") )
+                )
                 .exceptionHandling(customizer -> customizer.accessDeniedHandler(customAccessDeniedHandler()))
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .httpBasic(Customizer.withDefaults())
                 .build();
-    }
-    @Bean
-    public LogoutSuccessHandler logoutSuccessHandler() {
-        return new HttpStatusReturningLogoutSuccessHandler(HttpStatus.OK); // Trả về mã HTTP 200 OK sau khi logout thành công
     }
 }
