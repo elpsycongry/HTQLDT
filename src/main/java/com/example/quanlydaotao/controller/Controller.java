@@ -1,17 +1,18 @@
 package com.example.quanlydaotao.controller;
 
-import com.example.quanlydaotao.model.JwtResponse;
-import com.example.quanlydaotao.model.Response;
-import com.example.quanlydaotao.model.Role;
-import com.example.quanlydaotao.model.User;
+import com.example.quanlydaotao.model.*;
+import com.example.quanlydaotao.respository.JwtTokenRepository;
+import com.example.quanlydaotao.security.jwt.JwtAuthenticationFilter;
 import com.example.quanlydaotao.service.RoleService;
 import com.example.quanlydaotao.service.UserService;
 import com.example.quanlydaotao.service.impl.JwtService;
+import jakarta.annotation.Resource;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -24,10 +25,12 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
-
 @RestController
 @CrossOrigin("*")
 public class Controller {
+    @Autowired
+    private JwtTokenRepository tokenRepository;
+
     @Autowired
     private AuthenticationManager authenticationManager;
 
@@ -75,10 +78,19 @@ public class Controller {
             UserDetails userDetails = (UserDetails) authentication.getPrincipal();
             User currentUser = userService.findByUsername(user.getName());
             return ResponseEntity.ok(new Response("200", "Login success", new JwtResponse(jwt, currentUser.getId(), userDetails.getUsername(), userDetails.getAuthorities())));
-//            return ResponseEntity.ok(new JwtResponse(jwt, currentUser.getId(), userDetails.getUsername(), userDetails.getAuthorities()));
         }catch (Exception e){
-            return ResponseEntity.ok(new Response("401", "Username or password incorrect", ""));
+            return ResponseEntity.ok(new Response("401", "Username or password incorrect", null));
         }
+    }
+
+    @PostMapping("/logoutUser")
+    public ResponseEntity<?> logout(@RequestHeader HttpHeaders headers) {
+        String authorization = headers.getFirst(HttpHeaders.AUTHORIZATION);
+        String token = authorization.substring(7);
+        JwtToken jwtToken = tokenRepository.findByTokenEquals(token);
+        jwtToken.setValid(false);
+        tokenRepository.save(jwtToken);
+        return ResponseEntity.ok("Logout success");
     }
 
     @GetMapping("/users")
