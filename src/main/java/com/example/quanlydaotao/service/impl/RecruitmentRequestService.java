@@ -15,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -135,5 +134,22 @@ public class RecruitmentRequestService implements IRecruitmentRequestService {
     private void DeleteAllRecruitment(long id, Optional<UserRecruitmentAction> userRecruitmentAction) {
         iUserRecruitmentActionRepository.delete(userRecruitmentAction.get());
         iRecruitmentRequestDetailRepository.deleteAllByRecruitmentRequestId(id);
+    }
+    @Override
+    public Iterable<Object[]> findByName(String name) {
+        if (name == null || name.isEmpty()) {
+            return iRecruitmentRequestRepository.finAllRR();
+        }
+        return iRecruitmentRequestRepository.findRecruitmentRequestsByNameContaining(name);
+    }
+
+    @Override
+    public Iterable<Object[]> statusFilter(String status) {
+        return iRecruitmentRequestRepository.statusFilter(status);
+    }
+
+    @Override
+    public Iterable<Object[]> getStatus() {
+        return iRecruitmentRequestRepository.statusList();
     }
 }

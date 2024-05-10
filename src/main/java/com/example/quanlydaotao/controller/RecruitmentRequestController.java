@@ -12,6 +12,8 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 import java.util.Optional;
 
 
@@ -91,5 +93,25 @@ public class RecruitmentRequestController {
         }
         return new ResponseEntity<>("Đã từ chối", HttpStatus.OK);
 
+    }
+    @GetMapping("/search")
+    public ResponseEntity findAllName(@RequestParam String name) {
+        Iterable<Object[]> recruitmentRequestList = recruitmentRequestService.findByName(name);
+        try{
+            return new ResponseEntity<>(recruitmentRequestList, HttpStatus.OK);
+        }catch (Exception e){
+            return new ResponseEntity<>("No Content", HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @GetMapping("/filter")
+    public ResponseEntity statusFilter(@RequestParam String status){
+        Iterable<Object[]> recruitmentRequests = recruitmentRequestService.statusFilter(status);
+        return new ResponseEntity<>(recruitmentRequests, HttpStatus.OK);
+    }
+    @GetMapping("/status")
+    public ResponseEntity getStatus(){
+        Iterable<Object[]> recruitmentRequests = recruitmentRequestService.getStatus();
+        return new ResponseEntity<>(recruitmentRequests, HttpStatus.OK);
     }
 }
