@@ -1,5 +1,6 @@
 package com.example.quanlydaotao.controller;
 
+import com.example.quanlydaotao.dto.ReasonDTO;
 import com.example.quanlydaotao.model.RecruitmentRequest;
 import com.example.quanlydaotao.model.RecruitmentRequestDetail;
 import com.example.quanlydaotao.service.impl.RecruitmentRequestDetailService;
@@ -82,10 +83,10 @@ public class RecruitmentRequestController {
         return new ResponseEntity<>("cập nhật dữ liệu thành công!",HttpStatus.OK);
     }
 
-    @PutMapping("/{id}/users/{idUser}")
-    public ResponseEntity updateRecruitmentStatus(@RequestBody RecruitmentFormDTO recruitmentFormDTO, @PathVariable("id") Long idRecruitment, @PathVariable Long idUser) {
-        String action = recruitmentFormDTO.getRecruitmentRequest().getStatus();
-        String reason = recruitmentFormDTO.getRecruitmentRequest().getReason();
+    @PostMapping("/{id}/users/{idUser}")
+    public ResponseEntity updateRecruitmentStatus(@RequestBody ReasonDTO reasonDTO, @PathVariable("id") Long idRecruitment, @PathVariable Long idUser) {
+        String reason = reasonDTO.getReason();
+        String action = "Bị từ chối bởi DET";
         try {
             recruitmentRequestService.updateStatusRecruitment(idRecruitment, idUser, action,reason);
         } catch (Exception e) {
