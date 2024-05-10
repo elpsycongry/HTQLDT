@@ -9,11 +9,13 @@ import com.example.quanlydaotao.dto.RecruitmentFormDTO;
 import com.example.quanlydaotao.dto.UserAction;
 import com.example.quanlydaotao.model.RecruitmentRequestDetail;
 import com.example.quanlydaotao.model.Users;
-
+import com.example.quanlydaotao.repository.IUserRepository;
 import com.example.quanlydaotao.service.IRecruitmentRequestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -32,6 +34,9 @@ public class RecruitmentRequestService implements IRecruitmentRequestService {
     private IUserRecruitmentActionRepository iUserRecruitmentActionRepository;
     @Autowired
     private IRecruitmentRequestDetailRepository iRecruitmentRequestDetailRepository;
+    @Autowired
+    private IUserRepository userRepository;
+
     @Override
     public Iterable<RecruitmentRequest> getAllRecruitmentRequests() {
         Iterable<RecruitmentRequest> recruitmentRequests = iRecruitmentRequestRepository.getAll();
@@ -45,16 +50,26 @@ public class RecruitmentRequestService implements IRecruitmentRequestService {
     }
 
 
-
-
     public void createRecruitmentRequest(RecruitmentFormDTO recruitmentFormDTO) {
         RecruitmentRequest request = recruitmentFormDTO.getRecruitmentRequest();
         request.setStatus("Đang chờ");
+        Optional<Users> users = userRepository.findById(recruitmentFormDTO.getIdUser());
+        request.setUsers(users.get());
+        LocalDateTime localDateTime = LocalDateTime.now();
+        int day = localDateTime.getDayOfMonth();
+        int month = localDateTime.getMonthValue();
+        int year = localDateTime.getYear();
+        int hour = localDateTime.getHour();
+        int minute = localDateTime.getMinute();
+
+        LocalDateTime dateTime = LocalDateTime.of(year, month, day, hour, minute);
+        request.setDateStart(dateTime);
         request = iRecruitmentRequestRepository.save(request);
 
         createUserRecruitmentAction(recruitmentFormDTO.getIdUser(), request, UserAction.Demand.toString());
 
         List<RecruitmentRequestDetail> requestDetails = recruitmentFormDTO.getDetails();
+
         for (RecruitmentRequestDetail detail : requestDetails) {
             detail.setRecruitmentRequest(request);
             iRecruitmentRequestDetailService.saveDetail(detail);
@@ -83,7 +98,7 @@ public class RecruitmentRequestService implements IRecruitmentRequestService {
 
     public void updateRecruitmentRequest(RecruitmentFormDTO recruitmentFormDTO, long id) throws Exception {
         Iterable<RecruitmentRequest> recruitmentRequests = iRecruitmentRequestRepository.findAll();
-        for (RecruitmentRequest recruitmentRequest : recruitmentRequests){
+        for (RecruitmentRequest recruitmentRequest : recruitmentRequests) {
             if (recruitmentFormDTO.getRecruitmentRequest().getName().equals(recruitmentRequest.getName())) {
                 if (id != recruitmentRequest.getId()) {
                     throw new Exception();
@@ -93,11 +108,13 @@ public class RecruitmentRequestService implements IRecruitmentRequestService {
         Iterable<RecruitmentRequestDetail> recruitmentRequestDetails = iRecruitmentRequestDetailRepository.findByRecruitmentRequestId(recruitmentFormDTO.getRecruitmentRequest().getId());
         Optional<UserRecruitmentAction> userRecruitmentAction = iUserRecruitmentActionRepository.findByRecruitmentRequestId(id);
         DeleteAllRecruitment(id, userRecruitmentAction);
-        SaveRecruitment(recruitmentFormDTO , recruitmentRequestDetails);
+        SaveRecruitment(recruitmentFormDTO, recruitmentRequestDetails);
     }
 
-    private void SaveRecruitment(RecruitmentFormDTO recruitmentFormDTO , Iterable<RecruitmentRequestDetail> recruitmentRequestDetails ) {
+    private void SaveRecruitment(RecruitmentFormDTO recruitmentFormDTO, Iterable<RecruitmentRequestDetail> recruitmentRequestDetails) {
         RecruitmentRequest request = recruitmentFormDTO.getRecruitmentRequest();
+        Optional<Users> users = userRepository.findById(recruitmentFormDTO.getIdUser());
+        request.setUsers(users.get());
         iRecruitmentRequestRepository.saveAndFlush(request);
         Users user = usersService.findById(recruitmentFormDTO.getIdUser()).get();
         UserRecruitmentAction userAction = new UserRecruitmentAction();
@@ -105,7 +122,7 @@ public class RecruitmentRequestService implements IRecruitmentRequestService {
         iUserRecruitmentActionRepository.save(userAction);
         List<RecruitmentRequestDetail> requestDetailsOld = new ArrayList<>();
         for (RecruitmentRequestDetail detail : recruitmentRequestDetails) {
-             requestDetailsOld.add(detail);
+            requestDetailsOld.add(detail);
         }
         List<RecruitmentRequestDetail> requestDetails = recruitmentFormDTO.getDetails();
         for (RecruitmentRequestDetail detail : requestDetails) {

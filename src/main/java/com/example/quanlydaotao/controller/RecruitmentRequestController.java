@@ -13,7 +13,6 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.Optional;
 
 
@@ -30,7 +29,7 @@ public class RecruitmentRequestController {
 
     @GetMapping()
     public ResponseEntity<Iterable<RecruitmentRequest>> getAllRecruitmentRequest() {
-        Iterable<RecruitmentRequest> recruitmentRequestIterable = recruitmentRequestService.getAllRecruitmentRequests();
+        Iterable<RecruitmentRequest> recruitmentRequestIterable = recruitmentRequestRepository.findAll();
         return new ResponseEntity<>(recruitmentRequestIterable, HttpStatus.OK);
     }
 
