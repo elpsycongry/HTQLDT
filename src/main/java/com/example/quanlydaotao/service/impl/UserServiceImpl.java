@@ -52,21 +52,21 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Page<User> findAllUserWithRoles(Pageable pageable) {
-        Page<User> userPage = userRepository.findAll(pageable);
-        return userPage;
+    public Iterable<User> findAllUserWithRoles() {
+        Iterable<User> userIterable = userRepository.findAll();
+        return userIterable;
     }
 
     @Override
-    public Page<User> findAllByNameOrEmail(Pageable pageable, String keyword) {
-        Page<User> userPage = userRepository.findAllUserByNameContainingIgnoreCaseOrEmailContainingIgnoreCase(keyword, keyword, pageable);
-        return userPage;
+    public Iterable<User> findAllByNameOrEmail(String keyword) {
+        Iterable<User> userIterable = userRepository.findAllUserByNameContainingIgnoreCaseOrEmailContainingIgnoreCase(keyword, keyword);
+        return userIterable;
     }
 
     @Override
-    public Page<User> findUsersByRoles(Pageable pageable, Role role) {
-        Page<User> userPage = userRepository.findUsersByRoles(role, pageable);
-        return userPage;
+    public Iterable<User> findUsersByRoles(Role role) {
+        Iterable<User> userIterable = userRepository.findUsersByRoles(role);
+        return userIterable;
     }
 
     @Override

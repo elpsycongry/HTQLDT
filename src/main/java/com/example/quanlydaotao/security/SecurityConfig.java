@@ -74,7 +74,7 @@ public class SecurityConfig {
                 .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/login", "/register").permitAll()
-                        .requestMatchers("/users/**").hasAnyAuthority("ROLE_USER")
+                        .requestMatchers("/users/**").hasAnyAuthority("ROLE_USER", "ROLE_MANAGE")
                         .requestMatchers("/admin/**").hasAnyAuthority("ROLE_ADMIN")
                 ).logout(logout-> logout.
                         logoutUrl("/logout") // Đường dẫn để thực hiện logout
