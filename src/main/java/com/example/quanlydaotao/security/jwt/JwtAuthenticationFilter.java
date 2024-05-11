@@ -1,5 +1,7 @@
 package com.example.quanlydaotao.security.jwt;
 
+import com.example.quanlydaotao.model.JwtToken;
+import com.example.quanlydaotao.repository.JwtTokenRepository;
 import com.example.quanlydaotao.service.UserService;
 import com.example.quanlydaotao.service.impl.JwtService;
 import com.example.quanlydaotao.service.impl.UserServiceImpl;
@@ -19,6 +21,8 @@ import java.io.IOException;
 
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
+    @Autowired
+    private JwtTokenRepository tokenRepository;
 
     @Autowired
     private JwtService jwtService;
@@ -30,7 +34,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         try {
             String jwt = getJwtFromRequest(request);
-            if (jwt != null && jwtService.validateJwtToken(jwt)) {
+            JwtToken jwtToken = tokenRepository.findByTokenEquals(jwt);
+            if (jwt != null && jwtService.validateJwtToken(jwt) && jwtToken.isValid()) {
                 String username = jwtService.getUserNameFromJwtToken(jwt);
                 UserDetails userDetails = userService.loadUserByUsername(username);
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
