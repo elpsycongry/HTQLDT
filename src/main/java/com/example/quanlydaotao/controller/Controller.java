@@ -140,28 +140,25 @@ public class Controller {
 //        }
 //    }
 
-//    @GetMapping("/admin/users/role")
-//    public ResponseEntity<Iterable<Role>> getListRole() {
-//        List<Role> roles = (List<Role>) roleService.findAll();;
-//        roles.removeIf(role -> role.getId().equals(roleService.findByName("ROLE_ADMIN").getId()));
-//        return new ResponseEntity<>(roles, HttpStatus.OK);
-//    }
-//
-//    @GetMapping("/admin/users")
-//    public ResponseEntity<Iterable<User>> getListUserWithRole() {
-//        List<User> userList = (List<User>) userService.findAll();
-//        int index = 0;
-//        for (User user : userList) {
-//            index++;
-//            if (user.getRoles().size() > 1) {
-//                user.getRoles().removeIf(role ->
-//                        (role.equals(role.getName() == "ROLE_USER")
-//                                && role.equals(role.getDisplay_name() == "NA")));
-//            }
-//            userList.set(index, user);
-//        }
-//        return new ResponseEntity<>(userList, HttpStatus.OK);
-//    }
+    @GetMapping("/admin/users/role")
+    public ResponseEntity<Iterable<Role>> getListRole() {
+        List<Role> roles = (List<Role>) roleService.findAll();;
+        roles.removeIf(role -> role.getId().equals(roleService.findByName("ROLE_ADMIN").getId()));
+        return new ResponseEntity<>(roles, HttpStatus.OK);
+    }
+
+    @GetMapping("/admin/users")
+    public ResponseEntity<Iterable<User>> getListUserWithRole() {
+        List<User> users = (List<User>) userService.findAll();
+        for (int i = 0; i < users.size(); i++) {
+            User user = users.get(i);
+            List<Role> roles = users.get(i).getRoles();
+            roles.removeIf(role -> role.getId().equals(roleService.findByName("ROLE_ADMIN").getId()));
+            user.setRoles(roles);
+            users.set(i, user);
+        }
+        return new ResponseEntity<>(users, HttpStatus.OK);
+    }
     @GetMapping("/admin/users/search")
     public ResponseEntity<Iterable<User>> searchUserWithNameOrEmail(@RequestParam("keyword") String keyword) {
         System.out.println(keyword);

@@ -8,6 +8,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
 
+import java.util.List;
 import java.util.Optional;
 
 public interface UserService extends UserDetailsService {
@@ -26,6 +27,8 @@ public interface UserService extends UserDetailsService {
     Iterable<User> findUsersByRoles(Role role);
 
     User findByUsername(String username);
+
+    Iterable<User> remoteRoleAdminDisplay(Iterable<User> users);
 
     User getCurrentUser();
 
