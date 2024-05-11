@@ -1,7 +1,7 @@
 package com.example.quanlydaotao.security.jwt;
 
 import com.example.quanlydaotao.model.JwtToken;
-import com.example.quanlydaotao.respository.JwtTokenRepository;
+import com.example.quanlydaotao.repository.JwtTokenRepository;
 import com.example.quanlydaotao.service.UserService;
 import com.example.quanlydaotao.service.impl.JwtService;
 import com.example.quanlydaotao.service.impl.UserServiceImpl;

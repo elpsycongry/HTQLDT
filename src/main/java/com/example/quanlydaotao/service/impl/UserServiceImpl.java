@@ -14,13 +14,15 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
 public class UserServiceImpl implements UserService {
     @Autowired
     private UserRepository userRepository;
-
+    @Autowired
+    private RoleServiceImpl roleService;
     @Override
     @Transactional
     public UserDetails loadUserByUsername(String username) {
@@ -52,27 +54,41 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Page<User> findAllUserWithRoles(Pageable pageable) {
-        Page<User> userPage = userRepository.findAll(pageable);
-        return userPage;
+    public Iterable<User> remoteRoleAdminDisplay(Iterable<User> users) {
+        for (User user : users) {
+            List<Role> roles = user.getRoles();
+            roles.removeIf(role -> role.getId().equals(roleService.findByName("ROLE_ADMIN").getId()));
+            user.setRoles(roles);
+        }
+        return users;
     }
 
     @Override
-    public Page<User> findAllByNameOrEmail(Pageable pageable, String keyword) {
-        Page<User> userPage = userRepository.findAllUserByNameContainingIgnoreCaseOrEmailContainingIgnoreCase(keyword, keyword, pageable);
-        return userPage;
+    public Iterable<User> findAllUserWithRoles() {
+        Iterable<User> userIterable = userRepository.findAll();
+        userIterable = remoteRoleAdminDisplay(userIterable);
+        return userIterable;
     }
 
     @Override
-    public Page<User> findUsersByRoles(Pageable pageable, Role role) {
-        Page<User> userPage = userRepository.findUsersByRoles(role, pageable);
-        return userPage;
+    public Iterable<User> findAllByNameOrEmail(String keyword) {
+        Iterable<User> userIterable = userRepository.findAllUserByNameContainingIgnoreCaseOrEmailContainingIgnoreCase(keyword, keyword);
+        userIterable = remoteRoleAdminDisplay(userIterable);
+        return userIterable;
+    }
+
+    @Override
+    public Iterable<User> findUsersByRoles(Role role) {
+        Iterable<User> userIterable = userRepository.findUsersByRoles(role);
+        userIterable = remoteRoleAdminDisplay(userIterable);
+        return userIterable;
     }
 
     @Override
     public User findByUsername(String username) {
         return userRepository.findByName(username);
     }
+
 
     @Override
     public User getCurrentUser() {

@@ -8,6 +8,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
 
+import java.util.List;
 import java.util.Optional;
 
 public interface UserService extends UserDetailsService {
@@ -15,13 +16,19 @@ public interface UserService extends UserDetailsService {
 
     Iterable<User> findAll();
 
-    Page<User> findAllUserWithRoles(Pageable pageable);
+//    Page<User> findAllUserWithRoles(Pageable pageable);
 
-    Page<User> findAllByNameOrEmail(Pageable pageable, String keyword);
+//    Page<User> findAllByNameOrEmail(Pageable pageable, String keyword);
+//
+//    Page<User> findUsersByRoles(Pageable pageable, Role role);
+    Iterable<User> findAllUserWithRoles();
+    Iterable<User> findAllByNameOrEmail(String keyword);
 
-    Page<User> findUsersByRoles(Pageable pageable, Role role);
+    Iterable<User> findUsersByRoles(Role role);
 
     User findByUsername(String username);
+
+    Iterable<User> remoteRoleAdminDisplay(Iterable<User> users);
 
     User getCurrentUser();
 

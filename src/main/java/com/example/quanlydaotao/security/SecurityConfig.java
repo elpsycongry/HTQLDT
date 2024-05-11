@@ -74,7 +74,7 @@ public class SecurityConfig {
                 .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/login", "/register", "/logoutUser").permitAll()
-                        .requestMatchers("/users/**").hasAnyAuthority("ROLE_USER")
+                        .requestMatchers("/users/**").hasAnyAuthority("ROLE_USER", "ROLE_MANAGE")
                         .requestMatchers("/admin/**").hasAnyAuthority("ROLE_ADMIN")
                 )
                 .exceptionHandling(customizer -> customizer.accessDeniedHandler(customAccessDeniedHandler()))
