@@ -4,7 +4,7 @@ import com.example.quanlydaotao.model.JwtToken;
 import com.example.quanlydaotao.model.User;
 import com.example.quanlydaotao.model.UserPrinciple;
 import com.example.quanlydaotao.respository.JwtTokenRepository;
-import com.example.quanlydaotao.respository.UserRepository;
+import com.example.quanlydaotao.repository.UserRepository;
 import com.example.quanlydaotao.service.UserService;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
