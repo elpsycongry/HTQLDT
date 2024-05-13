@@ -1,5 +1,7 @@
 package com.example.quanlydaotao.service.impl;
 
+import com.example.quanlydaotao.dto.RecruitmentSearchDTO;
+import com.example.quanlydaotao.dto.RecruitmentSpec;
 import com.example.quanlydaotao.model.RecruitmentRequest;
 import com.example.quanlydaotao.model.UserRecruitmentAction;
 import com.example.quanlydaotao.repository.IRecruitmentRequestDetailRepository;
@@ -135,21 +137,10 @@ public class RecruitmentRequestService implements IRecruitmentRequestService {
         iUserRecruitmentActionRepository.delete(userRecruitmentAction.get());
         iRecruitmentRequestDetailRepository.deleteAllByRecruitmentRequestId(id);
     }
-    @Override
-    public Iterable<Object[]> findByName(String name) {
-        if (name == null || name.isEmpty()) {
-            return iRecruitmentRequestRepository.finAllRR();
-        }
-        return iRecruitmentRequestRepository.findRecruitmentRequestsByNameContaining(name);
+    public List<RecruitmentRequest> findByName(RecruitmentSearchDTO recruitmentSearchDTO) {
+       return iRecruitmentRequestRepository.findAll(
+               new RecruitmentSpec(recruitmentSearchDTO)
+       );
     }
 
-    @Override
-    public Iterable<Object[]> statusFilter(String status) {
-        return iRecruitmentRequestRepository.statusFilter(status);
-    }
-
-    @Override
-    public Iterable<Object[]> getStatus() {
-        return iRecruitmentRequestRepository.statusList();
-    }
 }
