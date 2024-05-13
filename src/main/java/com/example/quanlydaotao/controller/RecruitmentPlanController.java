@@ -74,6 +74,7 @@ public class RecruitmentPlanController {
                     }
                 }
             }
+            planFormDTO.getRecruitmentPlan().setId(id);
             recruitmentPlanService.updateRecruitmentPlan(planFormDTO,id);
         }catch (Exception e){
             return new ResponseEntity<>("Cập nhật dữ liệu thất bại", HttpStatus.BAD_REQUEST);

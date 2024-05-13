@@ -2,14 +2,8 @@ package com.example.quanlydaotao.service.impl;
 
 import com.example.quanlydaotao.dto.PlanFormDTO;
 import com.example.quanlydaotao.dto.UserAction;
-import com.example.quanlydaotao.model.RecruitmentPlan;
-import com.example.quanlydaotao.model.RecruitmentPlanDetail;
-import com.example.quanlydaotao.model.UserPlanAction;
-import com.example.quanlydaotao.model.Users;
-import com.example.quanlydaotao.repository.IRecruitmentPlanDetailRepository;
-import com.example.quanlydaotao.repository.IRecruitmentPlanRepository;
-import com.example.quanlydaotao.repository.IUserPlanActionRepository;
-import com.example.quanlydaotao.repository.IUserRepository;
+import com.example.quanlydaotao.model.*;
+import com.example.quanlydaotao.repository.*;
 import com.example.quanlydaotao.service.IRecruitmentPlanService;
 import org.apache.catalina.LifecycleState;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +25,8 @@ public class RecruitmentPlanService implements IRecruitmentPlanService {
     private IUserPlanActionRepository userPlanActionRepository;
     @Autowired
     private IUserRepository userRepository;
+    @Autowired
+    private IRecruitmentRequestRepository recruitmentRequestRepository;
     @Override
     public Page<RecruitmentPlan> showRecruitmentPlan(Pageable pageable) {
        return recruitmentPlanRepository.findAll(pageable);
@@ -43,13 +39,13 @@ public class RecruitmentPlanService implements IRecruitmentPlanService {
     public void updateRecruitmentPlan(PlanFormDTO planFormDTO,long id) {
        Iterable<RecruitmentPlanDetail> recruitmentPlanDetails = recruitmentPlanDetailRepository.findByRecruitmentPlanId(planFormDTO.getRecruitmentPlan().getId());
        Optional<UserPlanAction> userPlanAction = userPlanActionRepository.findByRecruitmentPlanId(id);
-       deleteAllRecruitmentPlan(id,userPlanAction);
+        deleteAllRecruitmentPlan(id,userPlanAction);
         SaveRecruitmentPlan(planFormDTO, recruitmentPlanDetails);
     }
 
     private void SaveRecruitmentPlan(PlanFormDTO planFormDTO, Iterable<RecruitmentPlanDetail> recruitmentPlanDetails) {
         RecruitmentPlan recruitmentPlan = planFormDTO.getRecruitmentPlan();
-        Optional<Users> usersOptional = userRepository.findById(recruitmentPlan.getUsers().getId());
+        Optional<Users> usersOptional = userRepository.findById(planFormDTO.getIdUser());
         recruitmentPlan.setUsers(usersOptional.get());
         recruitmentPlanRepository.saveAndFlush(recruitmentPlan);
         UserPlanAction userPlanActionNew = new UserPlanAction();
@@ -66,6 +62,7 @@ public class RecruitmentPlanService implements IRecruitmentPlanService {
             recruitmentPlanDetail.setRecruitmentPlan(recruitmentPlan);
             recruitmentPlanDetailRepository.save(recruitmentPlanDetail);
         }
+        Optional<RecruitmentRequest> recruitmentRequest = recruitmentRequestRepository.findById(recruitmentPlan.getRecruitmentRequest().getId());
     }
 
     public void deleteAllRecruitmentPlan(long id , Optional<UserPlanAction> userPlanAction) {
