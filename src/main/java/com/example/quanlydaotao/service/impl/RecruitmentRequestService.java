@@ -1,5 +1,7 @@
 package com.example.quanlydaotao.service.impl;
 
+import com.example.quanlydaotao.dto.RecruitmentSearchDTO;
+import com.example.quanlydaotao.dto.RecruitmentSpec;
 import com.example.quanlydaotao.model.RecruitmentRequest;
 import com.example.quanlydaotao.model.UserRecruitmentAction;
 import com.example.quanlydaotao.repository.IRecruitmentRequestDetailRepository;
@@ -15,7 +17,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -136,4 +137,10 @@ public class RecruitmentRequestService implements IRecruitmentRequestService {
         iUserRecruitmentActionRepository.delete(userRecruitmentAction.get());
         iRecruitmentRequestDetailRepository.deleteAllByRecruitmentRequestId(id);
     }
+    public List<RecruitmentRequest> findByName(RecruitmentSearchDTO recruitmentSearchDTO) {
+       return iRecruitmentRequestRepository.findAll(
+               new RecruitmentSpec(recruitmentSearchDTO)
+       );
+    }
+
 }
