@@ -1,6 +1,7 @@
 package com.example.quanlydaotao.controller;
 
 import com.example.quanlydaotao.dto.ReasonDTO;
+import com.example.quanlydaotao.dto.RecruitmentSearchDTO;
 import com.example.quanlydaotao.model.RecruitmentRequest;
 import com.example.quanlydaotao.model.RecruitmentRequestDetail;
 import com.example.quanlydaotao.repository.IUserRepository;
@@ -114,8 +115,11 @@ public class RecruitmentRequestController {
 
     }
     @GetMapping("/search")
-    public ResponseEntity findAllName(@RequestParam String name) {
-        Iterable<Object[]> recruitmentRequestList = recruitmentRequestService.findByName(name);
+    public ResponseEntity findAllName(@RequestParam(value = "name",required = false) String name,
+                                      @RequestParam(value = "status",required = false) String status) {
+        List<RecruitmentRequest> recruitmentRequestList = recruitmentRequestService.findByName(
+                new RecruitmentSearchDTO(name,status)
+        );
         try{
             return new ResponseEntity<>(recruitmentRequestList, HttpStatus.OK);
         }catch (Exception e){
@@ -123,14 +127,4 @@ public class RecruitmentRequestController {
         }
     }
 
-    @GetMapping("/filter")
-    public ResponseEntity statusFilter(@RequestParam String status){
-        Iterable<Object[]> recruitmentRequests = recruitmentRequestService.statusFilter(status);
-        return new ResponseEntity<>(recruitmentRequests, HttpStatus.OK);
-    }
-    @GetMapping("/status")
-    public ResponseEntity getStatus(){
-        Iterable<Object[]> recruitmentRequests = recruitmentRequestService.getStatus();
-        return new ResponseEntity<>(recruitmentRequests, HttpStatus.OK);
-    }
 }
