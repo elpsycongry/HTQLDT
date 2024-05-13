@@ -19,6 +19,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
+
 @RestController
 @CrossOrigin("*")
 public class Controller {
@@ -66,13 +67,18 @@ public class Controller {
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody User user) {
         try {
-            Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(user.getName(), user.getPassword()));
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(user.getName(), user.getPassword())
+            );
             SecurityContextHolder.getContext().setAuthentication(authentication);
             String jwt = jwtService.generateTokenLogin(authentication);
             UserDetails userDetails = (UserDetails) authentication.getPrincipal();
             User currentUser = userService.findByUsername(user.getName());
-            return ResponseEntity.ok(new Response("200", "Login success", new JwtResponse(jwt, currentUser.getId(), userDetails.getUsername(), userDetails.getAuthorities())));
-        }catch (Exception e){
+            return ResponseEntity.ok(
+                    new Response("200", "Login success",
+                    new JwtResponse(jwt, currentUser.getId(), userDetails.getUsername(), userDetails.getAuthorities()))
+            );
+        } catch (Exception e) {
             return ResponseEntity.ok(new Response("401", "Username or password incorrect", null));
         }
     }
@@ -147,7 +153,8 @@ public class Controller {
 
     @GetMapping("/admin/users/role")
     public ResponseEntity<Iterable<Role>> getListRole() {
-        List<Role> roles = (List<Role>) roleService.findAll();;
+        List<Role> roles = (List<Role>) roleService.findAll();
+        ;
         roles.removeIf(role -> role.getId().equals(roleService.findByName("ROLE_ADMIN").getId()));
         return new ResponseEntity<>(roles, HttpStatus.OK);
     }
@@ -164,6 +171,7 @@ public class Controller {
         }
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
+
     @GetMapping("/admin/users/search")
     public ResponseEntity<Iterable<User>> searchUserWithNameOrEmail(@RequestParam("keyword") String keyword) {
         System.out.println(keyword);
@@ -175,6 +183,7 @@ public class Controller {
         }
         return new ResponseEntity<>(userIterable, HttpStatus.OK);
     }
+
     @GetMapping("/admin/users/filter")
     public ResponseEntity<Iterable<User>> filterUserByRole(@RequestParam("role_id") Long role_id) {
         Optional<Role> role = roleService.findById(role_id);
