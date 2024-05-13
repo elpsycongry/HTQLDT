@@ -2,6 +2,7 @@ package com.example.quanlydaotao.model;
 
 import jakarta.persistence.*;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 @Entity
@@ -15,17 +16,14 @@ public class RecruitmentPlan {
     private RecruitmentRequest recruitmentRequest;
 
     @ManyToOne
-    @JoinColumn(name = "demand_originator_id", referencedColumnName = "id")
-    private UserRecruitmentAction demandOriginator;
-
+    @JoinColumn(name = "user_plan_id", referencedColumnName = "id")
+    private Users users;
+    @Column(unique = true, nullable = false)
     private String name;
-
-    @ManyToOne
-    @JoinColumn(name = "demand_confirmer_id", referencedColumnName = "id")
-    private UserRecruitmentAction demandConfirmer;
-
-    private Date dateRecruitmentEnd;
-
+    private LocalDate handoverDeadline;
+    private LocalDate dateRecruitmentEnd;
+    private String status;
+    private String reason;
     public Long getId() {
         return id;
     }
@@ -44,13 +42,20 @@ public class RecruitmentPlan {
         return this;
     }
 
-    public UserRecruitmentAction getDemandOriginator() {
-        return demandOriginator;
+    public String getReason() {
+        return reason;
     }
 
-    public RecruitmentPlan setDemandOriginator(UserRecruitmentAction demandOriginator) {
-        this.demandOriginator = demandOriginator;
-        return this;
+    public void setReason(String reason) {
+        this.reason = reason;
+    }
+
+    public Users getUsers() {
+        return users;
+    }
+
+    public void setUsers(Users users) {
+        this.users = users;
     }
 
     public String getName() {
@@ -62,21 +67,28 @@ public class RecruitmentPlan {
         return this;
     }
 
-    public UserRecruitmentAction getDemandConfirmer() {
-        return demandConfirmer;
-    }
-
-    public RecruitmentPlan setDemandConfirmer(UserRecruitmentAction demandConfirmer) {
-        this.demandConfirmer = demandConfirmer;
-        return this;
-    }
-
-    public Date getDateRecruitmentEnd() {
+    public LocalDate getDateRecruitmentEnd() {
         return dateRecruitmentEnd;
     }
 
-    public RecruitmentPlan setDateRecruitmentEnd(Date dateRecruitmentEnd) {
+    public void setDateRecruitmentEnd(LocalDate dateRecruitmentEnd) {
         this.dateRecruitmentEnd = dateRecruitmentEnd;
-        return this;
+    }
+
+    public LocalDate getHandoverDeadline() {
+        return handoverDeadline;
+    }
+
+    public void setHandoverDeadline(LocalDate handoverDeadline) {
+        this.handoverDeadline = handoverDeadline;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }
+
