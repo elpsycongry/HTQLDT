@@ -155,14 +155,7 @@ public class Controller {
     @GetMapping("/listUser")
     public ResponseEntity<Iterable<User>> getListUserWithRole() {
         List<User> users = (List<User>) userService.findAll();
-        for (int i = 0; i < users.size(); i++) {
-            User user = users.get(i);
-
-            List<Role> roles = users.get(i).getRoles();
-            roles.removeIf(role -> role.getId().equals(roleService.findByName("ROLE_ADMIN").getId()));
-            user.setRoles(roles);
-            users.set(i, user);
-        }
+        users.removeIf(user -> user.getRoles().stream().anyMatch(role -> role.getName().equals("ROLE_ADMIN")));
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
     @GetMapping("/admin/users/search")

@@ -3,8 +3,7 @@ CREATE DATABASE training_management;
 use training_management;
 ;
 
-
-insert into roles (display_name, name) values
+insert into roles (name, display_name) values
                                            ("ROLE_ADMIN", ""),
                                            ("ROLE_USER", "NA"),
                                            ("ROLE_MANAGE", "Quản Trị Viên"),

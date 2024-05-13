@@ -55,11 +55,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Iterable<User> remoteRoleAdminDisplay(Iterable<User> users) {
-        for (User user : users) {
-            List<Role> roles = user.getRoles();
-            roles.removeIf(role -> role.getId().equals(roleService.findByName("ROLE_ADMIN").getId()));
-            user.setRoles(roles);
-        }
+        List<User> userList = (List<User>) users;
+        userList.removeIf(user -> user.getRoles().stream().anyMatch(role -> role.getName().equals("ROLE_ADMIN")));
+        users = userList;
         return users;
     }
 
@@ -77,12 +75,20 @@ public class UserServiceImpl implements UserService {
         return userIterable;
     }
 
+//    @Override
+//    public Iterable<User> findUsersByRoles(Role role) {
+//        Iterable<User> userIterable = userRepository.findUsersByRoles(role);
+//        userIterable = remoteRoleAdminDisplay(userIterable);
+//        return userIterable;
+//    }
+
     @Override
     public Iterable<User> findUsersByRoles(Role role) {
         Iterable<User> userIterable = userRepository.findUsersByRoles(role);
         userIterable = remoteRoleAdminDisplay(userIterable);
         return userIterable;
     }
+
 
     @Override
     public User findByUsername(String email) {
