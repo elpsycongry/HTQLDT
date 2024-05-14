@@ -1,8 +1,6 @@
 DROP DATABASE IF EXISTS training_management;
 CREATE DATABASE training_management;
 use training_management;
-;
-
 insert into roles (name, display_name) values
                                            ("ROLE_ADMIN", ""),
                                            ("ROLE_USER", "NA"),
