@@ -42,20 +42,13 @@ public class RecruitmentPlan {
         return this;
     }
 
-    public String getReason() {
-        return reason;
-    }
-
-    public void setReason(String reason) {
-        this.reason = reason;
-    }
-
     public Users getUsers() {
         return users;
     }
 
-    public void setUsers(Users users) {
+    public RecruitmentPlan setUsers(Users users) {
         this.users = users;
+        return this;
     }
 
     public String getName() {
@@ -67,28 +60,40 @@ public class RecruitmentPlan {
         return this;
     }
 
-    public LocalDate getDateRecruitmentEnd() {
-        return dateRecruitmentEnd;
-    }
-
-    public void setDateRecruitmentEnd(LocalDate dateRecruitmentEnd) {
-        this.dateRecruitmentEnd = dateRecruitmentEnd;
-    }
-
     public LocalDate getHandoverDeadline() {
         return handoverDeadline;
     }
 
-    public void setHandoverDeadline(LocalDate handoverDeadline) {
+    public RecruitmentPlan setHandoverDeadline(LocalDate handoverDeadline) {
         this.handoverDeadline = handoverDeadline;
+        return this;
+    }
+
+    public LocalDate getDateRecruitmentEnd() {
+        return dateRecruitmentEnd;
+    }
+
+    public RecruitmentPlan setDateRecruitmentEnd(LocalDate dateRecruitmentEnd) {
+        this.dateRecruitmentEnd = dateRecruitmentEnd;
+        return this;
     }
 
     public String getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public RecruitmentPlan setStatus(String status) {
         this.status = status;
+        return this;
+    }
+
+    public String getReason() {
+        return reason;
+    }
+
+    public RecruitmentPlan setReason(String reason) {
+        this.reason = reason;
+        return this;
     }
 }
 
