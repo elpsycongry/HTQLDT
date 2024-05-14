@@ -22,5 +22,5 @@ public class InternProfile {
     private LocalDate startDate;
     private LocalDate endDate;
     private String trainingState;
-    private boolean isPass;
+    private Boolean isPass;
 }
