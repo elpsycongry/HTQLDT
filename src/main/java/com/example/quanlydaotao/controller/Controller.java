@@ -6,6 +6,10 @@ import com.example.quanlydaotao.service.RoleService;
 import com.example.quanlydaotao.service.UserService;
 import com.example.quanlydaotao.service.impl.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -93,58 +97,12 @@ public class Controller {
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
 
-//    @GetMapping("/admin/users")
-//    public ResponseEntity<Iterable<User>> showAllUserByAdmin() {
-//        Iterable<User> users = userService.findAll();
-//        return new ResponseEntity<>(users, HttpStatus.OK);
-//    }
 
     @GetMapping("/users/{id}")
     public ResponseEntity<User> getProfile(@PathVariable Long id) {
         Optional<User> userOptional = this.userService.findById(id);
         return userOptional.map(user -> new ResponseEntity<>(user, HttpStatus.OK)).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
-
-//    @GetMapping("/admin/users")
-//    public ResponseEntity<Page<User>> getListUserWithRole(
-//            @RequestParam(defaultValue = "1") int page,
-//            @RequestParam(defaultValue = "10") int limit) {
-//        Pageable pageable = PageRequest.of(page - 1, limit);
-//        Page<User> userPage = userService.findAllUserWithRoles(pageable);
-//        if (userPage.isEmpty()) {
-//            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-//        }
-//        return new ResponseEntity<>(userPage, HttpStatus.OK);
-//    }
-//    @GetMapping("/admin/users/search")
-//    public ResponseEntity<Page<User>> searchUserWithNameOrEmail(@RequestParam("keyword") String keyword) {
-//        Pageable pageable = PageRequest.of(0, 10);
-//        Page<User> userPage;
-//        if (StringUtils.isEmpty(keyword)) {
-//            userPage = userService.findAllUserWithRoles(pageable);
-//        } else {
-//            userPage = userService.findAllByNameOrEmail(pageable, keyword);
-//        }
-//        if (userPage.isEmpty()) {
-//            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-//        }
-//        return new ResponseEntity<>(userPage, HttpStatus.OK);
-//    }
-//    @GetMapping("/admin/users/filter/{role_id}")
-//    public ResponseEntity<Page<User>> filterUserByRole(@PathVariable Long role_id) {
-//        Optional<Role> role = roleService.findById(role_id);
-//        Pageable pageable = PageRequest.of(0, 10);
-//        if (role.isPresent()) {
-//            Page<User> userPage = userService.findUsersByRoles(pageable, role.get());
-//            if (userPage.isEmpty()) {
-//                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-//            }
-//            return new ResponseEntity<>(userPage, HttpStatus.OK);
-//        } else {
-//            return getListUserWithRole(1, 10);
-//        }
-//    }
-
     @GetMapping("/admin/users/role")
     public ResponseEntity<Iterable<Role>> getListRole() {
         List<Role> roles = (List<Role>) roleService.findAll();;
@@ -152,39 +110,21 @@ public class Controller {
         return new ResponseEntity<>(roles, HttpStatus.OK);
     }
 
-    @GetMapping("/admin/users")
-    public ResponseEntity<Iterable<User>> getListUserWithRole() {
-        List<User> users = (List<User>) userService.findAll();
-        for (int i = 0; i < users.size(); i++) {
-            User user = users.get(i);
-            List<Role> roles = users.get(i).getRoles();
-            roles.removeIf(role -> role.getId().equals(roleService.findByName("ROLE_ADMIN").getId()));
-            user.setRoles(roles);
-            users.set(i, user);
-        }
-        return new ResponseEntity<>(users, HttpStatus.OK);
-    }
-    @GetMapping("/admin/users/search")
-    public ResponseEntity<Iterable<User>> searchUserWithNameOrEmail(@RequestParam("keyword") String keyword) {
-        System.out.println(keyword);
+    @GetMapping("/admin/users/filterWithFields")
+    public ResponseEntity<Page<User>> filterWithFields(
+            @RequestParam(name = "page") int page,
+            @RequestParam(name = "size") int size,
+            @RequestParam(name = "keyword") String keyword,
+            @RequestParam(name = "role_id") String role_id) {
+        Pageable pageable = PageRequest.of(page, size);
         Iterable<User> userIterable;
-        if (keyword.isEmpty()) {
-            userIterable = userService.findAll();
-        } else {
+        if (role_id.equals("")) {
             userIterable = userService.findAllByNameOrEmail(keyword);
-        }
-        return new ResponseEntity<>(userIterable, HttpStatus.OK);
-    }
-    @GetMapping("/admin/users/filter")
-    public ResponseEntity<Iterable<User>> filterUserByRole(@RequestParam("role_id") Long role_id) {
-        Optional<Role> role = roleService.findById(role_id);
-        if (role.isPresent()) {
-            Iterable<User> userIterable = userService.findUsersByRoles(role.get());
-            return new ResponseEntity<>(userIterable, HttpStatus.OK);
         } else {
-            return new ResponseEntity<>(userService.findAll(), HttpStatus.OK);
+            userIterable = userService.filterWithFields(keyword, Long.valueOf(role_id));
         }
-
+        Page<User> userPage = userService.convertToPage(userIterable, pageable);
+        return new ResponseEntity<>(userPage, HttpStatus.OK);
     }
 
 }

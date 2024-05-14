@@ -16,7 +16,7 @@ public interface UserService extends UserDetailsService {
 
     Iterable<User> findAll();
 
-//    Page<User> findAllUserWithRoles(Pageable pageable);
+    Page<User> findAllUserWithRoles(Pageable pageable);
 
 //    Page<User> findAllByNameOrEmail(Pageable pageable, String keyword);
 //
@@ -25,7 +25,9 @@ public interface UserService extends UserDetailsService {
     Iterable<User> findAllByNameOrEmail(String keyword);
 
     Iterable<User> findUsersByRoles(Role role);
+    Iterable<User> filterWithFields(String keyword, Long role_id);
 
+    Page<User> convertToPage(Iterable<User> users, Pageable pageable);
     User findByUsername(String username);
 
     Iterable<User> remoteRoleAdminDisplay(Iterable<User> users);
