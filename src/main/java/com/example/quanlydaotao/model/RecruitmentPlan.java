@@ -3,6 +3,7 @@ package com.example.quanlydaotao.model;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Entity
@@ -20,10 +21,12 @@ public class RecruitmentPlan {
     private Users users;
     @Column(unique = true, nullable = false)
     private String name;
+    private LocalDateTime dateCreatePlan;
     private LocalDate handoverDeadline;
     private LocalDate dateRecruitmentEnd;
     private String status;
     private String reason;
+
     public Long getId() {
         return id;
     }
@@ -57,6 +60,15 @@ public class RecruitmentPlan {
 
     public RecruitmentPlan setName(String name) {
         this.name = name;
+        return this;
+    }
+
+    public LocalDateTime getDateCreatePlan() {
+        return dateCreatePlan;
+    }
+
+    public RecruitmentPlan setDateCreatePlan(LocalDateTime dateCreatePlan) {
+        this.dateCreatePlan = dateCreatePlan;
         return this;
     }
 

@@ -16,6 +16,7 @@ public class RecruitmentPlanDetail {
     private String type;
     private String numberOfPersonnelNeeded;
     private String numberOfOutputPersonnel;
+
     public RecruitmentPlanDetail setId(Long id) {
         this.id = id;
         return this;
@@ -34,23 +35,26 @@ public class RecruitmentPlanDetail {
         return type;
     }
 
-    public void setType(String type) {
+    public RecruitmentPlanDetail setType(String type) {
         this.type = type;
+        return this;
     }
 
     public String getNumberOfPersonnelNeeded() {
         return numberOfPersonnelNeeded;
     }
 
-    public void setNumberOfPersonnelNeeded(String numberOfPersonnelNeeded) {
+    public RecruitmentPlanDetail setNumberOfPersonnelNeeded(String numberOfPersonnelNeeded) {
         this.numberOfPersonnelNeeded = numberOfPersonnelNeeded;
+        return this;
     }
 
     public String getNumberOfOutputPersonnel() {
         return numberOfOutputPersonnel;
     }
 
-    public void setNumberOfOutputPersonnel(String numberOfOutputPersonnel) {
+    public RecruitmentPlanDetail setNumberOfOutputPersonnel(String numberOfOutputPersonnel) {
         this.numberOfOutputPersonnel = numberOfOutputPersonnel;
+        return this;
     }
 }
