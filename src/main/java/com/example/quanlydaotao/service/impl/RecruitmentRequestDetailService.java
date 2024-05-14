@@ -25,7 +25,5 @@ public class RecruitmentRequestDetailService implements IRecruitmentRequestDetai
     private IRecruitmentRequestDetailRepository detailRepository;
     public void saveDetail(RecruitmentRequestDetail requestDetail) {
         detailRepository.save(requestDetail);
-
-
     }
 }
