@@ -23,6 +23,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
+
 @RestController
 @CrossOrigin("*")
 public class Controller {
@@ -70,13 +71,18 @@ public class Controller {
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody User user) {
         try {
-            Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(user.getName(), user.getPassword()));
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(user.getName(), user.getPassword())
+            );
             SecurityContextHolder.getContext().setAuthentication(authentication);
             String jwt = jwtService.generateTokenLogin(authentication);
             UserDetails userDetails = (UserDetails) authentication.getPrincipal();
             User currentUser = userService.findByUsername(user.getName());
-            return ResponseEntity.ok(new Response("200", "Login success", new JwtResponse(jwt, currentUser.getId(), userDetails.getUsername(), userDetails.getAuthorities())));
-        }catch (Exception e){
+            return ResponseEntity.ok(
+                    new Response("200", "Login success",
+                            new JwtResponse(jwt, currentUser.getId(), userDetails.getUsername(), userDetails.getAuthorities()))
+            );
+        } catch (Exception e) {
             return ResponseEntity.ok(new Response("401", "Username or password incorrect", null));
         }
     }
@@ -105,7 +111,8 @@ public class Controller {
     }
     @GetMapping("/admin/users/role")
     public ResponseEntity<Iterable<Role>> getListRole() {
-        List<Role> roles = (List<Role>) roleService.findAll();;
+        List<Role> roles = (List<Role>) roleService.findAll();
+        ;
         roles.removeIf(role -> role.getId().equals(roleService.findByName("ROLE_ADMIN").getId()));
         return new ResponseEntity<>(roles, HttpStatus.OK);
     }
@@ -128,4 +135,22 @@ public class Controller {
 
     }
 
+
+
+    @GetMapping("/admin/users/view/{id}")
+    public ResponseEntity<User> view(@PathVariable Long id) {
+        Optional<User> userOptional = this.userService.findById(id);
+        return userOptional.map(user -> new ResponseEntity<>(user, HttpStatus.OK)).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
+
+    @PutMapping("/admin/users/update/{id}")
+    public ResponseEntity<String> updateUserAccount(@PathVariable Long id, @RequestBody User user) {
+        Optional<User> userOptional = userService.findById(id);
+        if (!userOptional.isPresent()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        user.setId(userOptional.get().getId());
+        userService.save(user);
+        return new ResponseEntity<>("Updated!", HttpStatus.OK);
+    }
 }
