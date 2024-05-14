@@ -178,7 +178,6 @@ public class Controller {
         } else {
             return new ResponseEntity<>(userService.findAll(), HttpStatus.OK);
         }
-
     }
 
 }
