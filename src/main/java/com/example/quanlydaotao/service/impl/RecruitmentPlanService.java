@@ -27,6 +27,12 @@ public class RecruitmentPlanService implements IRecruitmentPlanService {
     private IUserRepository userRepository;
     @Autowired
     private IRecruitmentRequestRepository recruitmentRequestRepository;
+    @Autowired
+    private UsersService usersService;
+    @Autowired
+    private RecruitmentPlanDetailService recruitmentPlanDetailService;
+    @Autowired
+    private UserPlanActionService userPlanActionService;
     @Override
     public Page<RecruitmentPlan> showRecruitmentPlan(Pageable pageable) {
        return recruitmentPlanRepository.findAll(pageable);
@@ -68,5 +74,28 @@ public class RecruitmentPlanService implements IRecruitmentPlanService {
     public void deleteAllRecruitmentPlan(long id , Optional<UserPlanAction> userPlanAction) {
         userPlanActionRepository.deleteById(userPlanAction.get().getId());
         recruitmentPlanDetailRepository.deleteAllByRecruitmentPlanId(id);
+    }
+
+    public void createRecruitmentPlan(PlanFormDTO planFormDTO) {
+        Users users = usersService.findById(planFormDTO.getIdUser()).get();
+        RecruitmentPlan recruitmentPlan = planFormDTO.getRecruitmentPlan();
+        List<RecruitmentPlanDetail> recruitmentPlanDetails = planFormDTO.getPlanDetails();
+
+        recruitmentPlan.setUsers(users)
+                .setStatus("Đã gửi");
+
+        recruitmentPlan = recruitmentPlanRepository.save(recruitmentPlan);
+
+        for (RecruitmentPlanDetail recruitmentPlanDetail : recruitmentPlanDetails) {
+            recruitmentPlanDetail.setRecruitmentPlan(recruitmentPlan);
+            recruitmentPlanDetailService.save(recruitmentPlanDetail);
+        }
+
+        UserPlanAction userPlanAction = new UserPlanAction();
+        userPlanAction.setRecruitmentPlan(recruitmentPlan)
+                .setUser(users)
+                .setAction(UserAction.Plane.toString());
+
+        userPlanActionService.save(userPlanAction);
     }
 }

@@ -12,7 +12,7 @@ public class UsersService {
     @Autowired
     private IUserRepository userRepository;
 
-    public Optional<Users> findById(Long id) {
+    public Optional<Users> findById(long id) {
         return userRepository.findById(id);
     }
 }
