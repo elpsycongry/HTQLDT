@@ -1,6 +1,9 @@
 package com.example.quanlydaotao.controller;
 
+import com.example.quanlydaotao.dto.PaginateRequest;
 import com.example.quanlydaotao.dto.PlanFormDTO;
+import com.example.quanlydaotao.dto.ReasonDTO;
+import com.example.quanlydaotao.dto.RecruitmentPlanDTO;
 import com.example.quanlydaotao.model.RecruitmentPlan;
 import com.example.quanlydaotao.model.RecruitmentPlanDetail;
 import com.example.quanlydaotao.model.RecruitmentRequest;
@@ -92,5 +95,30 @@ public class RecruitmentPlanController {
             return new ResponseEntity<>("Thêm kế hoạch thất bại", HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity<>("Thêm kế hoạch thành công", HttpStatus.OK);
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity findAllByName(@RequestParam(value = "name",required = false) String name,
+                                        @RequestParam(value = "status",required = false) String status,
+                                        @RequestParam(name = "page", required = false, defaultValue = "0") int page,
+                                        @RequestParam(name = "size", required = false, defaultValue = "5") int size){
+        Page<RecruitmentPlan> recruitmentPlanPage = recruitmentPlanService.findAllByName(
+                new PaginateRequest(page,size),
+                new RecruitmentPlanDTO(name,status)
+        );
+        return new ResponseEntity<>(recruitmentPlanPage, HttpStatus.OK);
+    }
+
+    @PostMapping("/{id}/users/{idUser}")
+    public ResponseEntity updateRecruitmentStatus(@RequestBody ReasonDTO reasonDTO, @PathVariable("id") Long idPlan, @PathVariable Long idUser) {
+        String reason = reasonDTO.getReason();
+        String action = "Bị từ chối";
+        try {
+            recruitmentPlanService.DeniedRecruitmentPlan(idPlan, idUser, action, reason);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>("Đã từ chối", HttpStatus.OK);
+
     }
 }
