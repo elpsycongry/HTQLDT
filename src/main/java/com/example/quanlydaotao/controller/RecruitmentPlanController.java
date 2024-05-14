@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/plan")
+@RequestMapping("/api/plans")
 public class RecruitmentPlanController {
     @Autowired
     private RecruitmentPlanService recruitmentPlanService;
@@ -42,12 +42,13 @@ public class RecruitmentPlanController {
         Page<RecruitmentPlan> recruitmentPlans = recruitmentPlanService.showRecruitmentPlan(pageable);
         return new ResponseEntity<>(recruitmentPlans, HttpStatus.OK);
     }
+
     @GetMapping("/{id}")
     public ResponseEntity<PlanFormDTO> getRecruitmentPlanById(@PathVariable("id") long id) {
         Optional<RecruitmentPlan> recruitmentPlan = recruitmentPlanService.showRecruitmentPlanById(id);
         Iterable<RecruitmentPlanDetail> recruitmentPlanDetails = recruitmentPlanDetailService.findByRecruitmentPlanId(id);
         List<RecruitmentPlanDetail> recruitmentPlanDetailsList = new ArrayList<>();
-        for (RecruitmentPlanDetail recruitmentPlanDetail : recruitmentPlanDetails){
+        for (RecruitmentPlanDetail recruitmentPlanDetail : recruitmentPlanDetails) {
             RecruitmentPlanDetail recruitmentPlanDetailNew = new RecruitmentPlanDetail();
             recruitmentPlanDetailNew.setId(recruitmentPlanDetail.getId());
             recruitmentPlanDetailNew.setType(recruitmentPlanDetail.getType());
@@ -63,21 +64,32 @@ public class RecruitmentPlanController {
         planFormDTO.setIdUser(recruitmentPlan.get().getUsers().getId());
         return new ResponseEntity<>(planFormDTO, HttpStatus.OK);
     }
+
     @PutMapping("/{id}")
-    public ResponseEntity<String> updateRecruitmentPlan(@PathVariable("id") long id,@RequestBody PlanFormDTO planFormDTO){
+    public ResponseEntity<String> updateRecruitmentPlan(@PathVariable("id") long id, @RequestBody PlanFormDTO planFormDTO) {
         Iterable<RecruitmentPlan> recruitmentPlans = recruitmentPlanRepository.findAll();
         try {
-            for (RecruitmentPlan recruitmentPlan : recruitmentPlans){
-                if (planFormDTO.getRecruitmentPlan().getName() == recruitmentPlan.getName()){
-                    if (id != recruitmentPlan.getId()){
+            for (RecruitmentPlan recruitmentPlan : recruitmentPlans) {
+                if (planFormDTO.getRecruitmentPlan().getName() == recruitmentPlan.getName()) {
+                    if (id != recruitmentPlan.getId()) {
                         return new ResponseEntity<>("Cập nhật dữ liệu thất bại", HttpStatus.BAD_REQUEST);
                     }
                 }
             }
-            recruitmentPlanService.updateRecruitmentPlan(planFormDTO,id);
-        }catch (Exception e){
+            recruitmentPlanService.updateRecruitmentPlan(planFormDTO, id);
+        } catch (Exception e) {
             return new ResponseEntity<>("Cập nhật dữ liệu thất bại", HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<>("Cập nhật dữ liệu thành công",HttpStatus.OK);
+        return new ResponseEntity<>("Cập nhật dữ liệu thành công", HttpStatus.OK);
+    }
+
+    @PostMapping()
+    public ResponseEntity createRecruitmentPlan(@RequestBody PlanFormDTO planFormDTO) {
+        try {
+            recruitmentPlanService.createRecruitmentPlan(planFormDTO);
+        } catch (Exception e) {
+            return new ResponseEntity<>("Thêm kế hoạch thất bại", HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<>("Thêm kế hoạch thành công", HttpStatus.OK);
     }
 }

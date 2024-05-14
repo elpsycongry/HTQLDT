@@ -16,35 +16,40 @@ public class UserPlanAction {
     @JoinColumn(name = "recruitment_plan_id", referencedColumnName = "id")
     private RecruitmentPlan recruitmentPlan;
     private String action;
+
     public Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public UserPlanAction setId(Long id) {
         this.id = id;
+        return this;
     }
 
     public Users getUser() {
         return user;
     }
 
-    public void setUser(Users user) {
+    public UserPlanAction setUser(Users user) {
         this.user = user;
+        return this;
     }
 
     public RecruitmentPlan getRecruitmentPlan() {
         return recruitmentPlan;
     }
 
-    public void setRecruitmentPlan(RecruitmentPlan recruitmentPlan) {
+    public UserPlanAction setRecruitmentPlan(RecruitmentPlan recruitmentPlan) {
         this.recruitmentPlan = recruitmentPlan;
+        return this;
     }
 
     public String getAction() {
         return action;
     }
 
-    public void setAction(String action) {
+    public UserPlanAction setAction(String action) {
         this.action = action;
+        return this;
     }
 }
