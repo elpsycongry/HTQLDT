@@ -51,8 +51,8 @@ public class Controller {
         }
         Iterable<User> users = userService.findAll();
         for (User currentUser : users) {
-            if (currentUser.getName().equals(user.getName())) {
-                return new ResponseEntity<>("Username existed", HttpStatus.OK);
+            if (currentUser.getName().equals(user.getEmail())) {
+                return new ResponseEntity<>("Email existed", HttpStatus.OK);
             }
         }
 

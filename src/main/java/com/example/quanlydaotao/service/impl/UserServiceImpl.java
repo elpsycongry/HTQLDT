@@ -32,10 +32,10 @@ public class UserServiceImpl implements UserService {
     private RoleServiceImpl roleService;
     @Override
     @Transactional
-    public UserDetails loadUserByUsername(String username) {
-        User user = userRepository.findByName(username);
+    public UserDetails loadUserByUsername(String email) {
+        User user = userRepository.findByEmail(email);
         if (user == null) {
-            throw new UsernameNotFoundException(username);
+            throw new UsernameNotFoundException(email);
         }
         if (this.checkLogin(user)) {
             return UserPrinciple.build(user);
@@ -44,7 +44,7 @@ public class UserServiceImpl implements UserService {
         boolean accountNonExpired = false;
         boolean credentialsNonExpired = false;
         boolean accountNonLocked = false;
-        return new org.springframework.security.core.userdetails.User(user.getName(),
+        return new org.springframework.security.core.userdetails.User(user.getEmail(),
                 user.getPassword(), enable, accountNonExpired, credentialsNonExpired,
                 accountNonLocked, null);
     }
@@ -87,12 +87,14 @@ public class UserServiceImpl implements UserService {
         return userIterable;
     }
 
+
     @Override
     public Iterable<User> findUsersByRoles(Role role) {
         Iterable<User> userIterable = userRepository.findUsersByRoles(role);
         userIterable = remoteRoleAdminDisplay(userIterable);
         return userIterable;
     }
+
 
     @Override
     public Iterable<User> filterWithFields(String keyword, Long role_id) {
@@ -131,8 +133,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User findByUsername(String username) {
-        return userRepository.findByName(username);
+    public User findByUsername(String email) {
+        return userRepository.findByEmail(email);
     }
 
 
