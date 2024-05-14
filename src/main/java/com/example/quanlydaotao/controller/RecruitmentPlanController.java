@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/plan")
+@RequestMapping("/api/plans")
 public class RecruitmentPlanController {
     @Autowired
     private RecruitmentPlanService recruitmentPlanService;
