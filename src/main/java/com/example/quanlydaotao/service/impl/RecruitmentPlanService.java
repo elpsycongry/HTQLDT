@@ -1,13 +1,13 @@
 package com.example.quanlydaotao.service.impl;
 
-import com.example.quanlydaotao.dto.PlanFormDTO;
-import com.example.quanlydaotao.dto.UserAction;
+import com.example.quanlydaotao.dto.*;
 import com.example.quanlydaotao.model.*;
 import com.example.quanlydaotao.repository.*;
 import com.example.quanlydaotao.service.IRecruitmentPlanService;
 import org.apache.catalina.LifecycleState;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -43,6 +43,8 @@ public class RecruitmentPlanService implements IRecruitmentPlanService {
     public Optional<RecruitmentPlan> showRecruitmentPlanById(long id) {
         return recruitmentPlanRepository.findById(id);
     }
+
+
     public void updateRecruitmentPlan(PlanFormDTO planFormDTO,long id) {
        Iterable<RecruitmentPlanDetail> recruitmentPlanDetails = recruitmentPlanDetailRepository.findByRecruitmentPlanId(planFormDTO.getRecruitmentPlan().getId());
        Optional<UserPlanAction> userPlanAction = userPlanActionRepository.findByRecruitmentPlanId(id);
@@ -107,5 +109,32 @@ public class RecruitmentPlanService implements IRecruitmentPlanService {
                 .setAction(UserAction.Plane.toString());
 
         userPlanActionService.save(userPlanAction);
+    }
+
+    @Override
+    public Page<RecruitmentPlan> findAllByName(PaginateRequest paginateRequest, RecruitmentPlanDTO recruitmentPlanDTO) {
+        return recruitmentPlanRepository.findAll(
+                new RecruitmentPlanSpec(recruitmentPlanDTO),
+                PageRequest.of(paginateRequest.getPage(), paginateRequest.getSize())
+        );
+    }
+
+    public void DeniedRecruitmentPlan(long idPlan, long idUser, String status, String reason) {
+        RecruitmentPlan recruitmentPlan = recruitmentPlanRepository.findById(idPlan).get();
+        recruitmentPlan.setStatus(status);
+        recruitmentPlan.setReason(reason);
+        recruitmentPlan = recruitmentPlanRepository.save(recruitmentPlan);
+        String action = UserAction.Denied.toString();
+        createUserPlanAction(idUser, recruitmentPlan, action);
+    }
+
+    private void createUserPlanAction(long idUser, RecruitmentPlan recruitmentPlan, String action) {
+        Users user = userRepository.findById(idUser).get();
+        UserPlanAction userAction = new UserPlanAction();
+        userAction.setUser(user)
+                .setRecruitmentPlan(recruitmentPlan)
+                .setUser(user)
+                .setAction(action);
+        userPlanActionService.save(userAction);
     }
 }
