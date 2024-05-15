@@ -22,4 +22,8 @@ public class RecruitmentPlanDetailService implements IRecruitmentPlanDetailServi
     public void save(RecruitmentPlanDetail recruitmentPlanDetail) {
         recruitmentPlanDetailRepository.save(recruitmentPlanDetail);
     }
+
+    public void deleteAllByRecruitmentPlanId(long id) {
+        recruitmentPlanDetailRepository.deleteAllByRecruitmentPlanId(id);
+    }
 }

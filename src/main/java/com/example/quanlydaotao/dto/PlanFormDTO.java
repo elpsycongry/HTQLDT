@@ -11,35 +11,40 @@ public class PlanFormDTO {
     private RecruitmentPlan recruitmentPlan;
     private List<RecruitmentPlanDetail> planDetails;
     private RecruitmentRequest recruitmentRequest;
+
     public Long getIdUser() {
         return idUser;
     }
 
-    public void setIdUser(Long idUser) {
+    public PlanFormDTO setIdUser(Long idUser) {
         this.idUser = idUser;
+        return this;
     }
 
     public RecruitmentPlan getRecruitmentPlan() {
         return recruitmentPlan;
     }
 
-    public void setRecruitmentPlan(RecruitmentPlan recruitmentPlan) {
+    public PlanFormDTO setRecruitmentPlan(RecruitmentPlan recruitmentPlan) {
         this.recruitmentPlan = recruitmentPlan;
+        return this;
     }
 
     public List<RecruitmentPlanDetail> getPlanDetails() {
         return planDetails;
     }
 
-    public void setPlanDetails(List<RecruitmentPlanDetail> planDetails) {
+    public PlanFormDTO setPlanDetails(List<RecruitmentPlanDetail> planDetails) {
         this.planDetails = planDetails;
+        return this;
     }
 
     public RecruitmentRequest getRecruitmentRequest() {
         return recruitmentRequest;
     }
 
-    public void setRecruitmentRequest(RecruitmentRequest recruitmentRequest) {
+    public PlanFormDTO setRecruitmentRequest(RecruitmentRequest recruitmentRequest) {
         this.recruitmentRequest = recruitmentRequest;
+        return this;
     }
 }

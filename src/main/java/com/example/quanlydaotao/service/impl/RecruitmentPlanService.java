@@ -1,13 +1,12 @@
 package com.example.quanlydaotao.service.impl;
 
-import com.example.quanlydaotao.dto.PlanFormDTO;
-import com.example.quanlydaotao.dto.UserAction;
+import com.example.quanlydaotao.dto.*;
 import com.example.quanlydaotao.model.*;
 import com.example.quanlydaotao.repository.*;
 import com.example.quanlydaotao.service.IRecruitmentPlanService;
-import org.apache.catalina.LifecycleState;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -21,13 +20,7 @@ public class RecruitmentPlanService implements IRecruitmentPlanService {
     @Autowired
     private IRecruitmentPlanRepository recruitmentPlanRepository;
     @Autowired
-    private IRecruitmentPlanDetailRepository recruitmentPlanDetailRepository;
-    @Autowired
-    private IUserPlanActionRepository userPlanActionRepository;
-    @Autowired
-    private IUserRepository userRepository;
-    @Autowired
-    private IRecruitmentRequestRepository recruitmentRequestRepository;
+    private RecruitmentRequestService recruitmentRequestService;
     @Autowired
     private UsersService usersService;
     @Autowired
@@ -43,38 +36,45 @@ public class RecruitmentPlanService implements IRecruitmentPlanService {
     public Optional<RecruitmentPlan> showRecruitmentPlanById(long id) {
         return recruitmentPlanRepository.findById(id);
     }
+
+
     public void updateRecruitmentPlan(PlanFormDTO planFormDTO,long id) {
-       Iterable<RecruitmentPlanDetail> recruitmentPlanDetails = recruitmentPlanDetailRepository.findByRecruitmentPlanId(planFormDTO.getRecruitmentPlan().getId());
-       Optional<UserPlanAction> userPlanAction = userPlanActionRepository.findByRecruitmentPlanId(id);
+       Iterable<RecruitmentPlanDetail> recruitmentPlanDetails = recruitmentPlanDetailService.findByRecruitmentPlanId(planFormDTO.getRecruitmentPlan().getId());
+       Optional<UserPlanAction> userPlanAction = userPlanActionService.findByRecruitmentPlanId(id);
         deleteAllRecruitmentPlan(id,userPlanAction);
         SaveRecruitmentPlan(planFormDTO, recruitmentPlanDetails);
     }
 
     private void SaveRecruitmentPlan(PlanFormDTO planFormDTO, Iterable<RecruitmentPlanDetail> recruitmentPlanDetails) {
         RecruitmentPlan recruitmentPlan = planFormDTO.getRecruitmentPlan();
-        Optional<Users> usersOptional = userRepository.findById(planFormDTO.getIdUser());
+        Optional<Users> usersOptional = usersService.findById(planFormDTO.getIdUser());
         recruitmentPlan.setUsers(usersOptional.get());
+
         recruitmentPlanRepository.saveAndFlush(recruitmentPlan);
+
         UserPlanAction userPlanActionNew = new UserPlanAction();
-        userPlanActionNew.setUser(usersOptional.get());
-        userPlanActionNew.setRecruitmentPlan(recruitmentPlan);
-        userPlanActionNew.setAction(UserAction.Plane.toString());
-        userPlanActionRepository.save(userPlanActionNew);
+        userPlanActionNew.setUser(usersOptional.get())
+            .setRecruitmentPlan(recruitmentPlan)
+            .setAction(UserAction.Plane.toString());
+        userPlanActionService.save(userPlanActionNew);
+
         List<RecruitmentPlanDetail> recruitmentPlanDetailsList = new ArrayList<>();
         for (RecruitmentPlanDetail recruitmentPlanDetail : recruitmentPlanDetails){
             recruitmentPlanDetailsList.add(recruitmentPlanDetail);
         }
+
         List<RecruitmentPlanDetail> recruitmentPlanDetailsListNew = planFormDTO.getPlanDetails();
         for (RecruitmentPlanDetail recruitmentPlanDetail : recruitmentPlanDetailsListNew) {
             recruitmentPlanDetail.setRecruitmentPlan(recruitmentPlan);
-            recruitmentPlanDetailRepository.save(recruitmentPlanDetail);
+            recruitmentPlanDetailService.save(recruitmentPlanDetail);
         }
-        Optional<RecruitmentRequest> recruitmentRequest = recruitmentRequestRepository.findById(recruitmentPlan.getRecruitmentRequest().getId());
+
+        Optional<RecruitmentRequest> recruitmentRequest = recruitmentRequestService.findById(recruitmentPlan.getRecruitmentRequest().getId());
     }
 
     public void deleteAllRecruitmentPlan(long id , Optional<UserPlanAction> userPlanAction) {
-        userPlanActionRepository.deleteById(userPlanAction.get().getId());
-        recruitmentPlanDetailRepository.deleteAllByRecruitmentPlanId(id);
+        userPlanActionService.deleteById(userPlanAction.get().getId());
+        recruitmentPlanDetailService.deleteAllByRecruitmentPlanId(id);
     }
 
     public void createRecruitmentPlan(PlanFormDTO planFormDTO) {
@@ -116,5 +116,31 @@ public class RecruitmentPlanService implements IRecruitmentPlanService {
     public void activePlan(RecruitmentPlan recruitmentPlan, UserPlanAction userPlanAction) {
         recruitmentPlanRepository.save(recruitmentPlan);
         userPlanActionService.save(userPlanAction);
+    }
+    @Override
+    public Page<RecruitmentPlan> findAllByName(PaginateRequest paginateRequest, RecruitmentPlanDTO recruitmentPlanDTO) {
+        return recruitmentPlanRepository.findAll(
+                new RecruitmentPlanSpec(recruitmentPlanDTO),
+                PageRequest.of(paginateRequest.getPage(), paginateRequest.getSize())
+        );
+    }
+
+    public void DeniedRecruitmentPlan(long idPlan, long idUser, String status, String reason) {
+        RecruitmentPlan recruitmentPlan = recruitmentPlanRepository.findById(idPlan).get();
+        recruitmentPlan.setStatus(status)
+            .setReason(reason);
+        recruitmentPlan = recruitmentPlanRepository.save(recruitmentPlan);
+        String action = UserAction.Denied.toString();
+        createUserPlanAction(idUser, recruitmentPlan, action);
+    }
+
+    private void createUserPlanAction(long idUser, RecruitmentPlan recruitmentPlan, String action) {
+        Users user = usersService.findById(idUser).get();
+        UserPlanAction userAction = new UserPlanAction();
+        userAction.setUser(user)
+                .setRecruitmentPlan(recruitmentPlan)
+                .setUser(user)
+                .setAction(action);
+        userPlanActionService.save(userAction);
     }
 }
