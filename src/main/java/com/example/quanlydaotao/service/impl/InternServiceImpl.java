@@ -32,7 +32,7 @@ public class InternServiceImpl implements InternService {
     }
 
     @Override
-    public InternProfile getInternProfileByUser(Long userID) {
+    public InternProfile getInternProfile(Long userID) {
         return internProfileRepository.findById(userID).get();
     }
 
@@ -44,5 +44,10 @@ public class InternServiceImpl implements InternService {
     @Override
     public List<InternSubject> getSubjects() {
         return internSubjectRepository.findAll();
+    }
+
+    @Override
+    public List<Object[]> getAllByUserId(Long id) {
+        return internScoreRepository.getAllByUserId(id);
     }
 }

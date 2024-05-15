@@ -95,7 +95,7 @@ public class SecurityConfig {
                         .requestMatchers("/users/**").hasAnyAuthority("ROLE_USER", "ROLE_MANAGE", "ROLE_ADMIN")
                         .requestMatchers("/login", "/register", "/logoutUser").permitAll()
                         .requestMatchers("/admin/**").hasAnyAuthority("ROLE_ADMIN")
-                        .requestMatchers("/api/interns**").hasAnyAuthority("ROLE_ADMIN","ROLE_MANAGE")
+                        .requestMatchers("/api/interns/**").hasAnyAuthority("ROLE_ADMIN","ROLE_MANAGE")
                 )
                 .exceptionHandling(customizer -> customizer.accessDeniedHandler(customAccessDeniedHandler()))
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

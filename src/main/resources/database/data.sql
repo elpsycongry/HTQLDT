@@ -10,6 +10,7 @@ values ('ROLE_ADMIN', ''),
        ('ROLE_MANAGE', 'Quality Controller'),
        ('ROLE_MANAGE', 'Recruitment supporter'),
        ('ROLE_MANAGE', 'Request recipient');
+
 insert into intern_profiles(end_date,
                             is_pass,
                             start_date,
@@ -29,10 +30,10 @@ values ('Java'),
        ('Scrum');
 
 insert into intern_scores (type, value, user_id, subject_id)
-values ('practice', 1, 1, 1),
-       ('practice', 3, 1, 2),
-       ('practice', 6, 1, 3),
-       ('practice', 8, 1, 4),
+values ('practice', null, 1, 1),
+       ('practice', null, 1, 2),
+       ('practice', null, 1, 3),
+       ('practice', null, 1, 4),
        ('practice', 10, 1, 5),
        ('practice', 2, 1, 6),
        ('practice', 2, 1, 7),
