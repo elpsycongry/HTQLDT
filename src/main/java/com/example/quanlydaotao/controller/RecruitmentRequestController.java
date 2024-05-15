@@ -4,7 +4,6 @@ import com.example.quanlydaotao.dto.ReasonDTO;
 import com.example.quanlydaotao.dto.RecruitmentSearchDTO;
 import com.example.quanlydaotao.model.RecruitmentRequest;
 import com.example.quanlydaotao.model.RecruitmentRequestDetail;
-import com.example.quanlydaotao.repository.IUserRepository;
 import com.example.quanlydaotao.service.impl.RecruitmentRequestDetailService;
 
 import com.example.quanlydaotao.dto.RecruitmentFormDTO;
@@ -29,14 +28,10 @@ public class RecruitmentRequestController {
     private RecruitmentRequestService recruitmentRequestService;
     @Autowired
     private RecruitmentRequestDetailService recruitmentRequestDetailService;
-    @Autowired
-    private IRecruitmentRequestRepository recruitmentRequestRepository;
-    @Autowired
-    private IUserRepository userRepository;
 
     @GetMapping()
     public ResponseEntity<Iterable<RecruitmentRequest>> getAllRecruitmentRequest() {
-        Iterable<RecruitmentRequest> recruitmentRequestIterable = recruitmentRequestRepository.findAll();
+        Iterable<RecruitmentRequest> recruitmentRequestIterable = recruitmentRequestService.findAll();
         return new ResponseEntity<>(recruitmentRequestIterable, HttpStatus.OK);
     }
 
@@ -82,9 +77,10 @@ public class RecruitmentRequestController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<String> updateRecruitmentRequest(@PathVariable long id, @RequestBody RecruitmentFormDTO request) throws Exception {
+    public ResponseEntity<String> updateRecruitmentRequest(@PathVariable long id,
+                                                           @RequestBody RecruitmentFormDTO request) throws Exception {
         RecruitmentFormDTO recruitmentFormDTO = request;
-        Iterable<RecruitmentRequest> recruitmentRequests = recruitmentRequestRepository.findAll();
+        Iterable<RecruitmentRequest> recruitmentRequests = recruitmentRequestService.findAll();
         try {
             for (RecruitmentRequest recruitmentRequest : recruitmentRequests) {
                 if (recruitmentFormDTO.getRecruitmentRequest().getName().equals(recruitmentRequest.getName())) {
@@ -103,7 +99,9 @@ public class RecruitmentRequestController {
     }
 
     @PostMapping("/{id}/users/{idUser}")
-    public ResponseEntity updateRecruitmentStatus(@RequestBody ReasonDTO reasonDTO, @PathVariable("id") Long idRecruitment, @PathVariable Long idUser) {
+    public ResponseEntity updateRecruitmentStatus(@RequestBody ReasonDTO reasonDTO,
+                                                  @PathVariable("id") Long idRecruitment,
+                                                  @PathVariable Long idUser) {
         String reason = reasonDTO.getReason();
         String action = "Bị từ chối bởi DET";
         try {

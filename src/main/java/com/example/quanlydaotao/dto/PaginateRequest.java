@@ -12,19 +12,22 @@ public class PaginateRequest {
         this.page = 0;
         this.size = 5;
     }
+
     public int getPage() {
         return page;
     }
 
-    public void setPage(int page) {
+    public PaginateRequest setPage(int page) {
         this.page = page;
+        return this;
     }
 
     public int getSize() {
         return size;
     }
 
-    public void setSize(int size) {
+    public PaginateRequest setSize(int size) {
         this.size = size;
+        return this;
     }
 }

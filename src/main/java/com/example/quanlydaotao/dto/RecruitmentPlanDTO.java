@@ -13,15 +13,17 @@ public class RecruitmentPlanDTO {
         return name;
     }
 
-    public void setName(String name) {
+    public RecruitmentPlanDTO setName(String name) {
         this.name = name;
+        return this;
     }
 
     public String getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public RecruitmentPlanDTO setStatus(String status) {
         this.status = status;
+        return this;
     }
 }
