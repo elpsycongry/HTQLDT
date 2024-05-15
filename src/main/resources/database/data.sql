@@ -3,13 +3,13 @@ CREATE DATABASE training_management;
 use training_management;
 ;
 
-insert into roles (name, display_name)
-values ('ROLE_ADMIN', ''),
-       ('ROLE_MANAGE', 'Quản Trị Viên'),
-       ('ROLE_MANAGE', 'Recruitment, Recruiter'),
-       ('ROLE_MANAGE', 'Quality Controller'),
-       ('ROLE_MANAGE', 'Recruitment supporter'),
-       ('ROLE_MANAGE', 'Request recipient');
+insert into training_management.roles (name, display_name)
+values ('ROLE_ADMIN', 'Super Admin'),
+       ('ROLE_DM', 'Trưởng bộ phận/nhóm'),
+       ('ROLE_QLĐT', 'Quản lí đào tạo'),
+       ('ROLE_KSCL', 'Kiểm soát chất lượng'),
+       ('ROLE_HR', 'Nhân sự'),
+       ('ROLE', 'Nhân viên');
 insert into intern_profiles(end_date,
                             is_pass,
                             start_date,
