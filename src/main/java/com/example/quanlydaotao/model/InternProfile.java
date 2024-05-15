@@ -23,4 +23,5 @@ public class InternProfile {
     private LocalDate endDate;
     private String trainingState;
     private Boolean isPass;
+    private String scoreInTeam;
 }
