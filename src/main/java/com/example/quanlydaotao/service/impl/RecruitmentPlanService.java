@@ -108,4 +108,13 @@ public class RecruitmentPlanService implements IRecruitmentPlanService {
 
         userPlanActionService.save(userPlanAction);
     }
+
+    public Optional<RecruitmentPlan> findById(Long id) {
+        return recruitmentPlanRepository.findById(id);
+    }
+
+    public void activePlan(RecruitmentPlan recruitmentPlan, UserPlanAction userPlanAction) {
+        recruitmentPlanRepository.save(recruitmentPlan);
+        userPlanActionService.save(userPlanAction);
+    }
 }

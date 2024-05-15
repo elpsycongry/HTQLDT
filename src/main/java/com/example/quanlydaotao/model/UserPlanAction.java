@@ -17,6 +17,14 @@ public class UserPlanAction {
     private RecruitmentPlan recruitmentPlan;
     private String action;
 
+    public UserPlanAction() {
+    }
+
+    public UserPlanAction(Users user, RecruitmentPlan recruitmentPlan) {
+        this.user = user;
+        this.recruitmentPlan = recruitmentPlan;
+    }
+
     public Long getId() {
         return id;
     }
