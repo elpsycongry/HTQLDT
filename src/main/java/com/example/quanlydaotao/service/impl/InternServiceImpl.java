@@ -3,6 +3,7 @@ package com.example.quanlydaotao.service.impl;
 import com.example.quanlydaotao.model.InternProfile;
 import com.example.quanlydaotao.model.InternScore;
 import com.example.quanlydaotao.model.InternSubject;
+import com.example.quanlydaotao.model.User;
 import com.example.quanlydaotao.repository.InternProfileRepository;
 import com.example.quanlydaotao.repository.InternScoreRepository;
 import com.example.quanlydaotao.repository.InternSubjectRepository;
@@ -29,6 +30,17 @@ public class InternServiceImpl implements InternService {
     public List<InternScore> getListInternScore() {
         return internScoreRepository.findAll();
     }
+
+    @Override
+    public InternProfile getInternProfileByUser(Long userID) {
+        return internProfileRepository.findById(userID).get();
+    }
+
+    @Override
+    public List<InternScore> getInternScore(User user) {
+        return internScoreRepository.getInternScoresByUser(user);
+    }
+
     @Override
     public List<InternSubject> getSubjects() {
         return internSubjectRepository.findAll();
