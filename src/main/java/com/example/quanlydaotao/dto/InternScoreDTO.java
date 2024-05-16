@@ -1,5 +1,6 @@
-package com.example.quanlydaotao.model;
+package com.example.quanlydaotao.dto;
 
+import com.example.quanlydaotao.model.InternSubject;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 
@@ -10,7 +11,6 @@ public class InternScoreDTO {
     private InternSubject internSubject;
 
     public InternScoreDTO() {
-
     }
 
     public InternScoreDTO(Long id, String value, String type, InternSubject internSubject) {

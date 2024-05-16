@@ -13,6 +13,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/interns")
 @CrossOrigin("*")
@@ -33,14 +35,14 @@ public class InternRestController {
     }
 
     @GetMapping("/findIntern")
-    public ResponseEntity<Iterable<InternDTO>> getAllInterWithNameOrTrainingState() {
-        Iterable<InternDTO> internDTOIterable = internService.getAllInterWithNameOrTrainingState();
-        return new ResponseEntity<>(internDTOIterable, HttpStatus.OK);
+    public ResponseEntity<Page<InternDTO>> getAllInterWithNameOrTrainingState(
+            @RequestParam(name = "page") int page,
+            @RequestParam(name = "size") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Iterable<InternDTO> internDTOIterable = internService.getAllInter();
+        Page<InternDTO> internDTOPage = internService.convertToPage((List<InternDTO>) internDTOIterable, pageable);
+        return new ResponseEntity<>(internDTOPage, HttpStatus.OK);
     }
 
-    @GetMapping("/findScore")
-    public ResponseEntity<Iterable<InternScore>> getScore() {
-        return new ResponseEntity<>(internService.findAllByUser(), HttpStatus.CREATED);
-    }
 
 }

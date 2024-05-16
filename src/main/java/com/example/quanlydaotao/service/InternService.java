@@ -13,6 +13,5 @@ public interface InternService {
     List<InternProfile> getListIntern();
     List<InternScore> getListInternScore();
     List<InternSubject> getSubjects();
-    Iterable<InternDTO> getAllInterWithNameOrTrainingState();
-    List<InternScore> findAllByUser();
-}
+    Iterable<InternDTO> getAllInter();
+    Page<InternDTO> convertToPage(List<InternDTO> internDTOList, Pageable pageable);}
