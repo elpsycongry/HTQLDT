@@ -3,13 +3,13 @@ CREATE DATABASE training_management;
 use training_management;
 ;
 
-insert into roles (name, display_name)
-values ('ROLE_ADMIN', ''),
-       ('ROLE_MANAGE', 'Quản Trị Viên'),
-       ('ROLE_MANAGE', 'Recruitment, Recruiter'),
-       ('ROLE_MANAGE', 'Quality Controller'),
-       ('ROLE_MANAGE', 'Recruitment supporter'),
-       ('ROLE_MANAGE', 'Request recipient');
+insert into training_management.roles (name, display_name)
+values ('ROLE_ADMIN', 'Super Admin'),
+       ('ROLE_DM', 'Trưởng bộ phận/nhóm'),
+       ('ROLE_QLĐT', 'Quản lí đào tạo'),
+       ('ROLE_KSCL', 'Kiểm soát chất lượng'),
+       ('ROLE_HR', 'Nhân sự'),
+       ('ROLE', 'Nhân viên');
 insert into intern_profiles(end_date,
                             is_pass,
                             start_date,
@@ -29,25 +29,25 @@ values ('Java'),
        ('Scrum');
 
 insert into intern_scores (type, value, user_id, subject_id)
-values ('practice', 1, 1, 1),
-       ('practice', 3, 1, 2),
-       ('practice', 6, 1, 3),
-       ('practice', 8, 1, 4),
-       ('practice', 10, 1, 5),
-       ('practice', 2, 1, 6),
-       ('practice', 2, 1, 7),
-       ('theory', 6, 1, 1),
-       ('theory', 6, 1, 2),
-       ('theory', 6, 1, 3),
-       ('theory', 6, 1, 4),
-       ('theory', 6, 1, 5),
-       ('theory', 6, 1, 6),
-       ('theory', 6, 1, 7),
-       ('attitude', 8, 1, 1),
-       ('attitude', 9, 1, 2),
-       ('attitude', 3, 1, 3),
-       ('attitude', 4, 1, 4),
-       ('attitude', 5, 1, 5),
-       ('attitude', 1, 1, 6),
-       ('attitude', 2, 1, 7);
+values ('practice', 1, 23, 1),
+       ('practice', 3, 23, 2),
+       ('practice', 6, 23, 3),
+       ('practice', 8, 23, 4),
+       ('practice', 10,23, 5),
+       ('practice', 2, 23, 6),
+       ('practice', 2, 23, 7),
+       ('theory', 6, 23, 1),
+       ('theory', 6, 23, 2),
+       ('theory', 6, 23, 3),
+       ('theory', 6, 23, 4),
+       ('theory', 6, 23, 5),
+       ('theory', 6, 23, 6),
+       ('theory', 6, 23, 7),
+       ('attitude', 8, 23, 1),
+       ('attitude', 9, 23, 2),
+       ('attitude', 3, 23, 3),
+       ('attitude', 4, 23, 4),
+       ('attitude', 5, 23, 5),
+       ('attitude', 1, 23, 6),
+       ('attitude', 2, 23, 7);
 select * from intern_scores;

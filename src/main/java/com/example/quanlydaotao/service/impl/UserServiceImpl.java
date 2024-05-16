@@ -179,6 +179,7 @@ public class UserServiceImpl implements UserService {
         return isCorrectUser;
     }
 
+
     public Page<User> getAllUsers(Pageable pageable) {
         return userRepository.findAll(pageable);
     }
