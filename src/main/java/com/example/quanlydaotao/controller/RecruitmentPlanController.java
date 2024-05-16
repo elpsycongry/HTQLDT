@@ -38,7 +38,7 @@ public class RecruitmentPlanController {
     private UsersService usersService;
 
     @GetMapping("")
-    public ResponseEntity<Page<RecruitmentPlan>> getRecruitmentPlan(@PageableDefault(5) Pageable pageable) {
+    public ResponseEntity<Page<RecruitmentPlan>> getRecruitmentPlan(@PageableDefault(10) Pageable pageable) {
         Page<RecruitmentPlan> recruitmentPlans = recruitmentPlanService.showRecruitmentPlan(pageable);
         return new ResponseEntity<>(recruitmentPlans, HttpStatus.OK);
     }
@@ -100,7 +100,7 @@ public class RecruitmentPlanController {
                                                 @PathVariable("userId") long userId) {
         try {
             RecruitmentPlan recruitmentPlan = recruitmentPlanService.findById(planId).get();
-            recruitmentPlan.setStatus("Đã xác nhận");
+            recruitmentPlan.setStatus("Đang tuyển dụng");
 
             Users users = usersService.findById(userId).get();
 
@@ -117,7 +117,7 @@ public class RecruitmentPlanController {
     public ResponseEntity findAllByName(@RequestParam(value = "name",required = false) String name,
                                         @RequestParam(value = "status",required = false) String status,
                                         @RequestParam(name = "page", required = false, defaultValue = "0") int page,
-                                        @RequestParam(name = "size", required = false, defaultValue = "5") int size){
+                                        @RequestParam(name = "size", required = false, defaultValue = "10") int size){
         Page<RecruitmentPlan> recruitmentPlanPage = recruitmentPlanService.findAllByName(
                 new PaginateRequest(page,size),
                 new RecruitmentPlanDTO(name,status)
@@ -130,7 +130,7 @@ public class RecruitmentPlanController {
                                                   @PathVariable("id") Long idPlan,
                                                   @PathVariable Long idUser) {
         String reason = reasonDTO.getReason();
-        String action = "Bị từ chối DECAN";
+        String action = "Bị từ chối bởi DECAN";
         try {
             recruitmentPlanService.DeniedRecruitmentPlan(idPlan, idUser, action, reason);
         } catch (Exception e) {
