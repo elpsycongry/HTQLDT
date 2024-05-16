@@ -152,4 +152,11 @@ public class RecruitmentRequestService implements IRecruitmentRequestService {
     public Optional<RecruitmentRequest> findById(Long id) {
         return iRecruitmentRequestRepository.findById(id);
     }
+
+    public void activeByRecruitmentPlan(long idRecruitmentRequest) {
+        RecruitmentRequest activedRequest = iRecruitmentRequestRepository.findById(idRecruitmentRequest).get()
+                .setStatus("Đã xác nhận");
+
+        iRecruitmentRequestRepository.save(activedRequest);
+    }
 }

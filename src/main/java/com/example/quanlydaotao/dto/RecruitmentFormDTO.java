@@ -10,6 +10,14 @@ public class RecruitmentFormDTO {
     private RecruitmentRequest recruitmentRequest;
     private List<RecruitmentRequestDetail> details;
 
+    public RecruitmentFormDTO() {
+    }
+
+    public RecruitmentFormDTO(Long idUser, RecruitmentRequest recruitmentRequest) {
+        this.idUser = idUser;
+        this.recruitmentRequest = recruitmentRequest;
+    }
+
     public RecruitmentRequest getRecruitmentRequest() {
         return recruitmentRequest;
     }

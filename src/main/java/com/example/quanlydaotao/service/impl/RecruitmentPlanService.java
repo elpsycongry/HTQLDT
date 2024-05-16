@@ -77,7 +77,7 @@ public class RecruitmentPlanService implements IRecruitmentPlanService {
         recruitmentPlanDetailService.deleteAllByRecruitmentPlanId(id);
     }
 
-    public void createRecruitmentPlan(PlanFormDTO planFormDTO) {
+    public void createRecruitmentPlan(PlanFormDTO planFormDTO) throws Exception {
         Users users = usersService.findById(planFormDTO.getIdUser()).get();
         RecruitmentPlan recruitmentPlan = planFormDTO.getRecruitmentPlan();
         List<RecruitmentPlanDetail> recruitmentPlanDetails = planFormDTO.getPlanDetails();
@@ -113,9 +113,11 @@ public class RecruitmentPlanService implements IRecruitmentPlanService {
         return recruitmentPlanRepository.findById(id);
     }
 
-    public void activePlan(RecruitmentPlan recruitmentPlan, UserPlanAction userPlanAction) {
+    public void activePlan(RecruitmentPlan recruitmentPlan, UserPlanAction userPlanAction) throws Exception {
         recruitmentPlanRepository.save(recruitmentPlan);
         userPlanActionService.save(userPlanAction);
+
+        recruitmentRequestService.activeByRecruitmentPlan(recruitmentPlan.getRecruitmentRequest().getId());
     }
     @Override
     public Page<RecruitmentPlan> findAllByName(PaginateRequest paginateRequest, RecruitmentPlanDTO recruitmentPlanDTO) {
