@@ -132,6 +132,9 @@ public class RecruitmentPlanService implements IRecruitmentPlanService {
         recruitmentPlan = recruitmentPlanRepository.save(recruitmentPlan);
         String action = UserAction.Denied.toString();
         createUserPlanAction(idUser, recruitmentPlan, action);
+
+        long idRecruitmentRequest = recruitmentPlan.getRecruitmentRequest().getId();
+        recruitmentRequestService.deniedRequestRecruitment(idRecruitmentRequest, idUser, status, reason);
     }
 
     private void createUserPlanAction(long idUser, RecruitmentPlan recruitmentPlan, String action) {
