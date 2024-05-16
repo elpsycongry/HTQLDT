@@ -6,7 +6,7 @@ public class InternSubjectDTO {
     private String theoryScore;
     private String practiceScore;
     private String attitudeScore;
-    private double totalScore;
+    private String totalScore;
     public InternSubjectDTO() {}
 
     public InternSubjectDTO(Long id, String nameSubject) {
@@ -14,7 +14,7 @@ public class InternSubjectDTO {
         this.nameSubject = nameSubject;
     }
 
-    public InternSubjectDTO(Long id, String nameSubject, String theoryScore, String practiceScore, String attitudeScore, double totalScore) {
+    public InternSubjectDTO(Long id, String nameSubject, String theoryScore, String practiceScore, String attitudeScore, String totalScore) {
         this.id = id;
         this.nameSubject = nameSubject;
         this.theoryScore = theoryScore;
@@ -63,11 +63,11 @@ public class InternSubjectDTO {
         this.attitudeScore = attitudeScore;
     }
 
-    public double getTotalScore() {
+    public String getTotalScore() {
         return totalScore;
     }
 
-    public void setTotalScore(double totalScore) {
+    public void setTotalScore(String totalScore) {
         this.totalScore = totalScore;
     }
 }

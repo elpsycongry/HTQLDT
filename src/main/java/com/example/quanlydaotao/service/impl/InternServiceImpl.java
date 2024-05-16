@@ -13,10 +13,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.relational.core.sql.In;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @Service
@@ -37,10 +39,12 @@ public class InternServiceImpl implements InternService {
         List<InternProfile> internProfiles = internProfileRepository.findAll();
         return internProfiles;
     }
+
     @Override
     public List<InternScore> getListInternScore() {
         return internScoreRepository.findAll();
     }
+
     @Override
     public List<InternSubject> getSubjects() {
         return internSubjectRepository.findAll();
@@ -68,11 +72,12 @@ public class InternServiceImpl implements InternService {
             //Khai báo danh sách môn học và điểm lí thuyết, thực hành, thái độ
             List<InternSubjectDTO> internSubjectDTOList = new ArrayList<>();
             //Khai báo điểm trung bình chung cuối khoá học
+            boolean checkFinalScore = true;
             double finalScore = 0;
 
 //            Lấy ra tên các môn học cho vào List<InternSubjectDTO>
             for (int j = 0; j < internSubjects.size(); j++) {
-                InternSubjectDTO internSubjectDTO = new InternSubjectDTO((long) (j+1), internSubjects.get(j).getName());
+                InternSubjectDTO internSubjectDTO = new InternSubjectDTO((long) (j + 1), internSubjects.get(j).getName());
                 internSubjectDTOList.add(j, internSubjectDTO);
             }
 
@@ -88,13 +93,15 @@ public class InternServiceImpl implements InternService {
                 internScoreDTOList.add(j, internScoreDTO);
             }
 
-            //Duyệt qua danh sách điểm
+            //Duyệt qua danh sách điểm với 27 con điểm cho 7 môn và 3 loại
             for (int j = 0; j < internScoreDTOList.size(); j++) {
                 //Lấy ra 3 giá trị từng đối tượng trong mảng internScoreDTOList
                 String nameSubject = internScoreDTOList.get(j).getInternSubject().getName();
                 String type = internScoreDTOList.get(j).getType();
                 String value = internScoreDTOList.get(j).getValue();
-
+                if (value.isEmpty()) {
+                    checkFinalScore = false;
+                }
                 //Tìm vị trí môn học theo tên trong danh sách internScoreDTOList
                 int indexSubject = IntStream.range(0, internSubjectDTOList.size())
                         .filter(k -> internSubjectDTOList.get(k).getNameSubject().equals(nameSubject))
@@ -103,13 +110,28 @@ public class InternServiceImpl implements InternService {
                 //Lấy ra đối tượng môn học internSubjectDTO
                 InternSubjectDTO internSubjectDTO = internSubjectDTOList.get(indexSubject);
                 if (type.equals("theory")) {
-                    internSubjectDTO.setTheoryScore(value);
+                    if (value.isEmpty()) {
+                        internSubjectDTO.setTheoryScore("NA");
+                        internSubjectDTO.setTotalScore("NA");
+                    } else {
+                        internSubjectDTO.setTheoryScore(value);
+                    }
                 }
                 if (type.equals("practice")) {
-                    internSubjectDTO.setPracticeScore(value);
+                    if (value.isEmpty()) {
+                        internSubjectDTO.setPracticeScore("NA");
+                        internSubjectDTO.setTotalScore("NA");
+                    } else {
+                        internSubjectDTO.setPracticeScore(value);
+                    }
                 }
                 if (type.equals("attitude")) {
-                    internSubjectDTO.setAttitudeScore(value);
+                    if (value.isEmpty()) {
+                        internSubjectDTO.setAttitudeScore("NA");
+                        internSubjectDTO.setTotalScore("NA");
+                    } else {
+                        internSubjectDTO.setAttitudeScore(value);
+                    }
                 }
                 internSubjectDTOList.set(indexSubject, internSubjectDTO);
             }
@@ -117,16 +139,25 @@ public class InternServiceImpl implements InternService {
 
             for (int j = 0; j < internSubjectDTOList.size(); j++) {
                 InternSubjectDTO internSubjectDTO = internSubjectDTOList.get(j);
-                double theoryScore = Double.parseDouble(internSubjectDTO.getTheoryScore());
-                double practice = Double.parseDouble(internSubjectDTO.getPracticeScore());
-                double attitude = Double.parseDouble(internSubjectDTO.getAttitudeScore());
-                double totalScore = Math.round(((theoryScore + (practice + attitude) * 2) / 5) * 100.0) / 100.0;
-                finalScore = finalScore + totalScore;
-                internSubjectDTO.setTotalScore(totalScore);
-                internSubjectDTOList.set(j, internSubjectDTO);
+                if (internSubjectDTO.getTotalScore() != "NA") {
+                    double theoryScore = Double.parseDouble(internSubjectDTO.getTheoryScore());
+                    double practice = Double.parseDouble(internSubjectDTO.getPracticeScore());
+                    double attitude = Double.parseDouble(internSubjectDTO.getAttitudeScore());
+                    double totalScore = Math.round(((theoryScore + (practice + attitude) * 2) / 5) * 100.0) / 100.0;
+                    internSubjectDTO.setTotalScore(String.valueOf(totalScore));
+                    internSubjectDTOList.set(j, internSubjectDTO);
+                }
             }
 
-            finalScore = Math.round((finalScore / internSubjectDTOList.size()) * 100.0) / 100.0;
+            if (checkFinalScore) {
+                for (int j = 0; j < internSubjectDTOList.size(); j++) {
+                    InternSubjectDTO internSubjectDTO = internSubjectDTOList.get(j);
+                    double totalScore = Double.parseDouble(internSubjectDTO.getTotalScore());
+                    finalScore = finalScore + totalScore;
+                }
+                finalScore = Math.round((finalScore / internSubjectDTOList.size()) * 100.0) / 100.0;
+            }
+
 
             InternDTO internDTO = new InternDTO(
                     internProfile.getUser().getId(),
@@ -135,13 +166,50 @@ public class InternServiceImpl implements InternService {
                     internProfile.getEndDate(),
                     internProfile.getTrainingState(),
                     internProfile.getIsPass(),
-                    finalScore,
+                    (checkFinalScore ? String.valueOf(finalScore) : "NA"),
                     internProfile.getScoreInTeam(),
                     internSubjectDTOList);
             internDTOList.add(i, internDTO);
         }
         return internDTOList;
     }
+
+    @Override
+    public Iterable<InternDTO> findListInterWithNameInternAndTrainingState(String keyword, String trainingState) {
+        Iterable<InternDTO> internDTOIterable = getAllInter();
+
+        if (!keyword.isEmpty() && !trainingState.isEmpty()) {
+            internDTOIterable = findListInterWithNameInter(keyword, internDTOIterable);
+            internDTOIterable = findListInterWithTrainingState(trainingState, internDTOIterable);
+            return internDTOIterable;
+        }
+        if (keyword.isEmpty() && !trainingState.isEmpty()) {
+            return findListInterWithTrainingState(trainingState, internDTOIterable);
+        }
+
+        if (!keyword.isEmpty() && trainingState.isEmpty()) {
+            return findListInterWithNameInter(keyword, internDTOIterable);
+        }
+        return internDTOIterable;
+    }
+    @Override
+    public Iterable<InternDTO> findListInterWithNameInter(String keyword, Iterable<InternDTO> internDTOIterable) {
+        List<InternDTO> internDTOList = (List<InternDTO>) internDTOIterable;
+        List<InternDTO> matchingInternDTO = internDTOList.stream()
+                .filter(f -> f.getUserName().toLowerCase().contains(String.valueOf(keyword).toLowerCase()))
+                .collect(Collectors.toList());
+        return matchingInternDTO;
+    }
+
+    @Override
+    public Iterable<InternDTO> findListInterWithTrainingState(String trainingState, Iterable<InternDTO> internDTOIterable) {
+        List<InternDTO> internDTOList = (List<InternDTO>) internDTOIterable;
+        List<InternDTO> matchingInternDTO = internDTOList.stream()
+                .filter(f -> f.getTrainingState().equals(trainingState))
+                .collect(Collectors.toList());
+        return matchingInternDTO;
+    }
+
     @Override
     public Page<InternDTO> convertToPage(List<InternDTO> internDTOList, Pageable pageable) {
         int start = (int) pageable.getOffset();
