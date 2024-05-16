@@ -7,7 +7,6 @@ import com.example.quanlydaotao.model.RecruitmentRequestDetail;
 import com.example.quanlydaotao.service.impl.RecruitmentRequestDetailService;
 
 import com.example.quanlydaotao.dto.RecruitmentFormDTO;
-import com.example.quanlydaotao.repository.IRecruitmentRequestRepository;
 import com.example.quanlydaotao.service.impl.RecruitmentRequestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
@@ -99,13 +98,13 @@ public class RecruitmentRequestController {
     }
 
     @PostMapping("/{id}/users/{idUser}")
-    public ResponseEntity updateRecruitmentStatus(@RequestBody ReasonDTO reasonDTO,
-                                                  @PathVariable("id") Long idRecruitment,
-                                                  @PathVariable Long idUser) {
+    public ResponseEntity deniedRecruitmentRequest(@RequestBody ReasonDTO reasonDTO,
+                                                   @PathVariable("id") Long idRecruitment,
+                                                   @PathVariable Long idUser) {
         String reason = reasonDTO.getReason();
-        String action = "Bị từ chối bởi DET";
+        String status = "Bị từ chối bởi DET";
         try {
-            recruitmentRequestService.updateStatusRecruitment(idRecruitment, idUser, action, reason);
+            recruitmentRequestService.deniedRequestRecruitment(idRecruitment, idUser, status, reason);
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }

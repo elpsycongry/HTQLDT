@@ -9,7 +9,6 @@ import com.example.quanlydaotao.dto.RecruitmentFormDTO;
 import com.example.quanlydaotao.dto.UserAction;
 import com.example.quanlydaotao.model.RecruitmentRequestDetail;
 import com.example.quanlydaotao.model.Users;
-import com.example.quanlydaotao.repository.IUserRepository;
 import com.example.quanlydaotao.service.IRecruitmentRequestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -71,7 +70,7 @@ public class RecruitmentRequestService implements IRecruitmentRequestService {
         }
     }
 
-    public void updateStatusRecruitment(long idRecruitment, long idUser, String status, String reason) {
+    public void deniedRequestRecruitment(long idRecruitment, long idUser, String status, String reason) {
         RecruitmentRequest recruitmentRequest = iRecruitmentRequestRepository.findById(idRecruitment).get();
         recruitmentRequest.setStatus(status)
             .setReason(reason);
