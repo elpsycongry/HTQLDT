@@ -107,6 +107,8 @@ public class RecruitmentPlanService implements IRecruitmentPlanService {
                 .setAction(UserAction.Plane.toString());
 
         userPlanActionService.save(userPlanAction);
+
+        recruitmentRequestService.activeByRecruitmentPlan(recruitmentPlan.getRecruitmentRequest().getId());
     }
 
     public Optional<RecruitmentPlan> findById(Long id) {
