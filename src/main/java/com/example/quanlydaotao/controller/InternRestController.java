@@ -1,10 +1,7 @@
 package com.example.quanlydaotao.controller;
 
-import com.example.quanlydaotao.model.InternDTO;
-import com.example.quanlydaotao.model.InternProfile;
-import com.example.quanlydaotao.model.InternScore;
+import com.example.quanlydaotao.dto.InternDTO;
 import com.example.quanlydaotao.service.InternService;
-import com.example.quanlydaotao.service.impl.InternServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;

@@ -1,6 +1,6 @@
 package com.example.quanlydaotao.service;
 
-import com.example.quanlydaotao.model.InternDTO;
+import com.example.quanlydaotao.dto.InternDTO;
 import com.example.quanlydaotao.model.InternProfile;
 import com.example.quanlydaotao.model.InternScore;
 import com.example.quanlydaotao.model.InternSubject;
