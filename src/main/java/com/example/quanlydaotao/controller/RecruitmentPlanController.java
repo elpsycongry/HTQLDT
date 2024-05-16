@@ -130,7 +130,7 @@ public class RecruitmentPlanController {
                                                   @PathVariable("id") Long idPlan,
                                                   @PathVariable Long idUser) {
         String reason = reasonDTO.getReason();
-        String action = "Bị từ chối DECAN";
+        String action = "Bị từ chối bởi DECAN";
         try {
             recruitmentPlanService.DeniedRecruitmentPlan(idPlan, idUser, action, reason);
         } catch (Exception e) {

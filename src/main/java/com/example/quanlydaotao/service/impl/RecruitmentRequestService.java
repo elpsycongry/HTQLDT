@@ -68,6 +68,10 @@ public class RecruitmentRequestService implements IRecruitmentRequestService {
             detail.setRecruitmentRequest(request);
             recruitmentRequestDetailService.saveDetail(detail);
         }
+
+        RecruitmentRequest activedRequest = iRecruitmentRequestRepository.findById(recruitmentFormDTO.getRecruitmentRequest().getId()).get()
+                .setStatus("Đã xác nhận");
+        iRecruitmentRequestRepository.save(activedRequest);
     }
 
     public void deniedRequestRecruitment(long idRecruitment, long idUser, String status, String reason) {
@@ -155,8 +159,7 @@ public class RecruitmentRequestService implements IRecruitmentRequestService {
 
     public void activeByRecruitmentPlan(long idRecruitmentRequest) {
         RecruitmentRequest activedRequest = iRecruitmentRequestRepository.findById(idRecruitmentRequest).get()
-                .setStatus("Đã xác nhận");
-
+                .setStatus("Đang tuyển dụng");
         iRecruitmentRequestRepository.save(activedRequest);
     }
 }
