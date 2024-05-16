@@ -14,4 +14,10 @@ public interface InternService {
     List<InternScore> getListInternScore();
     List<InternSubject> getSubjects();
     Iterable<InternDTO> getAllInter();
-    Page<InternDTO> convertToPage(List<InternDTO> internDTOList, Pageable pageable);}
+    Iterable<InternDTO> findListInterWithNameInternAndTrainingState(String keyword, String trainingState);
+    Iterable<InternDTO> findListInterWithNameInter(String keyword, Iterable<InternDTO> internDTOIterable);
+    Iterable<InternDTO> findListInterWithTrainingState(String trainingState, Iterable<InternDTO> internDTOIterable);
+
+    Page<InternDTO> convertToPage(List<InternDTO> internDTOList, Pageable pageable);
+
+}

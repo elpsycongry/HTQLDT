@@ -15,13 +15,13 @@ public class InternDTO {
     private Long numberDate;
     private String trainingState;
     private Boolean isPass;
-    private double finalScore;
+    private String finalScore;
     private String scoreInTeam;
     private List<InternSubjectDTO> internScoreDTOList;
 
     public InternDTO(){}
 
-    public InternDTO(Long id, String userName, LocalDate startDate, LocalDate endDate, String trainingState, Boolean isPass, double finalScore, String scoreInTeam, List<InternSubjectDTO> internScoreDTOList) {
+    public InternDTO(Long id, String userName, LocalDate startDate, LocalDate endDate, String trainingState, Boolean isPass, String finalScore, String scoreInTeam, List<InternSubjectDTO> internScoreDTOList) {
         this.id = id;
         this.userName = userName;
         this.startDate = startDate;
@@ -98,11 +98,11 @@ public class InternDTO {
         isPass = pass;
     }
 
-    public double getFinalScore() {
+    public String getFinalScore() {
         return finalScore;
     }
 
-    public void setFinalScore(double finalScore) {
+    public void setFinalScore(String finalScore) {
         this.finalScore = finalScore;
     }
 

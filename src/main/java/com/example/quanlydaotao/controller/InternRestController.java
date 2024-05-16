@@ -41,5 +41,16 @@ public class InternRestController {
         return new ResponseEntity<>(internDTOPage, HttpStatus.OK);
     }
 
+    @GetMapping("/search")
+    public ResponseEntity<Page<InternDTO>> findListInterWithNameOrTrainingState(
+            @RequestParam(name = "page") int page,
+            @RequestParam(name = "size") int size,
+            @RequestParam(name = "keyword") String keyword,
+            @RequestParam(name = "trainingState") String trainingState) {
+        Pageable pageable = PageRequest.of(page, size);
+        Iterable<InternDTO> internDTOIterable = internService.findListInterWithNameInternAndTrainingState(keyword, trainingState);
+        Page<InternDTO> internDTOPage = internService.convertToPage((List<InternDTO>) internDTOIterable, pageable);
+        return new ResponseEntity<>(internDTOPage, HttpStatus.OK);
+    }
 
 }
