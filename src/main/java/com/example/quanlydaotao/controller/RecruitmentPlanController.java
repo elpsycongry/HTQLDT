@@ -100,7 +100,7 @@ public class RecruitmentPlanController {
                                                 @PathVariable("userId") long userId) {
         try {
             RecruitmentPlan recruitmentPlan = recruitmentPlanService.findById(planId).get();
-            recruitmentPlan.setStatus("Đang tuyển dụng");
+            recruitmentPlan.setStatus("Đã xác nhận");
 
             Users users = usersService.findById(userId).get();
 

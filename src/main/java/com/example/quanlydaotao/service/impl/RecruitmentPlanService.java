@@ -108,7 +108,7 @@ public class RecruitmentPlanService implements IRecruitmentPlanService {
 
         userPlanActionService.save(userPlanAction);
 
-        recruitmentRequestService.activeByRecruitmentPlan(recruitmentPlan.getRecruitmentRequest().getId());
+        recruitmentRequestService.confimRequest(recruitmentPlan.getRecruitmentRequest().getId());
     }
 
     public Optional<RecruitmentPlan> findById(Long id) {
