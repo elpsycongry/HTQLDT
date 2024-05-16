@@ -91,10 +91,10 @@ public class SecurityConfig {
                 .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/login", "/register", "/logoutUser","/role", "/listUser").permitAll()
-                        .requestMatchers("/users/**").hasAnyAuthority("ROLE_USER", "ROLE_MANAGE", "ROLE_ADMIN")
+                        .requestMatchers("/users/**").hasAnyAuthority("ROLE_USER", "ROLE_TM", "ROLE_ADMIN")
                         .requestMatchers("/login", "/register", "/logoutUser").permitAll()
                         .requestMatchers("/admin/**").hasAnyAuthority("ROLE_ADMIN")
-                        .requestMatchers("/api/interns**").hasAnyAuthority("ROLE_ADMIN","ROLE_MANAGE")
+                        .requestMatchers("/api/interns**").hasAnyAuthority("ROLE_ADMIN","ROLE_TM")
                 )
                 .exceptionHandling(customizer -> customizer.accessDeniedHandler(customAccessDeniedHandler()))
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
