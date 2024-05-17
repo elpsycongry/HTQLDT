@@ -1,5 +1,6 @@
 package com.example.quanlydaotao.controller;
 
+import com.example.quanlydaotao.dto.PaginateRequest;
 import com.example.quanlydaotao.dto.ReasonDTO;
 import com.example.quanlydaotao.dto.RecruitmentSearchDTO;
 import com.example.quanlydaotao.model.RecruitmentRequest;
@@ -10,6 +11,8 @@ import com.example.quanlydaotao.dto.RecruitmentFormDTO;
 import com.example.quanlydaotao.service.impl.RecruitmentRequestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -113,8 +116,11 @@ public class RecruitmentRequestController {
     }
     @GetMapping("/search")
     public ResponseEntity findAllName(@RequestParam(value = "name",required = false) String name,
-                                      @RequestParam(value = "status",required = false) String status) {
-        List<RecruitmentRequest> recruitmentRequestList = recruitmentRequestService.findByName(
+                                      @RequestParam(value = "status",required = false) String status,
+                                      @RequestParam(name = "page", required = false, defaultValue = "0") int page,
+                                      @RequestParam(name = "size", required = false, defaultValue = "10") int size){
+        Page<RecruitmentRequest> recruitmentRequestList = recruitmentRequestService.findByName(
+                new PaginateRequest(page,size),
                 new RecruitmentSearchDTO(name,status)
         );
         try{

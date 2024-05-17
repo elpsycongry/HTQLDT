@@ -1,16 +1,15 @@
 package com.example.quanlydaotao.service.impl;
 
-import com.example.quanlydaotao.dto.RecruitmentSearchDTO;
-import com.example.quanlydaotao.dto.RecruitmentSpec;
+import com.example.quanlydaotao.dto.*;
 import com.example.quanlydaotao.model.RecruitmentRequest;
 import com.example.quanlydaotao.model.UserRecruitmentAction;
 import com.example.quanlydaotao.repository.IRecruitmentRequestRepository;
-import com.example.quanlydaotao.dto.RecruitmentFormDTO;
-import com.example.quanlydaotao.dto.UserAction;
 import com.example.quanlydaotao.model.RecruitmentRequestDetail;
 import com.example.quanlydaotao.model.Users;
 import com.example.quanlydaotao.service.IRecruitmentRequestService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -140,9 +139,10 @@ public class RecruitmentRequestService implements IRecruitmentRequestService {
         userRecruitmentActionService.delete(userRecruitmentAction.get());
         recruitmentRequestDetailService.deleteAllByRecruitmentRequestId(id);
     }
-    public List<RecruitmentRequest> findByName(RecruitmentSearchDTO recruitmentSearchDTO) {
+    public Page<RecruitmentRequest> findByName(PaginateRequest paginateRequest, RecruitmentSearchDTO recruitmentSearchDTO) {
        return iRecruitmentRequestRepository.findAll(
-               new RecruitmentSpec(recruitmentSearchDTO)
+               new RecruitmentSpec(recruitmentSearchDTO),
+               PageRequest.of(paginateRequest.getPage(), paginateRequest.getSize())
        );
     }
 
