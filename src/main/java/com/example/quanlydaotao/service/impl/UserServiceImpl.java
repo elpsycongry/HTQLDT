@@ -30,6 +30,7 @@ public class UserServiceImpl implements UserService {
     private UserRepository userRepository;
     @Autowired
     private RoleServiceImpl roleService;
+
     @Override
     @Transactional
     public UserDetails loadUserByUsername(String email) {
@@ -184,4 +185,8 @@ public class UserServiceImpl implements UserService {
         return userRepository.findAll(pageable);
     }
 
+    public boolean checkPhoneExists(String phone) {
+        long numberOfPhone = userRepository.countByPhone(phone);
+        return numberOfPhone >= 2;
+    }
 }
