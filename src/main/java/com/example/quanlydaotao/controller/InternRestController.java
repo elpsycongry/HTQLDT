@@ -47,7 +47,7 @@ public class InternRestController {
 
     @PutMapping
     public ResponseEntity<?> editInternDetail(@RequestBody Map<String, Object> payload) {
-
+        System.out.println(payload);
         InternProfile internProfile = internService.getInternProfile(Long.parseLong(payload.get("internID").toString()));
         // Xử lý startDate
         if (payload.get("startDate") != null) {

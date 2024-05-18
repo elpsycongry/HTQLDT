@@ -16,9 +16,9 @@ insert into intern_profiles(end_date,
                             start_date,
                             training_state,
                             user_id)
-values ('2024-05-17', false, '2024-05-14', 'Đang thực tập', 2),
-       ('2024-05-17', false, '2024-05-14', 'Đã thực tập', 3),
-       ('2024-05-17', false, '2024-05-14', 'Đang thực tập', 4),
+values ('2024-05-17', false, '2024-05-14', 'training', 2),
+       ('2024-05-17', false, '2024-05-14', 'trained', 3),
+       ('2024-05-17', false, '2024-05-14', 'trained', 4),
        ('2024-05-18', false, null , 'training', 1);
 
 insert into intern_subjects (name)
