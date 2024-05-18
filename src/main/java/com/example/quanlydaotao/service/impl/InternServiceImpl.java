@@ -162,7 +162,7 @@ public class InternServiceImpl implements InternService {
                 String nameSubject = internScoreDTOList.get(j).getInternSubject().getName();
                 String type = internScoreDTOList.get(j).getType();
                 String value = internScoreDTOList.get(j).getValue();
-                if (value.isEmpty()) {
+                if (value == null || value.isEmpty()) {
                     checkFinalScore = false;
                 }
                 //Tìm vị trí môn học theo tên trong danh sách internScoreDTOList
@@ -173,7 +173,7 @@ public class InternServiceImpl implements InternService {
                 //Lấy ra đối tượng môn học internSubjectDTO
                 InternSubjectDTO internSubjectDTO = internSubjectDTOList.get(indexSubject);
                 if (type.equals("theory")) {
-                    if (value.isEmpty()) {
+                    if (value == null || value.isEmpty()) {
                         internSubjectDTO.setTheoryScore("NA");
                         internSubjectDTO.setTotalScore("NA");
                     } else {
@@ -181,7 +181,7 @@ public class InternServiceImpl implements InternService {
                     }
                 }
                 if (type.equals("practice")) {
-                    if (value.isEmpty()) {
+                    if (value == null || value.isEmpty()) {
                         internSubjectDTO.setPracticeScore("NA");
                         internSubjectDTO.setTotalScore("NA");
                     } else {
@@ -189,7 +189,7 @@ public class InternServiceImpl implements InternService {
                     }
                 }
                 if (type.equals("attitude")) {
-                    if (value.isEmpty()) {
+                    if (value == null || value.isEmpty()) {
                         internSubjectDTO.setAttitudeScore("NA");
                         internSubjectDTO.setTotalScore("NA");
                     } else {
