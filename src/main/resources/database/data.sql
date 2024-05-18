@@ -31,6 +31,7 @@ values ('Java'),
        ('Scrum');
 
 insert into intern_scores (type, value, user_id, subject_id)
+
 values ('practice', null, 1, 1),
        ('practice', null, 1, 2),
        ('practice', null, 1, 3),
@@ -72,4 +73,5 @@ values ('practice', null, 1, 1),
        ('attitude', 2, 2, 7);
 
 insert into users_roles values (1, 1);
+
 select * from intern_scores;

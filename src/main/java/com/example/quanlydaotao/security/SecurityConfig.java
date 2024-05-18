@@ -90,11 +90,17 @@ public class SecurityConfig {
         return http.cors(Customizer.withDefaults()).csrf(AbstractHttpConfigurer::disable)
                 .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/login", "/register", "/logoutUser","/role", "/listUser", "/api/test/**").permitAll()
-                        .requestMatchers("/users/**").hasAnyAuthority("ROLE_USER", "ROLE_MANAGE", "ROLE_ADMIN")
+//                        .requestMatchers("/login", "/register", "/logoutUser","/role").permitAll()
+//                        .requestMatchers("/users/**").hasAnyAuthority("ROLE_USER", "ROLE_TM", "ROLE_ADMIN")
+//                        .requestMatchers("/admin/**").hasAnyAuthority("ROLE_ADMIN")
+//                        .requestMatchers("/api/**").hasAnyAuthority("ROLE_ADMIN","ROLE_TM")
+
+                        .requestMatchers("/login", "/register", "/logoutUser","/role").permitAll()
+                        .requestMatchers("/users/**").hasAnyAuthority("ROLE_USER", "ROLE_TM", "ROLE_ADMIN")
                         .requestMatchers("/login", "/register", "/logoutUser").permitAll()
                         .requestMatchers("/admin/**").hasAnyAuthority("ROLE_ADMIN")
-                        .requestMatchers("/api/interns/**").hasAnyAuthority("ROLE_ADMIN","ROLE_MANAGE")
+                        .requestMatchers("/api/interns/**").hasAnyAuthority("ROLE_ADMIN","ROLE_TM")
+
                 )
                 .exceptionHandling(customizer -> customizer.accessDeniedHandler(customAccessDeniedHandler()))
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

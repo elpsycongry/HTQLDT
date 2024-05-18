@@ -31,17 +31,17 @@ public class InternRestController {
     private UserService userService;
 
     @GetMapping
-    public ResponseEntity<?> getAllIntern() {
-        return new ResponseEntity<>(internService.getListIntern(), HttpStatus.CREATED);
+    public ResponseEntity<?> getAllIntern(){
+        return new ResponseEntity<>(internService.getListIntern(), HttpStatus.OK);
     }
 
     @GetMapping("/score")
-    public ResponseEntity<?> getAllInternScore() {
-        return new ResponseEntity<>(internService.getListInternScore(), HttpStatus.CREATED);
+    public ResponseEntity<?> getAllInternScore(){
+        return new ResponseEntity<>(internService.getListInternScore(), HttpStatus.OK);
     }
     @GetMapping("/subject")
     public ResponseEntity<?> getAllInternSubject(){
-        return new ResponseEntity<>(internService.getSubjects(), HttpStatus.CREATED);
+        return new ResponseEntity<>(internService.getSubjects(), HttpStatus.OK);
     }
 
     @GetMapping("/findIntern")
