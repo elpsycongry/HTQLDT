@@ -7,11 +7,14 @@ import com.example.quanlydaotao.model.User;
 import com.example.quanlydaotao.repository.InternProfileRepository;
 import com.example.quanlydaotao.repository.InternScoreRepository;
 import com.example.quanlydaotao.repository.InternSubjectRepository;
+import com.example.quanlydaotao.repository.UserRepository;
 import com.example.quanlydaotao.service.InternService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
+
 @Service
 public class InternServiceImpl implements InternService {
     @Autowired
@@ -22,6 +25,9 @@ public class InternServiceImpl implements InternService {
 
     @Autowired
     private InternSubjectRepository internSubjectRepository;
+
+    @Autowired
+    private UserRepository userRepository;
     @Override
     public List<InternProfile> getListIntern() {
         return internProfileRepository.findAll();
@@ -50,4 +56,21 @@ public class InternServiceImpl implements InternService {
     public List<Object[]> getAllByUserId(Long id) {
         return internScoreRepository.getAllByUserId(id);
     }
+
+    @Override
+    public InternProfile save(InternProfile internProfile) {
+        return internProfileRepository.save(internProfile);
+    }
+
+    @Override
+    public List<InternScore> getListInternScoreByUserID(Long userID) {
+        return internScoreRepository.getAllByUser(userRepository.findById(userID).get());
+    }
+
+    @Override
+    public InternSubject findInternSubjectByName(String name) {
+        return internSubjectRepository.findByName(name).get();
+    }
+
+
 }
