@@ -18,7 +18,8 @@ insert into intern_profiles(end_date,
                             user_id)
 values ('2024-05-17', false, '2024-05-14', 'Đang thực tập', 2),
        ('2024-05-17', false, '2024-05-14', 'Đã thực tập', 3),
-       ('2024-05-17', false, '2024-05-14', 'Đang thực tập', 4);
+       ('2024-05-17', false, '2024-05-14', 'Đang thực tập', 4),
+       ('2024-05-18', false, null , 'training', 1);
 
 insert into intern_subjects (name)
 values ('Java'),

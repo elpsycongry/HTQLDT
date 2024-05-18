@@ -4,7 +4,6 @@ import com.example.quanlydaotao.model.InternProfile;
 import com.example.quanlydaotao.model.InternScore;
 import com.example.quanlydaotao.model.InternSubject;
 import com.example.quanlydaotao.model.User;
-import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;
@@ -21,4 +20,10 @@ public interface InternService {
     List<InternScore> getListInternScoreByUserID(Long userID);
 
     InternSubject findInternSubjectByName(String name);
+
+    Optional<InternScore> getInternScoreByUserAndSubjectAndType(User user, InternSubject subject, String type);
+
+    Optional<InternProfile> getInternProfileByUserID(Long userId);
+
+    void saveInternScore(InternScore internScore);
 }

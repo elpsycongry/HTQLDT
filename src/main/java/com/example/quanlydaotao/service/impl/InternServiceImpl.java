@@ -9,6 +9,8 @@ import com.example.quanlydaotao.repository.InternScoreRepository;
 import com.example.quanlydaotao.repository.InternSubjectRepository;
 import com.example.quanlydaotao.repository.UserRepository;
 import com.example.quanlydaotao.service.InternService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +19,8 @@ import java.util.Optional;
 
 @Service
 public class InternServiceImpl implements InternService {
+
+    private static final Logger log = LoggerFactory.getLogger(InternServiceImpl.class);
     @Autowired
     private InternProfileRepository internProfileRepository;
 
@@ -70,6 +74,22 @@ public class InternServiceImpl implements InternService {
     @Override
     public InternSubject findInternSubjectByName(String name) {
         return internSubjectRepository.findByName(name).get();
+    }
+
+    @Override
+    public Optional<InternScore> getInternScoreByUserAndSubjectAndType(User user, InternSubject subject,String type) {
+        return internScoreRepository.findByUserAndInternSubjectAndType(user , subject, type);
+    }
+
+    @Override
+    public Optional<InternProfile> getInternProfileByUserID(Long userId) {
+
+        return internProfileRepository.findByUser(userRepository.findById(userId).get());
+    }
+
+    @Override
+    public void saveInternScore(InternScore internScore) {
+         internScoreRepository.save(internScore);
     }
 
 
