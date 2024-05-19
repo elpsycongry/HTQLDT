@@ -71,7 +71,6 @@ public class Controller {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
-
     @PostMapping("/login")
     public ResponseEntity<Response> login(@RequestBody User user) {
         try {
