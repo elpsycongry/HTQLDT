@@ -18,8 +18,8 @@ insert into intern_profiles(end_date,
                             user_id)
 values ('2024-05-17', false, '2024-05-14', 'training', 2),
        ('2024-05-17', false, '2024-05-14', 'training', 3),
-       (null, false, '2024-05-14', 'training', 4),
-       ('', false, '2024-05-14' , 'training', 1);
+       ('2024-05-17', false, '2024-05-14', 'training', 4),
+       ('2024-05-17', false, '2024-05-14' , 'training', 1);
 
 insert into intern_subjects (name)
 values ('Java'),
@@ -32,10 +32,10 @@ values ('Java'),
 
 insert into intern_scores (type, value, user_id, subject_id)
 
-values ('practice', null, 1, 1),
-       ('practice', null, 1, 2),
-       ('practice', null, 1, 3),
-       ('practice', null, 1, 4),
+values ('practice', "", 1, 1),
+       ('practice', 3, 1, 2),
+       ('practice', 5, 1, 3),
+       ('practice', 4, 1, 4),
        ('practice', 10, 1, 5),
        ('practice', 2, 1, 6),
        ('practice', 2, 1, 7),
@@ -53,9 +53,9 @@ values ('practice', null, 1, 1),
        ('attitude', 5, 1, 5),
        ('attitude', 1, 1, 6),
        ('attitude', 2, 1, 7),
-       ('practice', null, 2, 2),
-       ('practice', null, 2, 3),
-       ('practice', null, 2, 4),
+       ('practice', 4, 2, 2),
+       ('practice', 4, 2, 3),
+       ('practice', 4, 2, 4),
        ('practice', 0, 2, 5),
        ('practice', 2, 2, 6),
        ('practice', 2, 2, 7),

@@ -202,7 +202,7 @@ public class InternServiceImpl implements InternService {
 
             for (int j = 0; j < internSubjectDTOList.size(); j++) {
                 InternSubjectDTO internSubjectDTO = internSubjectDTOList.get(j);
-                if (internSubjectDTO.getTotalScore() != "NA") {
+                if (internSubjectDTO.getTotalScore() != null && internSubjectDTO.getTotalScore() != "NA" ) {
                     double theoryScore = Double.parseDouble(internSubjectDTO.getTheoryScore());
                     double practice = Double.parseDouble(internSubjectDTO.getPracticeScore());
                     double attitude = Double.parseDouble(internSubjectDTO.getAttitudeScore());
@@ -215,8 +215,11 @@ public class InternServiceImpl implements InternService {
             if (checkFinalScore) {
                 for (int j = 0; j < internSubjectDTOList.size(); j++) {
                     InternSubjectDTO internSubjectDTO = internSubjectDTOList.get(j);
-                    double totalScore = Double.parseDouble(internSubjectDTO.getTotalScore());
-                    finalScore = finalScore + totalScore;
+                    String totalScoreString = internSubjectDTO.getTotalScore();
+                    if (totalScoreString != null && !totalScoreString.trim().isEmpty()) {
+                        double totalScore = Double.parseDouble(totalScoreString.trim());
+                        finalScore = finalScore + totalScore;
+                    }
                 }
                 finalScore = Math.round((finalScore / internSubjectDTOList.size()) * 100.0) / 100.0;
             }
