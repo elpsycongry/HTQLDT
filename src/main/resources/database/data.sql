@@ -16,10 +16,13 @@ insert into intern_profiles(end_date,
                             start_date,
                             training_state,
                             user_id)
-values ('2024-05-17', false, '2024-05-14', 'training', 6),
+values ('2024-05-17', false, '2024-05-14', 'training', 2),
        ('2024-05-17', false, '2024-05-14', 'training', 3),
        ('2024-05-17', false, '2024-05-14', 'training', 4),
-       ('2024-05-17', false, '2024-05-14' , 'training', 5);
+       ('2024-05-17', false, '2024-05-14' , 'training',5),
+       ('2024-05-17', false, '2024-05-14' , 'training',6),
+       ('2024-05-17', false, '2024-05-14' , 'training',8),
+       ('2024-05-17', false, '2024-05-14' , 'training',9);
 
 insert into intern_subjects (name)
 values ('Java'),
@@ -118,7 +121,23 @@ values ('practice', 8, 2, 1),
        ('attitude', 4, 5, 4),
        ('attitude', 5, 5, 5),
        ('attitude', 2, 5, 6),
-       ('attitude', 2, 5, 7);
+       ('attitude', 2, 5, 7),
+
+('practice', 4, 9, 2),
+('practice', 4, 9, 3),
+('practice', 4, 9, 4),
+('practice', 2, 9, 7),
+('theory', 6, 9, 1),
+('theory', 6, 9, 3),
+('theory', 6, 9, 5),
+('theory', 6, 9, 7),
+('attitude', 8, 9, 1),
+('attitude', 3, 9, 3),
+('attitude', 4, 9, 4),
+('attitude', 5, 9, 5),
+('attitude', 2, 9, 6),
+('attitude', 2, 9, 7);
+
 
 insert into users_roles values (1, 1);
 
