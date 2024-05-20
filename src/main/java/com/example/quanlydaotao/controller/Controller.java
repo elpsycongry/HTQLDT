@@ -55,14 +55,9 @@ public class Controller {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
-        for (User currentUser : userService.findAll()) {
-            if (currentUser.getEmail().equals(user.getEmail())) {
-                return new ResponseEntity<>("Email existed", HttpStatus.OK);
-            }
-        }
 
         if (user.getRoles() == null) {
-            Role roleUser = roleService.findByName("ROLE_USER");
+            Role roleUser = roleService.findByName("ROLE_HR");
             user.setRoles(Collections.singletonList(roleUser));
         }
 

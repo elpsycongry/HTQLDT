@@ -200,9 +200,10 @@ public class InternServiceImpl implements InternService {
             }
 
 
+            //Tính điểm trung bình môn
             for (int j = 0; j < internSubjectDTOList.size(); j++) {
                 InternSubjectDTO internSubjectDTO = internSubjectDTOList.get(j);
-                if (internSubjectDTO.getTotalScore() != null && internSubjectDTO.getTotalScore() != "NA" ) {
+                if (internSubjectDTO.getTotalScore() != "NA" ) {
                     double theoryScore = Double.parseDouble(internSubjectDTO.getTheoryScore());
                     double practice = Double.parseDouble(internSubjectDTO.getPracticeScore());
                     double attitude = Double.parseDouble(internSubjectDTO.getAttitudeScore());
