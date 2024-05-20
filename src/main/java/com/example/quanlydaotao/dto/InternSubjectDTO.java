@@ -12,7 +12,12 @@ public class InternSubjectDTO {
     public InternSubjectDTO(Long id, String nameSubject) {
         this.id = id;
         this.nameSubject = nameSubject;
+        this.theoryScore = "NA";
+        this.practiceScore = "NA";
+        this.attitudeScore = "NA";
+        this.totalScore = "NA";
     }
+
 
     public InternSubjectDTO(Long id, String nameSubject, String theoryScore, String practiceScore, String attitudeScore, String totalScore) {
         this.id = id;
@@ -22,6 +27,7 @@ public class InternSubjectDTO {
         this.attitudeScore = attitudeScore;
         this.totalScore = totalScore;
     }
+
 
     public Long getId() {
         return id;

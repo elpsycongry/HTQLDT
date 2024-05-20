@@ -3,6 +3,7 @@ package com.example.quanlydaotao.dto;
 
 import com.example.quanlydaotao.dto.InternSubjectDTO;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
@@ -18,21 +19,31 @@ public class InternDTO {
     private Boolean isPass;
     private String finalScore;
     private String scoreInTeam;
-    private List<InternSubjectDTO> internScoreDTOList;
+    private List<InternSubjectDTO> internSubjectDTOList;
 
     public InternDTO(){}
 
-    public InternDTO(Long id, String userName, LocalDate startDate, LocalDate endDate, String trainingState, Boolean isPass, String finalScore, String scoreInTeam, List<InternSubjectDTO> internScoreDTOList) {
+    public InternDTO(Long id, String userName, LocalDate startDate, LocalDate endDate, String trainingState, Boolean isPass, String finalScore, String scoreInTeam, List<InternSubjectDTO> internSubjectDTOList) {
         this.id = id;
         this.userName = userName;
         this.startDate = startDate;
         this.endDate = endDate;
-        this.numberDate = ChronoUnit.DAYS.between(startDate, endDate);
+        this.numberDate = countDay(startDate, endDate);
         this.trainingState = trainingState;
         this.isPass = isPass;
         this.finalScore = finalScore;
         this.scoreInTeam = scoreInTeam;
-        this.internScoreDTOList = internScoreDTOList;
+        this.internSubjectDTOList = internSubjectDTOList;
+    }
+    
+    private Long countDay(LocalDate startDate, LocalDate endDate) {
+        long numberDate = ChronoUnit.DAYS.between(startDate, endDate.plusDays(1));
+        for (LocalDate date = startDate; date.isBefore(endDate.plusDays(1)); date = date.plusDays(1)) {
+            if (date.getDayOfWeek() == DayOfWeek.SATURDAY || date.getDayOfWeek() == DayOfWeek.SUNDAY) {
+                numberDate--;
+            }
+        }
+        return numberDate;
     }
 
     public Long getId() {
@@ -43,12 +54,12 @@ public class InternDTO {
         this.id = id;
     }
 
-    public List<InternSubjectDTO> getInternScoreDTOList() {
-        return internScoreDTOList;
+    public List<InternSubjectDTO> getInternSubjectDTOList() {
+        return internSubjectDTOList;
     }
 
-    public void setInternScoreDTOList(List<InternSubjectDTO> internScoreDTOList) {
-        this.internScoreDTOList = internScoreDTOList;
+    public void setInternSubjectDTOList(List<InternSubjectDTO> internSubjectDTOList) {
+        this.internSubjectDTOList = internSubjectDTOList;
     }
 
     public String getUserName() {

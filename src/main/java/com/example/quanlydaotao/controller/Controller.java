@@ -62,7 +62,7 @@ public class Controller {
         }
 
         if (user.getRoles() == null) {
-            Role roleUser = roleService.findByName("ROLE_USER");
+            Role roleUser = roleService.findByName("ROLE");
             user.setRoles(Collections.singletonList(roleUser));
         }
 

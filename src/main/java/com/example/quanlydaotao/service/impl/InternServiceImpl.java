@@ -130,41 +130,25 @@ public class InternServiceImpl implements InternService {
             InternProfile internProfile = internProfiles.get(i);
             //Lấy ra danh sách điểm InterScore của 1 thực tập sinh
             List<InternScore> internScores = internScoreRepository.findAllByUser(internProfile.getUser());
-            //Khai báo danh sách điểm 1 thực tập sinh
-            List<InternScoreDTO> internScoreDTOList = new ArrayList<>();
             //Khai báo danh sách môn học và điểm lí thuyết, thực hành, thái độ
-            List<InternSubjectDTO> internSubjectDTOList = new ArrayList<>();
-            //Khai báo điểm trung bình chung cuối khoá học
+            List<InternSubjectDTO> internSubjectDTOList = new ArrayList<>();            //Khai báo điểm trung bình chung cuối khoá học
             boolean checkFinalScore = true;
             double finalScore = 0;
 
-//            Lấy ra tên các môn học cho vào List<InternSubjectDTO>
             for (int j = 0; j < internSubjects.size(); j++) {
-                InternSubjectDTO internSubjectDTO = new InternSubjectDTO((long) (j + 1), internSubjects.get(j).getName());
+                Long id = (long) (j + 1);
+                InternSubjectDTO internSubjectDTO = new InternSubjectDTO(id, internSubjects.get(j).getName());
                 internSubjectDTOList.add(j, internSubjectDTO);
             }
 
-            //Lấy ra danh sách điểm tất cả môn học và loại điểm của thực tâp cho vào internScoreDTOList
-            for (int j = 0; j < internScores.size(); j++) {
-                InternScore internScore = internScores.get(j);
-                InternScoreDTO internScoreDTO = new InternScoreDTO(
-                        internScore.getId(),
-                        internScore.getValue(),
-                        internScore.getType(),
-                        internScore.getInternSubject()
-                );
-                internScoreDTOList.add(j, internScoreDTO);
-            }
-
             //Duyệt qua danh sách điểm với 27 con điểm cho 7 môn và 3 loại
-            for (int j = 0; j < internScoreDTOList.size(); j++) {
-                //Lấy ra 3 giá trị từng đối tượng trong mảng internScoreDTOList
-                String nameSubject = internScoreDTOList.get(j).getInternSubject().getName();
-                String type = internScoreDTOList.get(j).getType();
-                String value = internScoreDTOList.get(j).getValue();
-                if (value == null || value.isEmpty()) {
-                    checkFinalScore = false;
-                }
+            for (int j = 0; j < internScores.size(); j++) {
+
+                //Lấy ra 3 giá trị từng đối tượng trong bảng điểm của 1 intern
+                String nameSubject = internScores.get(j).getInternSubject().getName();
+                String type = internScores.get(j).getType();
+                String value = internScores.get(j).getValue();
+
                 //Tìm vị trí môn học theo tên trong danh sách internScoreDTOList
                 int indexSubject = IntStream.range(0, internSubjectDTOList.size())
                         .filter(k -> internSubjectDTOList.get(k).getNameSubject().equals(nameSubject))
@@ -172,6 +156,8 @@ public class InternServiceImpl implements InternService {
 
                 //Lấy ra đối tượng môn học internSubjectDTO
                 InternSubjectDTO internSubjectDTO = internSubjectDTOList.get(indexSubject);
+
+                //Gán giá trị từng loại điểm cho môn học
                 if (type.equals("theory")) {
                     if (value == null || value.isEmpty()) {
                         internSubjectDTO.setTheoryScore("NA");
@@ -191,35 +177,34 @@ public class InternServiceImpl implements InternService {
                 if (type.equals("attitude")) {
                     if (value == null || value.isEmpty()) {
                         internSubjectDTO.setAttitudeScore("NA");
-                        internSubjectDTO.setTotalScore("NA");
                     } else {
                         internSubjectDTO.setAttitudeScore(value);
+                        internSubjectDTO.setTotalScore("NA");
                     }
                 }
                 internSubjectDTOList.set(indexSubject, internSubjectDTO);
             }
 
-
+//            Tính điểm trung bình môn
             for (int j = 0; j < internSubjectDTOList.size(); j++) {
                 InternSubjectDTO internSubjectDTO = internSubjectDTOList.get(j);
-                if (internSubjectDTO.getTotalScore() != null && internSubjectDTO.getTotalScore() != "NA" ) {
-                    double theoryScore = Double.parseDouble(internSubjectDTO.getTheoryScore());
-                    double practice = Double.parseDouble(internSubjectDTO.getPracticeScore());
-                    double attitude = Double.parseDouble(internSubjectDTO.getAttitudeScore());
-                    double totalScore = Math.round(((theoryScore + (practice + attitude) * 2) / 5) * 100.0) / 100.0;
+                String theoryScore = internSubjectDTO.getTheoryScore();
+                String practiceScore = internSubjectDTO.getPracticeScore();
+                String attitudeScore = internSubjectDTO.getAttitudeScore();
+                if (theoryScore != "NA" && practiceScore != "NA" && attitudeScore != "NA") {
+                    double totalScore = Math.round(((
+                            Double.parseDouble(theoryScore) + (Double.parseDouble(practiceScore) + Double.parseDouble(attitudeScore)) * 2) / 5) * 100.0) / 100.0;
                     internSubjectDTO.setTotalScore(String.valueOf(totalScore));
                     internSubjectDTOList.set(j, internSubjectDTO);
+                } else {
+                    checkFinalScore = false;
                 }
             }
 
             if (checkFinalScore) {
                 for (int j = 0; j < internSubjectDTOList.size(); j++) {
                     InternSubjectDTO internSubjectDTO = internSubjectDTOList.get(j);
-                    String totalScoreString = internSubjectDTO.getTotalScore();
-                    if (totalScoreString != null && !totalScoreString.trim().isEmpty()) {
-                        double totalScore = Double.parseDouble(totalScoreString.trim());
-                        finalScore = finalScore + totalScore;
-                    }
+                    finalScore = finalScore + Double.parseDouble(internSubjectDTO.getTotalScore());
                 }
                 finalScore = Math.round((finalScore / internSubjectDTOList.size()) * 100.0) / 100.0;
             }
