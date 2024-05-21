@@ -151,10 +151,4 @@ public class Controller {
         boolean exists = userService.checkPhoneExists(phone);
         return ResponseEntity.ok(Collections.singletonMap("exists", exists));
     }
-
-    @GetMapping("/admin/trainingStats")
-    public ResponseEntity<TrainingStatsDTO> getTrainingStats() {
-        TrainingStatsDTO trainingStatsDTO = trainingStatsService.getTrainingStats();
-        return new ResponseEntity<>(trainingStatsDTO, HttpStatus.OK);
-    }
 }

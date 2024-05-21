@@ -6,17 +6,21 @@ public class TrainingStatsDTO {
     private String internsFailed;
     private int rate;
     private String internsCurrentlyPracticing;
+    private String internsQuitInternship;
     private double averageGraduationScore;
     public TrainingStatsDTO() {}
     public TrainingStatsDTO(String internsEnrolled, String graduatingInterns,
                             String internsFailed, int rate,
                             String internsCurrentlyPracticing,
+                            String internsQuitInternship,
                             double averageGraduationScore) {
         this.internsEnrolled = internsEnrolled;
         this.graduatingInterns = graduatingInterns;
         this.internsFailed = internsFailed;
         this.rate = rate;
+        this.internsQuitInternship = internsQuitInternship;
         this.internsCurrentlyPracticing = internsCurrentlyPracticing;
+        this.averageGraduationScore = averageGraduationScore;
     }
 
     public String getInternsEnrolled() {
@@ -67,5 +71,13 @@ public class TrainingStatsDTO {
 
     public void setAverageGraduationScore(double averageGraduationScore) {
         this.averageGraduationScore = averageGraduationScore;
+    }
+
+    public String getInternsQuitInternship() {
+        return internsQuitInternship;
+    }
+
+    public void setInternsQuitInternship(String internsQuitInternship) {
+        this.internsQuitInternship = internsQuitInternship;
     }
 }
