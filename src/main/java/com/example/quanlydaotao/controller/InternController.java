@@ -24,8 +24,9 @@ public class InternController {
     public ResponseEntity<Intern> getInternById(@PathVariable long id) {
         return new ResponseEntity<>(internService.getIntern(id).get(),HttpStatus.OK);
     }
-    @PutMapping("")
-    public ResponseEntity<Intern> updateIntern(@RequestBody Intern intern) {
+    @PutMapping("/{id}")
+    public ResponseEntity<Intern> updateIntern(@RequestBody Intern intern, @PathVariable long id) {
+        intern.setId(id);
         internService.updateIntern(intern);
         return new ResponseEntity<>(intern,HttpStatus.OK);
     }
