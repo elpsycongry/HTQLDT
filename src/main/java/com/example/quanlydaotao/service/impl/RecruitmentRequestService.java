@@ -10,12 +10,16 @@ import com.example.quanlydaotao.service.IRecruitmentRequestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @Service
 public class RecruitmentRequestService implements IRecruitmentRequestService {
@@ -142,7 +146,10 @@ public class RecruitmentRequestService implements IRecruitmentRequestService {
     public Page<RecruitmentRequest> findByName(PaginateRequest paginateRequest, RecruitmentSearchDTO recruitmentSearchDTO) {
        return iRecruitmentRequestRepository.findAll(
                new RecruitmentSpec(recruitmentSearchDTO),
-               PageRequest.of(paginateRequest.getPage(), paginateRequest.getSize())
+               PageRequest.of(
+                       paginateRequest.getPage(),
+                       paginateRequest.getSize(),
+                       Sort.by(Sort.Direction.DESC, "id"))
        );
     }
 

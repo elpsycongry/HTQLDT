@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -29,7 +30,10 @@ public class RecruitmentPlanService implements IRecruitmentPlanService {
     private UserPlanActionService userPlanActionService;
     @Override
     public Page<RecruitmentPlan> showRecruitmentPlan(Pageable pageable) {
-       return recruitmentPlanRepository.findAll(pageable);
+        Sort sort = Sort.by(Sort.Direction.DESC, "id");
+        Pageable reversedPageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sort);
+
+        return recruitmentPlanRepository.findAll(reversedPageable);
     }
 
     @Override
@@ -125,7 +129,11 @@ public class RecruitmentPlanService implements IRecruitmentPlanService {
     public Page<RecruitmentPlan> findAllByName(PaginateRequest paginateRequest, RecruitmentPlanDTO recruitmentPlanDTO) {
         return recruitmentPlanRepository.findAll(
                 new RecruitmentPlanSpec(recruitmentPlanDTO),
-                PageRequest.of(paginateRequest.getPage(), paginateRequest.getSize())
+                PageRequest.of(
+                        paginateRequest.getPage(),
+                        paginateRequest.getSize(),
+                        Sort.by(Sort.Direction.DESC, "id")
+                )
         );
     }
 

@@ -12,11 +12,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface IRecruitmentRequestRepository extends JpaRepository<RecruitmentRequest, Long> , JpaSpecificationExecutor<RecruitmentRequest> {
-    @Query("select rr.id,rr.name,rr.dateStart,rr.status from RecruitmentRequest rr ")
+    @Query("select rr.id,rr.name,rr.dateStart,rr.status from RecruitmentRequest rr order by rr.id desc")
     Iterable<RecruitmentRequest> getAll();
 
-    @Query("SELECT r.id, r.dateStart, r.dateEnd, r.name, r.reason, r.division, r.status FROM RecruitmentRequest r WHERE r.id =:id")
-    Object[] findNonForeignKeyFields(@Param("id") Long id);
-    @Query("DELETE FROM RecruitmentRequest r WHERE r.id =:value")
-    void deleteAllExceptLinked(@Param("value") long id);
 }
