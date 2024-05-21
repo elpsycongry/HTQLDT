@@ -7,6 +7,7 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
+import java.util.Date;
 import java.util.List;
 
 public class InternDTO {
@@ -37,6 +38,9 @@ public class InternDTO {
     }
     
     private Long countDay(LocalDate startDate, LocalDate endDate) {
+        if (endDate == null) {
+            endDate = LocalDate.now();
+        }
         long numberDate = ChronoUnit.DAYS.between(startDate, endDate.plusDays(1));
         for (LocalDate date = startDate; date.isBefore(endDate.plusDays(1)); date = date.plusDays(1)) {
             if (date.getDayOfWeek() == DayOfWeek.SATURDAY || date.getDayOfWeek() == DayOfWeek.SUNDAY) {
