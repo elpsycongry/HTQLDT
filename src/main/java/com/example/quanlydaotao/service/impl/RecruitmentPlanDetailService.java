@@ -26,4 +26,17 @@ public class RecruitmentPlanDetailService implements IRecruitmentPlanDetailServi
     public void deleteAllByRecruitmentPlanId(long id) {
         recruitmentPlanDetailRepository.deleteAllByRecruitmentPlanId(id);
     }
+
+    public int getTotalIntern(long recruitmentPlanId) {
+        int totalIntern = 0;
+        Iterable<RecruitmentPlanDetail> planDetails = findByRecruitmentPlanId(recruitmentPlanId);
+
+        if (planDetails != null) {
+            for (RecruitmentPlanDetail planDetail : planDetails) {
+                totalIntern += Integer.parseInt(planDetail.getNumberOfPersonnelNeeded());
+            }
+        }
+
+        return totalIntern;
+    }
 }

@@ -1,5 +1,6 @@
 package com.example.quanlydaotao.controller;
 
+import com.example.quanlydaotao.dto.InternDTO;
 import com.example.quanlydaotao.model.Intern;
 import com.example.quanlydaotao.service.impl.InternService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,17 @@ public class InternController {
     @GetMapping("/{id}")
     public ResponseEntity<Intern> getInternById(@PathVariable long id) {
         return new ResponseEntity<>(internService.getIntern(id).get(),HttpStatus.OK);
+    }
+
+    @PostMapping
+    public ResponseEntity addIntern(@RequestBody InternDTO dto) {
+        try {
+            internService.addIntern(dto);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(),HttpStatus.BAD_REQUEST);
+        }
+
+        return new ResponseEntity<>("Thêm ứng viên thành công", HttpStatus.OK);
     }
     @PutMapping("/{id}")
     public ResponseEntity<Intern> updateIntern(@RequestBody Intern intern, @PathVariable long id) {
