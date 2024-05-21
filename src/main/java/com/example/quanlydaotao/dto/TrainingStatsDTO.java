@@ -4,13 +4,13 @@ public class TrainingStatsDTO {
     private String internsEnrolled;
     private String graduatingInterns;
     private String internsFailed;
-    private int rate;
+    private Double rate;
     private String internsCurrentlyPracticing;
     private String internsQuitInternship;
     private double averageGraduationScore;
     public TrainingStatsDTO() {}
     public TrainingStatsDTO(String internsEnrolled, String graduatingInterns,
-                            String internsFailed, int rate,
+                            String internsFailed, Double rate,
                             String internsCurrentlyPracticing,
                             String internsQuitInternship,
                             double averageGraduationScore) {
@@ -47,11 +47,11 @@ public class TrainingStatsDTO {
         this.internsFailed = internsFailed;
     }
 
-    public int getRate() {
+    public Double getRate() {
         return rate;
     }
 
-    public void setRate(int rate) {
+    public void setRate(Double rate) {
         this.rate = rate;
     }
 
