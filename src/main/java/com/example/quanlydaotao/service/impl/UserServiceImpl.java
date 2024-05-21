@@ -189,4 +189,5 @@ public class UserServiceImpl implements UserService {
         long numberOfPhone = userRepository.countByPhone(phone);
         return numberOfPhone >= 2;
     }
+
 }

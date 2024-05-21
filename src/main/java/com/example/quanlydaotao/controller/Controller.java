@@ -157,4 +157,36 @@ public class Controller {
         TrainingStatsDTO trainingStatsDTO = trainingStatsService.getTrainingStats();
         return new ResponseEntity<>(trainingStatsDTO, HttpStatus.OK);
     }
+
+    @PostMapping("/admin/block/{id}")
+    public ResponseEntity<String> blockUser(@PathVariable Long id) {
+        //true - Người dùng được cấp quyền
+        //false - Người dùng bị từ chối quyền
+        String message;
+        User user;
+        try {
+            user = userService.findById(id).orElseThrow(() -> new RuntimeException("User not found!"));
+        } catch (RuntimeException e) {
+            message = "User not found!";
+            return new ResponseEntity<>(message, HttpStatus.NOT_FOUND);
+        }
+
+        boolean isAdmin = user.getRoles().stream()
+                .anyMatch(role -> role.getName().equals("ROLE_ADMIN"));
+
+        if (isAdmin) {
+            message = "Not confirmation!";
+            return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
+        }
+
+        boolean toggleStatus = !user.isStatus();
+        user.setStatus(toggleStatus);
+        userService.save(user);
+
+        message = toggleStatus ?
+                "Blocked user with id = " + id + " access!" :
+                "Unblock user with id = " + id + " access!";
+
+        return new ResponseEntity<>(message, HttpStatus.OK);
+    }
 }

@@ -17,4 +17,5 @@ public interface UserRepository extends JpaRepository<User,Long> {
     Iterable<User> findUsersByRoles(Role role);
     boolean existsByPhone(String phone);
     long countByPhone(String phone);
+
 }
