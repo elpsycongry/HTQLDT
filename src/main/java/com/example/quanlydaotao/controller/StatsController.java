@@ -5,10 +5,7 @@ import com.example.quanlydaotao.service.TrainingStatsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/stats")
@@ -23,21 +20,21 @@ public class StatsController {
         return new ResponseEntity<>(trainingStatsDTO, HttpStatus.OK);
     }
 
-    @GetMapping("/trainingStats/month")
-    public ResponseEntity<TrainingStatsDTO> getTrainingStatsWithMonth() {
-        TrainingStatsDTO trainingStatsDTO = trainingStatsService.getTrainingStatsWithMonth(5);
+    @GetMapping("/trainingStats/month/{month}")
+    public ResponseEntity<TrainingStatsDTO> getTrainingStatsWithMonth(@PathVariable int month) {
+        TrainingStatsDTO trainingStatsDTO = trainingStatsService.getTrainingStatsWithMonth(month);
         return new ResponseEntity<>(trainingStatsDTO, HttpStatus.OK);
     }
 
-    @GetMapping("/trainingStats/quarter")
-    public ResponseEntity<TrainingStatsDTO> getTrainingStatsWithQuarter() {
-        TrainingStatsDTO trainingStatsDTO = trainingStatsService.getTrainingStatsWithQuarter(2);
+    @GetMapping("/trainingStats/quarter/{quarter}")
+    public ResponseEntity<TrainingStatsDTO> getTrainingStatsWithQuarter(@PathVariable int quarter) {
+        TrainingStatsDTO trainingStatsDTO = trainingStatsService.getTrainingStatsWithQuarter(quarter);
         return new ResponseEntity<>(trainingStatsDTO, HttpStatus.OK);
     }
 
-    @GetMapping("/trainingStats/year")
-    public ResponseEntity<TrainingStatsDTO> getTrainingStatsWithYear() {
-        TrainingStatsDTO trainingStatsDTO = trainingStatsService.getTrainingStatsWithYear(2024);
+    @GetMapping("/trainingStats/year/{year}")
+    public ResponseEntity<TrainingStatsDTO> getTrainingStatsWithYear(@PathVariable int year) {
+        TrainingStatsDTO trainingStatsDTO = trainingStatsService.getTrainingStatsWithYear(year);
         return new ResponseEntity<>(trainingStatsDTO, HttpStatus.OK);
     }
 }
