@@ -1,14 +1,14 @@
 package com.example.quanlydaotao.controller;
 
 import com.example.quanlydaotao.dto.InternDTO;
+import com.example.quanlydaotao.model.*;
 import com.example.quanlydaotao.service.InternService;
 import com.example.quanlydaotao.dto.SubjectDTO;
-import com.example.quanlydaotao.model.InternProfile;
-import com.example.quanlydaotao.model.InternScore;
-import com.example.quanlydaotao.model.InternSubject;
-import com.example.quanlydaotao.model.User;
 import com.example.quanlydaotao.service.InternService;
 import com.example.quanlydaotao.service.UserService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -112,6 +112,45 @@ public class InternRestController {
 
             handleScore(user, internSubject, TYPE_SCORE, subj.get("theoryScore"), subj.get("practiceScore"), subj.get("attitudeScore"));
         }
+
+        // Lưu subject comment
+        for (Map<String, Object> subj : subjects) {
+            String json = subj.get("comment").toString();
+            int idIndex = json.indexOf("id=");
+            int commaIndex = json.indexOf(",");
+            int valueIndex = json.indexOf("value=");
+            if (idIndex != -1) {
+                // Lấy chuỗi từ vị trí của "id=" đến vị trí của dấu phẩy
+                String idString = json.substring(idIndex + 3, commaIndex).trim();
+                // Chuyển đổi chuỗi thành Long
+                Long idComment = Long.valueOf(idString);
+
+                int valueCommaIndex = json.indexOf(",", valueIndex);
+                if (valueCommaIndex == -1) {
+                    // Nếu không tìm thấy dấu phẩy, sử dụng dấu } thay thế
+                    valueCommaIndex = json.indexOf("}", valueIndex);
+                }
+                // Lấy chuỗi từ vị trí của "value=" đến vị trí của dấu phẩy hoặc dấu }
+                String valueComment = json.substring(valueIndex + 6, valueCommaIndex).trim();
+
+                SubjectComment subjectComment = internService.getSubjectCommentByID(idComment).get();
+                subjectComment.setValue(valueComment);
+                internService.saveSubjectComment(subjectComment);
+
+            } else {
+                //
+                int valueCommaIndex = json.indexOf("}", valueIndex);
+                String valueComment = json.substring(valueIndex + 6, valueCommaIndex).trim();
+                if (!valueComment.isEmpty() && !valueComment.equals("null")) { // Sử dụng phương thức equals() để so sánh chuỗi
+                    SubjectComment subjectComment = new SubjectComment();
+                    subjectComment.setValue(valueComment);
+                    subjectComment.setUser(user);
+                    subjectComment.setInternSubject(internService.findInternSubjectByName(subj.get("name").toString()));
+                    internService.saveSubjectComment(subjectComment);
+                }
+            }
+        }
+
         return getInternDetail(user.getId());
     }
 
@@ -148,7 +187,7 @@ public class InternRestController {
 
     public ResponseEntity<?> getInternDetail(Long id) {
         InternProfile profile = internService.getInternProfileByUserID(id).get();
-
+        List<SubjectComment> comments = internService.getListSubjectCommentByUserID(id);
         List<Object[]> objects = internService.getAllByUserId(id);
         List<InternSubject> subjects = internService.getSubjects();
 
@@ -156,7 +195,7 @@ public class InternRestController {
         List<SubjectDTO> subjectDTOs = new ArrayList<>();
 
         for (InternSubject subject : subjects) {
-            addSubjectIfNotExist(subjectDTOs, subject.getName());
+            addSubjectIfNotExist(subjectDTOs, subject.getName(), comments);
         }
 
         // convert subject sang định dạng fe
@@ -166,7 +205,7 @@ public class InternRestController {
             String score = (String) obj[0];
 
             // Nếu môn học
-            SubjectDTO subjectDTO = addSubjectIfNotExist(subjectDTOs, name);
+            SubjectDTO subjectDTO = addSubjectIfNotExist(subjectDTOs, name, comments);
 
             if (type.equals("theory")) {
                 subjectDTO.setTheoryScore(score);
@@ -184,10 +223,12 @@ public class InternRestController {
         map.put("trainingState", profile.getTrainingState());
         map.put("isPass", profile.getIsPass());
         map.put("scoreInTeam", profile.getScoreInTeam());
+
         return new ResponseEntity<>(map, HttpStatus.OK);
     }
 
-    private static SubjectDTO addSubjectIfNotExist(List<SubjectDTO> subjectDTOs, String name) {
+    private static SubjectDTO addSubjectIfNotExist(List<SubjectDTO> subjectDTOs, String name, List<SubjectComment> comments) {
+
         for (SubjectDTO subjectDTO : subjectDTOs) {
             if (subjectDTO.getName().equals(name)) {
                 return subjectDTO;
@@ -196,6 +237,12 @@ public class InternRestController {
 
         SubjectDTO newSubjectDTO = new SubjectDTO();
         newSubjectDTO.setName(name);
+        for (SubjectComment comment : comments) {
+            if (Objects.equals(newSubjectDTO.getName(), comment.getInternSubject().getName())){
+                newSubjectDTO.setComment(comment);
+            }
+        }
+
         subjectDTOs.add(newSubjectDTO);
         return newSubjectDTO;
     }

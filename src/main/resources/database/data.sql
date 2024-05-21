@@ -140,5 +140,14 @@ values ('practice', 8, 2, 1),
 
 
 insert into users_roles values (1, 1);
-
+insert into subject_comment (user_id, value, subject_id) values (1,'Nghỉ học nhiều', 1),
+                                                             (1,'Tốt', 2),
+                                                             (1,'Trông hơi béo ', 3),
+                                                             (1,'Trông hơi béo ', 4),
+                                                             (1,'Trông hơi béo ', 5),
+                                                             (1,'Trông hơi béo ', 6),
+                                                             (1,'Trông hơi béo ', 7),
+                                                             (2,'Tư duy tốt', 1),
+                                                             (2,'Tư duy tốt', 2),
+                                                             (2,null, 4);
 select * from intern_scores;
