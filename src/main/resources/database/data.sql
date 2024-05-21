@@ -16,7 +16,7 @@ insert into intern_profiles(end_date,
                             start_date,
                             training_state,
                             user_id)
-values ('2024-05-17', false, '2024-05-14', 'training', 2),
+values ('2024-05-17', false, '2024-05-14', 'training', 10),
        ('2024-05-17', false, '2024-05-14', 'training', 3),
        ('2024-05-17', false, '2024-05-14', 'training', 4),
        ('2024-05-17', false, '2024-05-14' , 'training',5),
