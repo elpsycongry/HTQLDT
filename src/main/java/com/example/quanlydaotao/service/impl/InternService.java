@@ -51,6 +51,8 @@ public class InternService implements IInternService {
 
     public void addIntern(InternDTO internDTO) throws Exception {
         Intern intern = internDTO.getIntern();
+        RecruitmentPlan plan = recruitmentPlanService.findById(intern.getId()).get();
+        intern.setRecruitmentPlan(plan);
 
         if (!isFullIntern(internDTO.getIdRecruitment())) {
             iInternRepository.save(intern);
