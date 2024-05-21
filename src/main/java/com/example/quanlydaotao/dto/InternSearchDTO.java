@@ -13,9 +13,6 @@ public class InternSearchDTO {
         this.recruitmentPlan = recruitmentPlan;
     }
 
-    public InternSearchDTO(InternSearchDTO internDTO) {
-    }
-
     public String getNameOrEmail() {
         return nameOrEmail;
     }

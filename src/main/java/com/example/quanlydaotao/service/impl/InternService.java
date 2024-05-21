@@ -3,8 +3,8 @@ package com.example.quanlydaotao.service.impl;
 import com.example.quanlydaotao.dto.*;
 import com.example.quanlydaotao.model.Intern;
 import com.example.quanlydaotao.model.RecruitmentPlan;
+import com.example.quanlydaotao.model.RecruitmentPlanDetail;
 import com.example.quanlydaotao.repository.IInternRepository;
-import com.example.quanlydaotao.repository.IRecruitmentPlanRepository;
 import com.example.quanlydaotao.service.IInternService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -14,6 +14,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -21,8 +22,6 @@ public class InternService implements IInternService {
     @Autowired
     private IInternRepository iInternRepository;
     @Autowired
-    private IRecruitmentPlanRepository recruitmentPlanRepository;
-
     private RecruitmentPlanService recruitmentPlanService;
     @Autowired
     private RecruitmentPlanDetailService recruitmentPlanDetailService;
@@ -51,17 +50,7 @@ public class InternService implements IInternService {
         return iInternRepository.findById(id);
     }
 
-    @Override
-    public Page<Intern> findAllByNameOrEmail(PaginateRequest paginateRequest, InternSearchDTO internSearchDTO) {
-        return iInternRepository.findAll(
-                new InternSpec(internSearchDTO),
-                PageRequest.of(
-                        paginateRequest.getPage(),
-                        paginateRequest.getSize(),
-                        Sort.by(Sort.Direction.DESC, "id")
-                )
-        );
-    }
+
     public void addIntern(InternDTO internDTO) throws Exception {
         Intern intern = internDTO.getIntern();
         RecruitmentPlan plan = recruitmentPlanService.findById(internDTO.getIdRecruitment()).get();
@@ -85,4 +74,16 @@ public class InternService implements IInternService {
         }
         return isFull;
     }
+    @Override
+    public Page<Intern> findAllByNameOrEmail(PaginateRequest paginateRequest, InternSearchDTO internSearchDTO) {
+        return iInternRepository.findAll(
+                new InternSpec(internSearchDTO),
+                PageRequest.of(
+                        paginateRequest.getPage(),
+                        paginateRequest.getSize(),
+                        Sort.by(Sort.Direction.DESC, "id")
+                )
+        );
+    }
+
 }

@@ -61,7 +61,7 @@ public class InternController {
                                                         @RequestParam(value = "namePlan", required = false) String namePlan,
                                                         @RequestParam(value = "status", required = false) String status) {
         RecruitmentPlan recruitmentPlan = null;
-        if (namePlan != null && namePlan.isEmpty()) {
+        if (namePlan != null && !namePlan.isEmpty()) {
             recruitmentPlan = new RecruitmentPlan();
             recruitmentPlan.setName(namePlan);
         }
