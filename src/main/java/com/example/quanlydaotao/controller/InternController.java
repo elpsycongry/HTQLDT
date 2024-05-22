@@ -38,9 +38,9 @@ public class InternController {
 
 
     @PostMapping
-    public ResponseEntity addIntern(@RequestBody InternDTO dto) {
+    public ResponseEntity addIntern(@RequestBody Intern intern) {
         try {
-            internService.addIntern(dto);
+            internService.addIntern(intern);
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(),HttpStatus.BAD_REQUEST);
         }

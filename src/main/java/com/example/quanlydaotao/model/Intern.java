@@ -24,19 +24,29 @@ public class Intern {
 
     private String linkCv;
     private LocalDateTime interviewTime;
-    private boolean isInterview;
+    private boolean checkInterview;
     private String comment;
     private String note;
     private boolean finalResult;
     private String status;
-    private LocalDate dateCreate;
+    private String scoreTest;
+    private String scoreInterview;
 
-    public LocalDate getDateCreate() {
-        return dateCreate;
+    public String getScoreTest() {
+        return scoreTest;
     }
 
-    public Intern setDateCreate(LocalDate dateCreate) {
-        this.dateCreate = dateCreate;
+    public Intern setScoreTest(String scoreTest) {
+        this.scoreTest = scoreTest;
+        return this;
+    }
+
+    public String getScoreInterview() {
+        return scoreInterview;
+    }
+
+    public Intern setScoreInterview(String scoreInterview) {
+        this.scoreInterview = scoreInterview;
         return this;
     }
 
@@ -76,12 +86,12 @@ public class Intern {
         return this;
     }
 
-    public boolean isInterview() {
-        return isInterview;
+    public boolean isCheckInterview() {
+        return checkInterview;
     }
 
-    public Intern setInterview(boolean interview) {
-        isInterview = interview;
+    public Intern setCheckInterview(boolean checkInterview) {
+        this.checkInterview = checkInterview;
         return this;
     }
 
