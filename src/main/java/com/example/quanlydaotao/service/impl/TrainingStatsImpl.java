@@ -28,19 +28,19 @@ public class TrainingStatsImpl implements TrainingStatsService {
         DecimalFormat newDf = new DecimalFormat("#.#");
 
         List<InternProfile> profiles = profileRepository.findAll();
-        trainingStatsDTO.setInternsEnrolled(profiles.size() + " TTS");
+        trainingStatsDTO.setInternsEnrolled(profiles.size());
 
         List<InternProfile> profilesPass = profileRepository.findByIsPassEquals(true);
-        trainingStatsDTO.setGraduatingInterns(profilesPass.size() + " TTS");
+        trainingStatsDTO.setGraduatingInterns(profilesPass.size());
 
         List<InternProfile> profilesFailed = profileRepository.findByIsPassEqualsAndTrainingStateEquals(false, "trained");
-        trainingStatsDTO.setInternsFailed(profilesFailed.size() + " TTS");
+        trainingStatsDTO.setInternsFailed(profilesFailed.size());
 
         List<InternProfile> profilesCurrent = profileRepository.findByTrainingStateEquals("training");
-        trainingStatsDTO.setInternsCurrentlyPracticing(profilesCurrent.size() + " TTS");
+        trainingStatsDTO.setInternsCurrentlyPracticing(profilesCurrent.size());
 
         List<InternProfile> listInternQuitInternship = profileRepository.findByTrainingStateEquals("stop_training");
-        trainingStatsDTO.setInternsQuitInternship(listInternQuitInternship.size() + " TTS");
+        trainingStatsDTO.setInternsQuitInternship(listInternQuitInternship.size());
 
         if (profilesFailed.size() > 0) {
             trainingStatsDTO.setRate(Double.valueOf(newDf.format((Double.valueOf(profilesPass.size()) / (Double.valueOf(profilesFailed.size()) +  Double.valueOf(listInternQuitInternship.size()))))));
@@ -68,53 +68,53 @@ public class TrainingStatsImpl implements TrainingStatsService {
     }
 
     @Override
-    public TrainingStatsDTO getTrainingStatsWithMonth(int month) {
+    public TrainingStatsDTO getTrainingStatsWithMonth(int month, int year) {
         TrainingStatsDTO trainingStatsDTO = new TrainingStatsDTO();
         DecimalFormat newDf = new DecimalFormat("#.#");
         List<InternProfile> profiles = profileRepository.findAll();
         List<InternProfile> newProfiels = new ArrayList<>();
         for (InternProfile profile : profiles) {
-            if (profile.getStartDate().getMonthValue() == month){
+            if (profile.getStartDate().getMonthValue() == month && profile.getStartDate().getYear() == year){
                 newProfiels.add(profile);
             }
         }
-        trainingStatsDTO.setInternsEnrolled(newProfiels.size() + " TTS");
+        trainingStatsDTO.setInternsEnrolled(newProfiels.size());
 
         List<InternProfile> profilesPass = profileRepository.findByIsPassEquals(true);
         List<InternProfile> newProfilesPass = new ArrayList<>();
         for (InternProfile profile : profilesPass) {
-            if (profile.getStartDate().getMonthValue() == month){
+            if (profile.getStartDate().getMonthValue() == month && profile.getStartDate().getYear() == year){
                 newProfilesPass.add(profile);
             }
         }
-        trainingStatsDTO.setGraduatingInterns(newProfilesPass.size() + " TTS");
+        trainingStatsDTO.setGraduatingInterns(newProfilesPass.size());
 
         List<InternProfile> profilesFailed = profileRepository.findByIsPassEqualsAndTrainingStateEquals(false, "trained");
         List<InternProfile> newProfilesFailed = new ArrayList<>();
         for (InternProfile profile : profilesFailed) {
-            if (profile.getStartDate().getMonthValue() == month){
+            if (profile.getStartDate().getMonthValue() == month && profile.getStartDate().getYear() == year){
                 newProfilesFailed.add(profile);
             }
         }
-        trainingStatsDTO.setInternsFailed(newProfilesFailed.size() + " TTS");
+        trainingStatsDTO.setInternsFailed(newProfilesFailed.size());
 
         List<InternProfile> profilesCurrent = profileRepository.findByTrainingStateEquals("training");
         List<InternProfile> newProfilesCurrent = new ArrayList<>();
         for (InternProfile profile : profilesCurrent) {
-            if (profile.getStartDate().getMonthValue() == month){
+            if (profile.getStartDate().getMonthValue() == month && profile.getStartDate().getYear() == year){
                 newProfilesCurrent.add(profile);
             }
         }
-        trainingStatsDTO.setInternsCurrentlyPracticing(newProfilesCurrent.size() + " TTS");
+        trainingStatsDTO.setInternsCurrentlyPracticing(newProfilesCurrent.size());
 
         List<InternProfile> listInternQuitInternship = profileRepository.findByTrainingStateEquals("stop_training");
         List<InternProfile> newProfilesQuitInternship = new ArrayList<>();
         for (InternProfile profile : listInternQuitInternship) {
-            if (profile.getStartDate().getMonthValue() == month){
+            if (profile.getStartDate().getMonthValue() == month && profile.getStartDate().getYear() == year){
                 newProfilesQuitInternship.add(profile);
             }
         }
-        trainingStatsDTO.setInternsQuitInternship(newProfilesQuitInternship.size() + " TTS");
+        trainingStatsDTO.setInternsQuitInternship(newProfilesQuitInternship.size());
 
         if (newProfilesFailed.size() > 0) {
             trainingStatsDTO.setRate(Double.valueOf(newDf.format((Double.valueOf(newProfilesPass.size()) / (Double.valueOf(newProfilesFailed.size()) +  Double.valueOf(newProfilesQuitInternship.size()))))));
@@ -127,7 +127,7 @@ public class TrainingStatsImpl implements TrainingStatsService {
         Iterable<InternDTO> internDTOIterable = internService.findListInterWithNameInternAndTrainingState("", "trained");
         internDTOIterable.forEach(
                 internDTO -> {
-                    if (internDTO.getPass() && internDTO.getStartDate().getMonthValue() == month){
+                    if (internDTO.getPass() && internDTO.getStartDate().getMonthValue() == month && internDTO.getStartDate().getYear() == year){
                         Double score = (Double.valueOf(internDTO.getFinalScore()) + Double.valueOf(internDTO.getScoreInTeam())) / 2;
                         listScore.add(score);
                     }
@@ -143,54 +143,54 @@ public class TrainingStatsImpl implements TrainingStatsService {
     }
 
     @Override
-    public TrainingStatsDTO getTrainingStatsWithQuarter(int quarter) {
+    public TrainingStatsDTO getTrainingStatsWithQuarter(int quarter, int year) {
         TrainingStatsDTO trainingStatsDTO = new TrainingStatsDTO();
         DecimalFormat newDf = new DecimalFormat("#.#");
 
         List<InternProfile> profiles = profileRepository.findAll();
         List<InternProfile> newProfiels = new ArrayList<>();
         for (InternProfile profile : profiles) {
-            if ((profile.getStartDate().getMonthValue() /3 ) + 1 == quarter){
+            if ((profile.getStartDate().getMonthValue() /3 ) + 1 == quarter && profile.getStartDate().getYear() == year){
                 newProfiels.add(profile);
             }
         }
-        trainingStatsDTO.setInternsEnrolled(newProfiels.size() + " TTS");
+        trainingStatsDTO.setInternsEnrolled(newProfiels.size());
 
         List<InternProfile> profilesPass = profileRepository.findByIsPassEquals(true);
         List<InternProfile> newProfilesPass = new ArrayList<>();
         for (InternProfile profile : profilesPass) {
-            if ((profile.getStartDate().getMonthValue() /3 ) + 1 == quarter){
+            if ((profile.getStartDate().getMonthValue() /3 ) + 1 == quarter && profile.getStartDate().getYear() == year){
                 newProfilesPass.add(profile);
             }
         }
-        trainingStatsDTO.setGraduatingInterns(newProfilesPass.size() + " TTS");
+        trainingStatsDTO.setGraduatingInterns(newProfilesPass.size());
 
         List<InternProfile> profilesFailed = profileRepository.findByIsPassEqualsAndTrainingStateEquals(false, "trained");
         List<InternProfile> newProfilesFailed = new ArrayList<>();
         for (InternProfile profile : profilesFailed) {
-            if ((profile.getStartDate().getMonthValue() /3 ) + 1 == quarter){
+            if ((profile.getStartDate().getMonthValue() /3 ) + 1 == quarter && profile.getStartDate().getYear() == year){
                 newProfilesFailed.add(profile);
             }
         }
-        trainingStatsDTO.setInternsFailed(newProfilesFailed.size() + " TTS");
+        trainingStatsDTO.setInternsFailed(newProfilesFailed.size());
 
         List<InternProfile> profilesCurrent = profileRepository.findByTrainingStateEquals("training");
         List<InternProfile> newProfilesCurrent = new ArrayList<>();
         for (InternProfile profile : profilesCurrent) {
-            if ((profile.getStartDate().getMonthValue() /3 ) + 1 == quarter){
+            if ((profile.getStartDate().getMonthValue() /3 ) + 1 == quarter && profile.getStartDate().getYear() == year){
                 newProfilesCurrent.add(profile);
             }
         }
-        trainingStatsDTO.setInternsCurrentlyPracticing(newProfilesCurrent.size() + " TTS");
+        trainingStatsDTO.setInternsCurrentlyPracticing(newProfilesCurrent.size());
 
         List<InternProfile> listInternQuitInternship = profileRepository.findByTrainingStateEquals("stop_training");
         List<InternProfile> newProfilesQuitInternship = new ArrayList<>();
         for (InternProfile profile : listInternQuitInternship) {
-            if ((profile.getStartDate().getMonthValue() /3 ) + 1 == quarter){
+            if ((profile.getStartDate().getMonthValue() /3 ) + 1 == quarter && profile.getStartDate().getYear() == year){
                 newProfilesQuitInternship.add(profile);
             }
         }
-        trainingStatsDTO.setInternsQuitInternship(newProfilesQuitInternship.size() + " TTS");
+        trainingStatsDTO.setInternsQuitInternship(newProfilesQuitInternship.size());
 
         if (newProfilesFailed.size() > 0) {
             trainingStatsDTO.setRate(Double.valueOf(newDf.format((Double.valueOf(newProfilesPass.size()) / (Double.valueOf(newProfilesFailed.size()) +  Double.valueOf(newProfilesQuitInternship.size()))))));
@@ -203,7 +203,7 @@ public class TrainingStatsImpl implements TrainingStatsService {
         Iterable<InternDTO> internDTOIterable = internService.findListInterWithNameInternAndTrainingState("", "trained");
         internDTOIterable.forEach(
                 internDTO -> {
-                    if (internDTO.getPass() && (internDTO.getStartDate().getMonthValue() / 3 ) + 1 == quarter){
+                    if (internDTO.getPass() && (internDTO.getStartDate().getMonthValue() / 3 ) + 1 == quarter && internDTO.getStartDate().getYear() == year){
                         Double score = (Double.valueOf(internDTO.getFinalScore()) + Double.valueOf(internDTO.getScoreInTeam())) / 2;
                         listScore.add(score);
                     }
@@ -230,7 +230,7 @@ public class TrainingStatsImpl implements TrainingStatsService {
                 newProfiels.add(profile);
             }
         }
-        trainingStatsDTO.setInternsEnrolled(newProfiels.size() + " TTS");
+        trainingStatsDTO.setInternsEnrolled(newProfiels.size());
 
         List<InternProfile> profilesPass = profileRepository.findByIsPassEquals(true);
         List<InternProfile> newProfilesPass = new ArrayList<>();
@@ -239,7 +239,7 @@ public class TrainingStatsImpl implements TrainingStatsService {
                 newProfilesPass.add(profile);
             }
         }
-        trainingStatsDTO.setGraduatingInterns(newProfilesPass.size() + " TTS");
+        trainingStatsDTO.setGraduatingInterns(newProfilesPass.size());
 
         List<InternProfile> profilesFailed = profileRepository.findByIsPassEqualsAndTrainingStateEquals(false, "trained");
         List<InternProfile> newProfilesFailed = new ArrayList<>();
@@ -248,7 +248,7 @@ public class TrainingStatsImpl implements TrainingStatsService {
                 newProfilesFailed.add(profile);
             }
         }
-        trainingStatsDTO.setInternsFailed(newProfilesFailed.size() + " TTS");
+        trainingStatsDTO.setInternsFailed(newProfilesFailed.size());
 
         List<InternProfile> profilesCurrent = profileRepository.findByTrainingStateEquals("training");
         List<InternProfile> newProfilesCurrent = new ArrayList<>();
@@ -257,7 +257,7 @@ public class TrainingStatsImpl implements TrainingStatsService {
                 newProfilesCurrent.add(profile);
             }
         }
-        trainingStatsDTO.setInternsCurrentlyPracticing(newProfilesCurrent.size() + " TTS");
+        trainingStatsDTO.setInternsCurrentlyPracticing(newProfilesCurrent.size());
 
         List<InternProfile> listInternQuitInternship = profileRepository.findByTrainingStateEquals("stop_training");
         List<InternProfile> newProfilesQuitInternship = new ArrayList<>();
@@ -266,7 +266,7 @@ public class TrainingStatsImpl implements TrainingStatsService {
                 newProfilesQuitInternship.add(profile);
             }
         }
-        trainingStatsDTO.setInternsQuitInternship(newProfilesQuitInternship.size() + " TTS");
+        trainingStatsDTO.setInternsQuitInternship(newProfilesQuitInternship.size());
 
         if (newProfilesFailed.size() > 0) {
             trainingStatsDTO.setRate(Double.valueOf(newDf.format((Double.valueOf(newProfilesPass.size()) / (Double.valueOf(newProfilesFailed.size()) +  Double.valueOf(newProfilesQuitInternship.size()))))));

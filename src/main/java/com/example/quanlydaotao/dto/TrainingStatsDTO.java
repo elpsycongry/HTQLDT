@@ -1,18 +1,18 @@
 package com.example.quanlydaotao.dto;
 
 public class TrainingStatsDTO {
-    private String internsEnrolled;
-    private String graduatingInterns;
-    private String internsFailed;
+    private int internsEnrolled;
+    private int graduatingInterns;
+    private int internsFailed;
     private Double rate;
-    private String internsCurrentlyPracticing;
-    private String internsQuitInternship;
+    private int internsCurrentlyPracticing;
+    private int internsQuitInternship;
     private double averageGraduationScore;
     public TrainingStatsDTO() {}
-    public TrainingStatsDTO(String internsEnrolled, String graduatingInterns,
-                            String internsFailed, Double rate,
-                            String internsCurrentlyPracticing,
-                            String internsQuitInternship,
+    public TrainingStatsDTO(int internsEnrolled, int graduatingInterns,
+                            int internsFailed, Double rate,
+                            int internsCurrentlyPracticing,
+                            int internsQuitInternship,
                             double averageGraduationScore) {
         this.internsEnrolled = internsEnrolled;
         this.graduatingInterns = graduatingInterns;
@@ -23,27 +23,27 @@ public class TrainingStatsDTO {
         this.averageGraduationScore = averageGraduationScore;
     }
 
-    public String getInternsEnrolled() {
+    public int getInternsEnrolled() {
         return internsEnrolled;
     }
 
-    public void setInternsEnrolled(String internsEnrolled) {
+    public void setInternsEnrolled(int internsEnrolled) {
         this.internsEnrolled = internsEnrolled;
     }
 
-    public String getGraduatingInterns() {
+    public int getGraduatingInterns() {
         return graduatingInterns;
     }
 
-    public void setGraduatingInterns(String graduatingInterns) {
+    public void setGraduatingInterns(int graduatingInterns) {
         this.graduatingInterns = graduatingInterns;
     }
 
-    public String getInternsFailed() {
+    public int getInternsFailed() {
         return internsFailed;
     }
 
-    public void setInternsFailed(String internsFailed) {
+    public void setInternsFailed(int internsFailed) {
         this.internsFailed = internsFailed;
     }
 
@@ -55,11 +55,11 @@ public class TrainingStatsDTO {
         this.rate = rate;
     }
 
-    public String getInternsCurrentlyPracticing() {
+    public int getInternsCurrentlyPracticing() {
         return internsCurrentlyPracticing;
     }
 
-    public void setInternsCurrentlyPracticing(String internsCurrentlyPracticing) {
+    public void setInternsCurrentlyPracticing(int internsCurrentlyPracticing) {
         this.internsCurrentlyPracticing = internsCurrentlyPracticing;
     }
 
@@ -73,11 +73,11 @@ public class TrainingStatsDTO {
         this.averageGraduationScore = averageGraduationScore;
     }
 
-    public String getInternsQuitInternship() {
+    public int getInternsQuitInternship() {
         return internsQuitInternship;
     }
 
-    public void setInternsQuitInternship(String internsQuitInternship) {
+    public void setInternsQuitInternship(int internsQuitInternship) {
         this.internsQuitInternship = internsQuitInternship;
     }
 }
