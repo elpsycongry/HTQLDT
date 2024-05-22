@@ -75,12 +75,15 @@ public class Controller {
             );
             SecurityContextHolder.getContext().setAuthentication(authentication);
             String jwt = jwtService.generateTokenLogin(authentication);
+            if (jwt.equals("Tài khoản của bạn đã bị chặn")){
+                return ResponseEntity.ok(new Response("202", "Tài khoản của bạn đã bị chặn", null));
+            }
             UserDetails userDetails = (UserDetails) authentication.getPrincipal();
             User currentUser = userService.findByUsername(user.getName());
-            return ResponseEntity.ok(new Response("200", "Login success",
+            return ResponseEntity.ok(new Response("200", "Đăng nhập thành công",
                     new JwtResponse(jwt, currentUser.getId(), userDetails.getUsername(), userDetails.getAuthorities())));
         } catch (Exception e) {
-            return ResponseEntity.ok(new Response("401", "Username or password incorrect", null));
+            return ResponseEntity.ok(new Response("401", "Tài khoản hoặc mật khẩu không đúng", null));
         }
     }
 
@@ -150,5 +153,37 @@ public class Controller {
     public ResponseEntity<Map<String, Boolean>> checkPhoneExists(@PathVariable String phone) {
         boolean exists = userService.checkPhoneExists(phone);
         return ResponseEntity.ok(Collections.singletonMap("exists", exists));
+    }
+
+    @PostMapping("/admin/block/{id}")
+    public ResponseEntity<String> blockUser(@PathVariable Long id) {
+        //true - Người dùng được cấp quyền
+        //false - Người dùng bị từ chối quyền
+        String message;
+        User user;
+        try {
+            user = userService.findById(id).orElseThrow(() -> new RuntimeException("User not found!"));
+        } catch (RuntimeException e) {
+            message = "User not found!";
+            return new ResponseEntity<>(message, HttpStatus.NOT_FOUND);
+        }
+
+        boolean isAdmin = user.getRoles().stream()
+                .anyMatch(role -> role.getName().equals("ROLE_ADMIN"));
+
+        if (isAdmin) {
+            message = "Not confirmation!";
+            return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
+        }
+
+        boolean toggleStatus = !user.isStatus();
+        user.setStatus(toggleStatus);
+        userService.save(user);
+
+        message = toggleStatus ?
+                "Blocked user with id = " + id + " access!" :
+                "Unblock user with id = " + id + " access!";
+
+        return new ResponseEntity<>(message, HttpStatus.OK);
     }
 }
