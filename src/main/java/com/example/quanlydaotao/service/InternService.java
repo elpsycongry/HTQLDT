@@ -1,12 +1,9 @@
 package com.example.quanlydaotao.service;
 
 import com.example.quanlydaotao.dto.InternDTO;
-import com.example.quanlydaotao.model.InternProfile;
-import com.example.quanlydaotao.model.InternScore;
-import com.example.quanlydaotao.model.InternSubject;
+import com.example.quanlydaotao.model.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import com.example.quanlydaotao.model.User;
 
 import java.util.List;
 import java.util.Optional;
@@ -36,4 +33,10 @@ public interface InternService {
     Optional<InternProfile> getInternProfileByUserID(Long userId);
 
     void saveInternScore(InternScore internScore);
+
+    List<SubjectComment> getListSubjectCommentByUserID(Long userID);
+
+    Optional<SubjectComment> getSubjectCommentByID(Long idComment);
+
+    void saveSubjectComment(SubjectComment subjectComment);
 }
