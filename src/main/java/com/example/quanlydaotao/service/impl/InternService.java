@@ -26,14 +26,12 @@ public class InternService implements IInternService {
 
     @Override
     public void createIntern(Intern intern) {
-        LocalDate localDate = LocalDate.now();
-        intern.setDateCreate(localDate);
         iInternRepository.save(intern);
     }
 
     @Override
     public Page<Intern> showIntern(Pageable pageable) {
-        return iInternRepository.findAllByOrderByDateCreateDesc(pageable);
+        return iInternRepository.findAllByOrderByIdDesc(pageable);
     }
 
     @Override
@@ -49,12 +47,11 @@ public class InternService implements IInternService {
     }
 
 
-    public void addIntern(InternDTO internDTO) throws Exception {
-        Intern intern = internDTO.getIntern();
-        RecruitmentPlan plan = recruitmentPlanService.findById(intern.getId()).get();
+    public void addIntern(Intern intern) throws Exception{
+        RecruitmentPlan plan = recruitmentPlanService.findById(intern.getRecruitmentPlan().getId()).get();
         intern.setRecruitmentPlan(plan);
 
-        if (!isFullIntern(internDTO.getIdRecruitment())) {
+        if (!isFullIntern(intern.getRecruitmentPlan().getId())) {
             iInternRepository.save(intern);
         }else {
             throw new Exception("số lượng của kế hoạch này đã đủ");
