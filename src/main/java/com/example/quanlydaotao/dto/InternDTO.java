@@ -24,14 +24,14 @@ public class InternDTO {
 
     public InternDTO(){}
 
-    public InternDTO(Long id, String userName, LocalDate startDate, LocalDate endDate, String trainingState, Boolean isPass, String finalScore, String scoreInTeam, List<InternSubjectDTO> internSubjectDTOList) {
+    public InternDTO(Long id, String userName, LocalDate startDate, LocalDate endDate, String trainingState, String finalScore, String scoreInTeam, List<InternSubjectDTO> internSubjectDTOList) {
         this.id = id;
         this.userName = userName;
         this.startDate = startDate;
         this.endDate = endDate;
         this.numberDate = countDay(startDate, endDate);
         this.trainingState = trainingState;
-        this.isPass = isPass;
+        this.isPass = setIsPass(finalScore, scoreInTeam);
         this.finalScore = finalScore;
         this.scoreInTeam = scoreInTeam;
         this.internSubjectDTOList = internSubjectDTOList;
@@ -50,6 +50,21 @@ public class InternDTO {
         return numberDate;
     }
 
+    private Boolean setIsPass(String finalScoreIntern, String scoreInTeamIntern) {
+        if (finalScoreIntern == null || scoreInTeamIntern == null || finalScoreIntern.isEmpty() || scoreInTeamIntern.isEmpty()) {
+            return null;
+        }
+        double finalScore = Double.parseDouble(finalScoreIntern);
+        double scoreInTeam = Double.parseDouble(scoreInTeamIntern);
+
+        if (finalScore >= 7 && scoreInTeam >= 7) {
+            return true;
+        } else if (finalScore < 7) {
+            return false;
+        } else {
+            return false;
+        }
+    }
 
     public Long getId() {
         return id;

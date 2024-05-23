@@ -185,7 +185,7 @@ public class InternServiceImpl implements InternService {
                 internSubjectDTOList.set(indexSubject, internSubjectDTO);
             }
 
-//            Tính điểm trung bình môn
+//          Tính điểm trung bình môn
             for (int j = 0; j < internSubjectDTOList.size(); j++) {
                 InternSubjectDTO internSubjectDTO = internSubjectDTOList.get(j);
                 String theoryScore = internSubjectDTO.getTheoryScore();
@@ -196,19 +196,21 @@ public class InternServiceImpl implements InternService {
                             Double.parseDouble(theoryScore) + (Double.parseDouble(practiceScore) + Double.parseDouble(attitudeScore)) * 2) / 5) * 100.0) / 100.0;
                     internSubjectDTO.setTotalScore(String.valueOf(totalScore));
                     internSubjectDTOList.set(j, internSubjectDTO);
-                } else {
-                    checkFinalScore = false;
                 }
             }
-
-            if (checkFinalScore) {
-                for (int j = 0; j < internSubjectDTOList.size(); j++) {
-                    InternSubjectDTO internSubjectDTO = internSubjectDTOList.get(j);
+            int count = 0;
+            for (int j = 0; j < internSubjectDTOList.size(); j++) {
+                InternSubjectDTO internSubjectDTO = internSubjectDTOList.get(j);
+                if (internSubjectDTO.getTotalScore() != "NA") {
+                    count ++;
                     finalScore = finalScore + Double.parseDouble(internSubjectDTO.getTotalScore());
                 }
-                finalScore = Math.round((finalScore / internSubjectDTOList.size()) * 100.0) / 100.0;
             }
-
+            if (count == 0) {
+                checkFinalScore = false;
+            } else {
+                finalScore = Math.round((finalScore / count) * 100.0) / 100.0;
+            }
 
             InternDTO internDTO = new InternDTO(
                     internProfile.getUser().getId(),
@@ -216,7 +218,6 @@ public class InternServiceImpl implements InternService {
                     internProfile.getStartDate(),
                     internProfile.getEndDate(),
                     internProfile.getTrainingState(),
-                    internProfile.getIsPass(),
                     (checkFinalScore ? String.valueOf(finalScore) : "NA"),
                     internProfile.getScoreInTeam(),
                     internSubjectDTOList);
