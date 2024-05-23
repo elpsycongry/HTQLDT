@@ -39,8 +39,8 @@ public class RecruitmentPlanController {
     private UsersService usersService;
 
     @GetMapping("")
-    public ResponseEntity<Page<RecruitmentPlan>> getRecruitmentPlan(@PageableDefault(10) Pageable pageable) {
-        Page<RecruitmentPlan> recruitmentPlans = recruitmentPlanService.showRecruitmentPlan(pageable);
+    public ResponseEntity<Iterable<RecruitmentPlan>> getRecruitmentPlan() {
+        Iterable<RecruitmentPlan> recruitmentPlans = recruitmentPlanRepository.findAll();
         return new ResponseEntity<>(recruitmentPlans, HttpStatus.OK);
     }
 

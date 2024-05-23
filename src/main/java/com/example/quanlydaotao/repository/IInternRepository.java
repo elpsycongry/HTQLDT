@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface IInternRepository extends JpaRepository<Intern,Long> {
-    Page<Intern> findAllByOrderByDateCreateDesc(Pageable pageable);
+    Page<Intern> findAllByOrderByIdDesc(Pageable pageable);
 
     Iterable<Intern> findByRecruitmentPlan(RecruitmentPlan recruitmentPlan);
 
