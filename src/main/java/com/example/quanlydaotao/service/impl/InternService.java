@@ -48,6 +48,7 @@ public class InternService implements IInternService {
         return iInternRepository.findById(id);
     }
 
+
     public void addIntern(Intern intern) throws Exception{
         RecruitmentPlan plan = recruitmentPlanService.findById(intern.getRecruitmentPlan().getId()).get();
         intern.setRecruitmentPlan(plan);
