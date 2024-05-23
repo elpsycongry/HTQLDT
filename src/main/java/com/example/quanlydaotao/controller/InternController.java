@@ -33,7 +33,6 @@ public class InternController {
         return new ResponseEntity<>(internService.getIntern(id).get(), HttpStatus.OK);
     }
 
-
     @PostMapping
     public ResponseEntity addIntern(@RequestBody Intern intern) {
         try {
