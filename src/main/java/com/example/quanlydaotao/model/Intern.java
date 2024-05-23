@@ -27,7 +27,7 @@ public class Intern {
     private boolean checkInterview;
     private String comment;
     private String note;
-    private boolean finalResult;
+    private String finalResult;
     private String status;
     private String scoreTest;
     private String scoreInterview;
@@ -59,11 +59,11 @@ public class Intern {
         return this;
     }
 
-    public boolean isFinalResult() {
+    public String getFinalResult() {
         return finalResult;
     }
 
-    public Intern setFinalResult(boolean finalResult) {
+    public Intern setFinalResult(String finalResult) {
         this.finalResult = finalResult;
         return this;
     }
