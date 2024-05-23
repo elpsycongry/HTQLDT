@@ -51,7 +51,6 @@ public class InternService implements IInternService {
     public void addIntern(Intern intern) throws Exception{
         RecruitmentPlan plan = recruitmentPlanService.findById(intern.getRecruitmentPlan().getId()).get();
         intern.setRecruitmentPlan(plan);
-
         if (!isFullIntern(intern.getRecruitmentPlan().getId())) {
             iInternRepository.save(intern);
         }else {
@@ -82,6 +81,5 @@ public class InternService implements IInternService {
                 )
         );
     }
-
 
 }

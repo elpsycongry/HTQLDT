@@ -1,17 +1,14 @@
 package com.example.quanlydaotao.controller;
 
-import com.example.quanlydaotao.dto.InternDTO;
 import com.example.quanlydaotao.dto.InternSearchDTO;
 import com.example.quanlydaotao.dto.PaginateRequest;
 import com.example.quanlydaotao.model.Intern;
 import com.example.quanlydaotao.model.RecruitmentPlan;
-import com.example.quanlydaotao.model.RecruitmentRequest;
 import com.example.quanlydaotao.service.impl.InternService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -42,11 +39,12 @@ public class InternController {
         try {
             internService.addIntern(intern);
         } catch (Exception e) {
-            return new ResponseEntity<>(e.getMessage(),HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
 
         return new ResponseEntity<>("Thêm ứng viên thành công", HttpStatus.OK);
     }
+
     @PutMapping("/{id}")
     public ResponseEntity<Intern> updateIntern(@RequestBody Intern intern, @PathVariable long id) {
         intern.setId(id);
