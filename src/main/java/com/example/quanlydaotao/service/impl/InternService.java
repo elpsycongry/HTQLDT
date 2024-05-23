@@ -1,15 +1,17 @@
 package com.example.quanlydaotao.service.impl;
 
-import com.example.quanlydaotao.dto.InternDTO;
+import com.example.quanlydaotao.dto.*;
 import com.example.quanlydaotao.model.Intern;
 import com.example.quanlydaotao.model.RecruitmentPlan;
-import com.example.quanlydaotao.model.RecruitmentPlanDetail;
 import com.example.quanlydaotao.repository.IInternRepository;
 import com.example.quanlydaotao.service.IInternService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+
 
 import java.time.LocalDate;
 import java.util.List;
@@ -47,11 +49,9 @@ public class InternService implements IInternService {
     }
 
 
-
     public void addIntern(Intern intern) throws Exception{
         RecruitmentPlan plan = recruitmentPlanService.findById(intern.getRecruitmentPlan().getId()).get();
         intern.setRecruitmentPlan(plan);
-
         if (!isFullIntern(intern.getRecruitmentPlan().getId())) {
             iInternRepository.save(intern);
         }else {
@@ -70,4 +70,17 @@ public class InternService implements IInternService {
         }
         return isFull;
     }
+
+    @Override
+    public Page<Intern> findAllByNameOrEmail(PaginateRequest paginateRequest, InternSearchDTO internSearchDTO) {
+        return iInternRepository.findAll(
+                new InternSpec(internSearchDTO),
+                PageRequest.of(
+                        paginateRequest.getPage(),
+                        paginateRequest.getSize(),
+                        Sort.by(Sort.Direction.DESC, "id")
+                )
+        );
+    }
+
 }
