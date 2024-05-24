@@ -1,17 +1,13 @@
 package com.example.quanlydaotao.service.impl;
 
 import com.example.quanlydaotao.dto.InternDTO;
-import com.example.quanlydaotao.dto.InternScoreDTO;
 import com.example.quanlydaotao.dto.InternSubjectDTO;
 import com.example.quanlydaotao.model.*;
 import com.example.quanlydaotao.model.InternProfile;
 import com.example.quanlydaotao.model.InternScore;
 import com.example.quanlydaotao.model.InternSubject;
 import com.example.quanlydaotao.model.User;
-import com.example.quanlydaotao.repository.InternProfileRepository;
-import com.example.quanlydaotao.repository.InternScoreRepository;
-import com.example.quanlydaotao.repository.InternSubjectRepository;
-import com.example.quanlydaotao.repository.UserRepository;
+import com.example.quanlydaotao.repository.*;
 import com.example.quanlydaotao.service.InternService;
 import com.example.quanlydaotao.service.UserService;
 import org.slf4j.Logger;
@@ -20,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.relational.core.sql.In;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -47,6 +42,8 @@ public class InternServiceImpl implements InternService {
     private UserRepository userRepository;
     @Autowired
     private UserService userService;
+    @Autowired
+    private SubjectCommentRepo subjectCommentRepo;
 
     @Override
     public List<InternProfile> getListIntern() {
@@ -111,6 +108,20 @@ public class InternServiceImpl implements InternService {
          internScoreRepository.save(internScore);
     }
 
+    @Override
+    public List<SubjectComment> getListSubjectCommentByUserID(Long userID) {
+        return subjectCommentRepo.findAllByUser(userRepository.findById(userID).get());
+    }
+
+    @Override
+    public Optional<SubjectComment> getSubjectCommentByID(Long idComment) {
+        return subjectCommentRepo.findById(idComment);
+    }
+
+    @Override
+    public void saveSubjectComment(SubjectComment subjectComment) {
+        subjectCommentRepo.save(subjectComment);
+    }
 
 
     @Override
