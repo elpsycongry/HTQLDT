@@ -106,4 +106,13 @@ public class  StatsController {
         return new ResponseEntity<>(trainingStatsService.getMaxTrainingStatsWithYear(), HttpStatus.OK);
     }
 
+    @GetMapping("/getMaxGrowthStatisticsWithMonth")
+    public ResponseEntity<TrainingStatsDTO> getMaxAverageOfMonth() {
+        return new ResponseEntity<>(trainingStatsService.getMaxTrainingStatsWithMonth(), HttpStatus.OK);
+    }
+
+    @GetMapping("/getMaxGrowthStatisticsWithQuarter")
+    public ResponseEntity<TrainingStatsDTO> getMaxAverageOfQuarter() {
+        return new ResponseEntity<>(trainingStatsService.getMaxTrainingStatsWithQuarter(), HttpStatus.OK);
+    }
 }
