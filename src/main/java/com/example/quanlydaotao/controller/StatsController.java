@@ -14,7 +14,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/stats")
 @CrossOrigin("*")
-public class StatsController {
+public class  StatsController {
     @Autowired
     private TrainingStatsService trainingStatsService;
 
