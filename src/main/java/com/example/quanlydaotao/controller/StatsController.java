@@ -1,6 +1,6 @@
 package com.example.quanlydaotao.controller;
 
-import com.example.quanlydaotao.dto.TraingChartsDTO;
+import com.example.quanlydaotao.dto.AverageOfSubjectDTO;
 import com.example.quanlydaotao.dto.TrainingStatsDTO;
 import com.example.quanlydaotao.service.TrainingStatsService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -85,4 +85,25 @@ public class StatsController {
 
         return new ResponseEntity<>(traingChartsDTOList, HttpStatus.OK);
     }
+
+    @GetMapping("/getGrowthStatisticsWithYear")
+    public ResponseEntity<TrainingStatsDTO> getAverageOfSubject(@RequestParam(name = "year")int year) {
+        return new ResponseEntity<>(trainingStatsService.getTrainingStatsWithYear(year), HttpStatus.OK);
+    }
+
+    @GetMapping("/getGrowthStatisticsWithMonth")
+    public ResponseEntity<TrainingStatsDTO> getGrowthStatisticsWithMonth(@RequestParam(name = "month")int month) {
+        return new ResponseEntity<>(trainingStatsService.getTrainingStatsWithMonth(month, 2024), HttpStatus.OK);
+    }
+
+    @GetMapping("/getGrowthStatisticsWithQuarter")
+    public ResponseEntity<TrainingStatsDTO> getGrowthStatisticsWithQuarter(@RequestParam(name = "quarter")int quarter) {
+        return new ResponseEntity<>(trainingStatsService.getTrainingStatsWithQuarter(quarter, 2024), HttpStatus.OK);
+    }
+
+    @GetMapping("/getMaxGrowthStatisticsWithYear")
+    public ResponseEntity<TrainingStatsDTO> getMaxAverageOfSubject() {
+        return new ResponseEntity<>(trainingStatsService.getMaxTrainingStatsWithYear(), HttpStatus.OK);
+    }
+
 }

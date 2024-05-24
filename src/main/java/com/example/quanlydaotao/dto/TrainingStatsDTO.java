@@ -1,5 +1,7 @@
 package com.example.quanlydaotao.dto;
 
+import java.util.List;
+
 public class TrainingStatsDTO {
     private int internsEnrolled;
     private int graduatingInterns;
@@ -9,6 +11,7 @@ public class TrainingStatsDTO {
     private int internsQuitInternship;
     private double averageGraduationScore;
     public TrainingStatsDTO() {}
+    private List<AverageOfSubjectDTO> averageOfSubject;
     public TrainingStatsDTO(int internsEnrolled, int graduatingInterns,
                             int internsFailed, Double rate,
                             int internsCurrentlyPracticing,
@@ -21,6 +24,21 @@ public class TrainingStatsDTO {
         this.internsQuitInternship = internsQuitInternship;
         this.internsCurrentlyPracticing = internsCurrentlyPracticing;
         this.averageGraduationScore = averageGraduationScore;
+    }
+
+    public TrainingStatsDTO(int internsEnrolled, int graduatingInterns,
+                            int internsFailed, Double rate,
+                            int internsCurrentlyPracticing,
+                            int internsQuitInternship,
+                            double averageGraduationScore, List<AverageOfSubjectDTO> averageOfSubject) {
+        this.internsEnrolled = internsEnrolled;
+        this.graduatingInterns = graduatingInterns;
+        this.internsFailed = internsFailed;
+        this.rate = rate;
+        this.internsQuitInternship = internsQuitInternship;
+        this.internsCurrentlyPracticing = internsCurrentlyPracticing;
+        this.averageGraduationScore = averageGraduationScore;
+        this.averageOfSubject = averageOfSubject;
     }
 
     public int getInternsEnrolled() {
@@ -79,5 +97,13 @@ public class TrainingStatsDTO {
 
     public void setInternsQuitInternship(int internsQuitInternship) {
         this.internsQuitInternship = internsQuitInternship;
+    }
+
+    public List<AverageOfSubjectDTO> getAverageOfSubject() {
+        return averageOfSubject;
+    }
+
+    public void setAverageOfSubject(List<AverageOfSubjectDTO> averageOfSubject) {
+        this.averageOfSubject = averageOfSubject;
     }
 }
