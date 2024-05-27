@@ -2,6 +2,7 @@ package com.example.quanlydaotao.dto;
 
 
 import com.example.quanlydaotao.dto.InternSubjectDTO;
+import com.example.quanlydaotao.model.Intern;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -21,6 +22,29 @@ public class InternDTO {
     private String finalScore;
     private String scoreInTeam;
     private List<InternSubjectDTO> internSubjectDTOList;
+
+
+
+    private long idRecruitment;
+    private Intern intern;
+
+    public long getIdRecruitment() {
+        return idRecruitment;
+    }
+
+    public InternDTO setIdRecruitment(long idRecruitment) {
+        this.idRecruitment = idRecruitment;
+        return this;
+    }
+
+    public Intern getIntern() {
+        return intern;
+    }
+
+    public InternDTO setIntern(Intern intern) {
+        this.intern = intern;
+        return this;
+    }
 
     public InternDTO(){}
 
@@ -157,4 +181,3 @@ public class InternDTO {
     }
 
 }
-
