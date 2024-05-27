@@ -31,7 +31,7 @@ public class InternDTO {
         this.endDate = endDate;
         this.numberDate = countDay(startDate, endDate);
         this.trainingState = trainingState;
-        this.isPass = setIsPass(finalScore, scoreInTeam);
+        this.isPass = setIsPass(finalScore, scoreInTeam, startDate, endDate, trainingState);
         this.finalScore = finalScore;
         this.scoreInTeam = scoreInTeam;
         this.internSubjectDTOList = internSubjectDTOList;
@@ -50,9 +50,19 @@ public class InternDTO {
         return numberDate;
     }
 
-    private Boolean setIsPass(String finalScoreIntern, String scoreInTeamIntern) {
+    private Boolean setIsPass(String finalScoreIntern, String scoreInTeamIntern,
+                              LocalDate startDate, LocalDate endDate, String trainingState) {
+        if (trainingState.equals("stop_training")) {
+            return false;
+        }
         if (finalScoreIntern == null || scoreInTeamIntern == null || finalScoreIntern.isEmpty() || scoreInTeamIntern.isEmpty()) {
             return null;
+        }
+
+
+
+        if (countDay(startDate, endDate) > 50) {
+            return false;
         }
         double finalScore = Double.parseDouble(finalScoreIntern);
         double scoreInTeam = Double.parseDouble(scoreInTeamIntern);
