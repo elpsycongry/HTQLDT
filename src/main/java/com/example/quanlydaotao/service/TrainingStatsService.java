@@ -13,4 +13,6 @@ public interface TrainingStatsService {
     TrainingStatsDTO getTrainingStatsWithYear(int year);
     List<AverageOfSubjectDTO> getAllAverageOfSubject();
     TrainingStatsDTO getMaxTrainingStatsWithYear();
+    TrainingStatsDTO getMaxTrainingStatsWithMonth();
+    TrainingStatsDTO getMaxTrainingStatsWithQuarter();
 }

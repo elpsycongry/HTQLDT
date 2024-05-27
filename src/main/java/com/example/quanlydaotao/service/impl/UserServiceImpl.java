@@ -70,11 +70,7 @@ public class UserServiceImpl implements UserService {
     public Iterable<User> remoteRoleAdminDisplay(Iterable<User> users) {
         List<User> userList = (List<User>) users;
         userList.removeIf(user -> user.getRoles().stream().anyMatch(role -> role.getName().equals("ROLE_ADMIN")));
-        userList.forEach(user -> {
-            List<Role> roles = user.getRoles();
-            roles.removeIf(role -> role.getName().equals("ROLE"));
-            user.setRoles(roles);
-        });
+        userList.removeIf(user -> user.getRoles().stream().anyMatch(role -> role.getName().equals("ROLE_HR")));
         users = userList;
         return users;
     }

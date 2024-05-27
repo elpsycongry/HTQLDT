@@ -685,4 +685,239 @@ public class TrainingStatsImpl implements TrainingStatsService {
         trainingStatsMaxDTO.setAverageOfSubject(listAverageOfSubjectDTO);
         return trainingStatsMaxDTO;
     }
+
+    @Override
+    public TrainingStatsDTO getMaxTrainingStatsWithMonth() {
+        List<TrainingStatsDTO> trainingStatsDTOList = new ArrayList<>();
+        TrainingStatsDTO trainingStatsDTO1 = getTrainingStatsWithMonth(1,2024);
+        TrainingStatsDTO trainingStatsDTO2 = getTrainingStatsWithMonth(2,2024);
+        TrainingStatsDTO trainingStatsDTO3 = getTrainingStatsWithMonth(3, 2024);
+        TrainingStatsDTO trainingStatsDTO4 = getTrainingStatsWithMonth(4, 2024);
+        TrainingStatsDTO trainingStatsDTO5 = getTrainingStatsWithMonth(5, 2024);
+        TrainingStatsDTO trainingStatsDTO6 = getTrainingStatsWithMonth(6,2024);
+        TrainingStatsDTO trainingStatsDTO7 = getTrainingStatsWithMonth(7,2024);
+        TrainingStatsDTO trainingStatsDTO8 = getTrainingStatsWithMonth(8, 2024);
+        TrainingStatsDTO trainingStatsDTO9 = getTrainingStatsWithMonth(9, 2024);
+        TrainingStatsDTO trainingStatsDTO10 = getTrainingStatsWithMonth(10, 2024);
+        TrainingStatsDTO trainingStatsDTO11 = getTrainingStatsWithMonth(11, 2024);
+        TrainingStatsDTO trainingStatsDTO12 = getTrainingStatsWithMonth(12, 2024);
+        trainingStatsDTOList.add(trainingStatsDTO1);
+        trainingStatsDTOList.add(trainingStatsDTO2);
+        trainingStatsDTOList.add(trainingStatsDTO3);
+        trainingStatsDTOList.add(trainingStatsDTO4);
+        trainingStatsDTOList.add(trainingStatsDTO5);
+        trainingStatsDTOList.add(trainingStatsDTO6);
+        trainingStatsDTOList.add(trainingStatsDTO7);
+        trainingStatsDTOList.add(trainingStatsDTO8);
+        trainingStatsDTOList.add(trainingStatsDTO9);
+        trainingStatsDTOList.add(trainingStatsDTO10);
+        trainingStatsDTOList.add(trainingStatsDTO11);
+        trainingStatsDTOList.add(trainingStatsDTO12);
+        TrainingStatsDTO trainingStatsMaxDTO = new TrainingStatsDTO();
+        int internsEnrolled = trainingStatsDTOList.get(0).getInternsEnrolled();
+        int graduatingInterns = trainingStatsDTOList.get(0).getGraduatingInterns();
+        int internsFailed = trainingStatsDTOList.get(0).getInternsFailed();
+        double rate = trainingStatsDTOList.get(0).getRate();
+        double averageGraduationScore = trainingStatsDTOList.get(0).getAverageGraduationScore();
+        double scoreJava = trainingStatsDTOList.get(0).getAverageOfSubject().get(0).getAverage();
+        double scoreGit = trainingStatsDTOList.get(0).getAverageOfSubject().get(1).getAverage();
+        double scoreReact = trainingStatsDTOList.get(0).getAverageOfSubject().get(2).getAverage();
+        double scoreSpring = trainingStatsDTOList.get(0).getAverageOfSubject().get(3).getAverage();
+        double scoreCTDL = trainingStatsDTOList.get(0).getAverageOfSubject().get(4).getAverage();
+        double scoreGiaiThuat = trainingStatsDTOList.get(0).getAverageOfSubject().get(5).getAverage();
+        double scoreScrum = trainingStatsDTOList.get(0).getAverageOfSubject().get(6).getAverage();
+        for (TrainingStatsDTO trainingStatsDTO : trainingStatsDTOList) {
+            if (internsEnrolled < trainingStatsDTO.getInternsEnrolled()) {
+                internsEnrolled = trainingStatsDTO.getInternsEnrolled();
+            }
+            if (graduatingInterns < trainingStatsDTO.getGraduatingInterns()){
+                graduatingInterns = trainingStatsDTO.getGraduatingInterns();
+            }
+            if (internsFailed < trainingStatsDTO.getInternsFailed()) {
+                internsFailed = trainingStatsDTO.getInternsFailed();
+            }
+            if (rate < trainingStatsDTO.getRate()) {
+                rate = trainingStatsDTO.getRate();
+            }
+            if (averageGraduationScore < trainingStatsDTO.getAverageGraduationScore()) {
+                averageGraduationScore = trainingStatsDTO.getAverageGraduationScore();
+            }
+            if (scoreJava < trainingStatsDTO.getAverageOfSubject().get(0).getAverage()) {
+                scoreJava = trainingStatsDTO.getAverageOfSubject().get(0).getAverage();
+            }
+            if (scoreGit < trainingStatsDTO.getAverageOfSubject().get(1).getAverage()) {
+                scoreGit = trainingStatsDTO.getAverageOfSubject().get(1).getAverage();
+            }
+            if (scoreReact < trainingStatsDTO.getAverageOfSubject().get(2).getAverage()) {
+                scoreReact = trainingStatsDTO.getAverageOfSubject().get(2).getAverage();
+            }
+            if (scoreSpring < trainingStatsDTO.getAverageOfSubject().get(3).getAverage()) {
+                scoreSpring = trainingStatsDTO.getAverageOfSubject().get(3).getAverage();
+            }
+            if (scoreCTDL < trainingStatsDTO.getAverageOfSubject().get(4).getAverage()) {
+                scoreCTDL = trainingStatsDTO.getAverageOfSubject().get(4).getAverage();
+            }
+            if (scoreGiaiThuat < trainingStatsDTO.getAverageOfSubject().get(5).getAverage()) {
+                scoreGiaiThuat  = trainingStatsDTO.getAverageOfSubject().get(5).getAverage();
+            }
+            if (scoreScrum < trainingStatsDTO.getAverageOfSubject().get(6).getAverage()) {
+                scoreScrum = trainingStatsDTO.getAverageOfSubject().get(6).getAverage();
+            }
+        }
+
+        trainingStatsMaxDTO.setInternsEnrolled(internsEnrolled);
+        trainingStatsMaxDTO.setGraduatingInterns(graduatingInterns);
+        trainingStatsMaxDTO.setInternsFailed(internsFailed);
+        trainingStatsMaxDTO.setAverageGraduationScore(averageGraduationScore);
+        trainingStatsMaxDTO.setRate(rate);
+        List<AverageOfSubjectDTO> listAverageOfSubjectDTO = new ArrayList<>();
+
+        AverageOfSubjectDTO averageOfSubjectDTO = new AverageOfSubjectDTO();
+        averageOfSubjectDTO.setSubjectName("Java");
+        averageOfSubjectDTO.setAverage(scoreJava);
+        listAverageOfSubjectDTO.add(averageOfSubjectDTO);
+
+        AverageOfSubjectDTO averageOfSubjectDTO1 = new AverageOfSubjectDTO();
+        averageOfSubjectDTO1.setSubjectName("Git");
+        averageOfSubjectDTO1.setAverage(scoreGit);
+        listAverageOfSubjectDTO.add(averageOfSubjectDTO1);
+
+        AverageOfSubjectDTO averageOfSubjectDTO2 = new AverageOfSubjectDTO();
+        averageOfSubjectDTO2.setSubjectName("React");
+        averageOfSubjectDTO2.setAverage(scoreReact);
+        listAverageOfSubjectDTO.add(averageOfSubjectDTO2);
+
+        AverageOfSubjectDTO averageOfSubjectDTO3 = new AverageOfSubjectDTO();
+        averageOfSubjectDTO3.setSubjectName("Spring Boot");
+        averageOfSubjectDTO3.setAverage(scoreSpring);
+        listAverageOfSubjectDTO.add(averageOfSubjectDTO3);
+
+        AverageOfSubjectDTO averageOfSubjectDTO4 = new AverageOfSubjectDTO();
+        averageOfSubjectDTO4.setSubjectName("CTDL");
+        averageOfSubjectDTO4.setAverage(scoreCTDL);
+        listAverageOfSubjectDTO.add(averageOfSubjectDTO4);
+
+        AverageOfSubjectDTO averageOfSubjectDTO5 = new AverageOfSubjectDTO();
+        averageOfSubjectDTO5.setSubjectName("Giải thuật");
+        averageOfSubjectDTO5.setAverage(scoreGiaiThuat);
+        listAverageOfSubjectDTO.add(averageOfSubjectDTO5);
+
+        AverageOfSubjectDTO averageOfSubjectDTO6 = new AverageOfSubjectDTO();
+        averageOfSubjectDTO6.setSubjectName("Scrum");
+        averageOfSubjectDTO6.setAverage(scoreScrum);
+        listAverageOfSubjectDTO.add(averageOfSubjectDTO6);
+
+        trainingStatsMaxDTO.setAverageOfSubject(listAverageOfSubjectDTO);
+        return trainingStatsMaxDTO;
+    }
+
+    @Override
+    public TrainingStatsDTO getMaxTrainingStatsWithQuarter() {
+        List<TrainingStatsDTO> trainingStatsDTOList = new ArrayList<>();
+        TrainingStatsDTO trainingStatsDTO1 = getTrainingStatsWithQuarter(1,2024);
+        TrainingStatsDTO trainingStatsDTO2 = getTrainingStatsWithQuarter(2,2024);
+        TrainingStatsDTO trainingStatsDTO3 = getTrainingStatsWithQuarter(3, 2024);
+        TrainingStatsDTO trainingStatsDTO4 = getTrainingStatsWithQuarter(4, 2024);
+        trainingStatsDTOList.add(trainingStatsDTO1);
+        trainingStatsDTOList.add(trainingStatsDTO2);
+        trainingStatsDTOList.add(trainingStatsDTO3);
+        trainingStatsDTOList.add(trainingStatsDTO4);
+
+        TrainingStatsDTO trainingStatsMaxDTO = new TrainingStatsDTO();
+        int internsEnrolled = trainingStatsDTOList.get(0).getInternsEnrolled();
+        int graduatingInterns = trainingStatsDTOList.get(0).getGraduatingInterns();
+        int internsFailed = trainingStatsDTOList.get(0).getInternsFailed();
+        double rate = trainingStatsDTOList.get(0).getRate();
+        double averageGraduationScore = trainingStatsDTOList.get(0).getAverageGraduationScore();
+        double scoreJava = trainingStatsDTOList.get(0).getAverageOfSubject().get(0).getAverage();
+        double scoreGit = trainingStatsDTOList.get(0).getAverageOfSubject().get(1).getAverage();
+        double scoreReact = trainingStatsDTOList.get(0).getAverageOfSubject().get(2).getAverage();
+        double scoreSpring = trainingStatsDTOList.get(0).getAverageOfSubject().get(3).getAverage();
+        double scoreCTDL = trainingStatsDTOList.get(0).getAverageOfSubject().get(4).getAverage();
+        double scoreGiaiThuat = trainingStatsDTOList.get(0).getAverageOfSubject().get(5).getAverage();
+        double scoreScrum = trainingStatsDTOList.get(0).getAverageOfSubject().get(6).getAverage();
+        for (TrainingStatsDTO trainingStatsDTO : trainingStatsDTOList) {
+            if (internsEnrolled < trainingStatsDTO.getInternsEnrolled()) {
+                internsEnrolled = trainingStatsDTO.getInternsEnrolled();
+            }
+            if (graduatingInterns < trainingStatsDTO.getGraduatingInterns()){
+                graduatingInterns = trainingStatsDTO.getGraduatingInterns();
+            }
+            if (internsFailed < trainingStatsDTO.getInternsFailed()) {
+                internsFailed = trainingStatsDTO.getInternsFailed();
+            }
+            if (rate < trainingStatsDTO.getRate()) {
+                rate = trainingStatsDTO.getRate();
+            }
+            if (averageGraduationScore < trainingStatsDTO.getAverageGraduationScore()) {
+                averageGraduationScore = trainingStatsDTO.getAverageGraduationScore();
+            }
+            if (scoreJava < trainingStatsDTO.getAverageOfSubject().get(0).getAverage()) {
+                scoreJava = trainingStatsDTO.getAverageOfSubject().get(0).getAverage();
+            }
+            if (scoreGit < trainingStatsDTO.getAverageOfSubject().get(1).getAverage()) {
+                scoreGit = trainingStatsDTO.getAverageOfSubject().get(1).getAverage();
+            }
+            if (scoreReact < trainingStatsDTO.getAverageOfSubject().get(2).getAverage()) {
+                scoreReact = trainingStatsDTO.getAverageOfSubject().get(2).getAverage();
+            }
+            if (scoreSpring < trainingStatsDTO.getAverageOfSubject().get(3).getAverage()) {
+                scoreSpring = trainingStatsDTO.getAverageOfSubject().get(3).getAverage();
+            }
+            if (scoreCTDL < trainingStatsDTO.getAverageOfSubject().get(4).getAverage()) {
+                scoreCTDL = trainingStatsDTO.getAverageOfSubject().get(4).getAverage();
+            }
+            if (scoreGiaiThuat < trainingStatsDTO.getAverageOfSubject().get(5).getAverage()) {
+                scoreGiaiThuat  = trainingStatsDTO.getAverageOfSubject().get(5).getAverage();
+            }
+            if (scoreScrum < trainingStatsDTO.getAverageOfSubject().get(6).getAverage()) {
+                scoreScrum = trainingStatsDTO.getAverageOfSubject().get(6).getAverage();
+            }
+        }
+
+        trainingStatsMaxDTO.setInternsEnrolled(internsEnrolled);
+        trainingStatsMaxDTO.setGraduatingInterns(graduatingInterns);
+        trainingStatsMaxDTO.setInternsFailed(internsFailed);
+        trainingStatsMaxDTO.setAverageGraduationScore(averageGraduationScore);
+        trainingStatsMaxDTO.setRate(rate);
+        List<AverageOfSubjectDTO> listAverageOfSubjectDTO = new ArrayList<>();
+
+        AverageOfSubjectDTO averageOfSubjectDTO = new AverageOfSubjectDTO();
+        averageOfSubjectDTO.setSubjectName("Java");
+        averageOfSubjectDTO.setAverage(scoreJava);
+        listAverageOfSubjectDTO.add(averageOfSubjectDTO);
+
+        AverageOfSubjectDTO averageOfSubjectDTO1 = new AverageOfSubjectDTO();
+        averageOfSubjectDTO1.setSubjectName("Git");
+        averageOfSubjectDTO1.setAverage(scoreGit);
+        listAverageOfSubjectDTO.add(averageOfSubjectDTO1);
+
+        AverageOfSubjectDTO averageOfSubjectDTO2 = new AverageOfSubjectDTO();
+        averageOfSubjectDTO2.setSubjectName("React");
+        averageOfSubjectDTO2.setAverage(scoreReact);
+        listAverageOfSubjectDTO.add(averageOfSubjectDTO2);
+
+        AverageOfSubjectDTO averageOfSubjectDTO3 = new AverageOfSubjectDTO();
+        averageOfSubjectDTO3.setSubjectName("Spring Boot");
+        averageOfSubjectDTO3.setAverage(scoreSpring);
+        listAverageOfSubjectDTO.add(averageOfSubjectDTO3);
+
+        AverageOfSubjectDTO averageOfSubjectDTO4 = new AverageOfSubjectDTO();
+        averageOfSubjectDTO4.setSubjectName("CTDL");
+        averageOfSubjectDTO4.setAverage(scoreCTDL);
+        listAverageOfSubjectDTO.add(averageOfSubjectDTO4);
+
+        AverageOfSubjectDTO averageOfSubjectDTO5 = new AverageOfSubjectDTO();
+        averageOfSubjectDTO5.setSubjectName("Giải thuật");
+        averageOfSubjectDTO5.setAverage(scoreGiaiThuat);
+        listAverageOfSubjectDTO.add(averageOfSubjectDTO5);
+
+        AverageOfSubjectDTO averageOfSubjectDTO6 = new AverageOfSubjectDTO();
+        averageOfSubjectDTO6.setSubjectName("Scrum");
+        averageOfSubjectDTO6.setAverage(scoreScrum);
+        listAverageOfSubjectDTO.add(averageOfSubjectDTO6);
+
+        trainingStatsMaxDTO.setAverageOfSubject(listAverageOfSubjectDTO);
+        return trainingStatsMaxDTO;
+    }
 }
