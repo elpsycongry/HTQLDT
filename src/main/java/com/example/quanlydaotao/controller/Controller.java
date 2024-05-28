@@ -186,4 +186,11 @@ public class Controller {
 
         return new ResponseEntity<>(message, HttpStatus.OK);
     }
+
+    @PostMapping("/admin/users/add")
+    public ResponseEntity<String> addUser(@RequestBody User user) {
+        // Save the new user
+        userService.save(user);
+        return new ResponseEntity<>("User added!", HttpStatus.CREATED);
+    }
 }
