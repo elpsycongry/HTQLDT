@@ -100,6 +100,7 @@ public class SecurityConfig {
                         .requestMatchers("api/recruitmentRequests/**").hasAnyAuthority("ROLE_ADMIN")
                         .requestMatchers("api/plansIntern/**").hasAnyAuthority("ROLE_ADMIN")
                         .requestMatchers("/api/recruitmentStats/**").hasAnyAuthority("ROLE_ADMIN")
+                        .requestMatchers("/api/notifications/**").permitAll()
                 )
                 .exceptionHandling(customizer -> customizer.accessDeniedHandler(customAccessDeniedHandler()))
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

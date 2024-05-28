@@ -1,0 +1,101 @@
+package com.example.quanlydaotao.controller;
+
+import com.example.quanlydaotao.dto.NotificationDTO;
+import com.example.quanlydaotao.model.Notification;
+import com.example.quanlydaotao.model.NotificationToUser;
+import com.example.quanlydaotao.model.User;
+import com.example.quanlydaotao.repository.RoleRepository;
+import com.example.quanlydaotao.repository.UserRepository;
+import com.example.quanlydaotao.service.NotificationService;
+import com.example.quanlydaotao.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
+import java.util.List;
+
+@RestController
+@CrossOrigin("*")
+@RequestMapping("/api/notifications")
+public class NotificationController {
+    @Autowired
+    private NotificationService notificationService;
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private RoleRepository roleRepository;
+
+    @GetMapping
+    public ResponseEntity<?> testCode (){
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> findAllNotiUser (@PathVariable("id") Long id, @RequestParam(required = false) String type){
+        List<NotificationToUser> listData = new ArrayList<>();
+        if (type == null || type.equals("all")) {
+            listData = notificationService.findAllNotiWithUserId(id);
+        } else if (type.equals("un_read")) {
+            listData = notificationService.findAllNotiWithUserIdAndStatus(id, false);
+        }
+        ArrayList<NotificationDTO> list = new ArrayList<>();
+        for (NotificationToUser notificationToUser : listData) {
+            NotificationDTO notificationDTO = new NotificationDTO();
+            notificationDTO.setContent(notificationToUser.getNotification().getContent());
+            notificationDTO.setId(notificationToUser.getId());
+            notificationDTO.setIsRead(notificationToUser.getIsRead());
+            notificationDTO.setTimeCreate(notificationToUser.getNotification().getTimestamp());
+            notificationDTO.setTimestamp(notificationService.getTimestamp(notificationToUser.getNotification().getTimestamp()));
+            list.add(notificationDTO);
+        }
+        return new ResponseEntity<>(list,HttpStatus.OK);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<?> setStatusNotification (@RequestBody List<NotificationDTO> notificationlist){
+
+        for (NotificationDTO notificationDTO : notificationlist) {
+           NotificationToUser notification =   notificationService.findNotificationToUserById(notificationDTO.getId()).get();
+           notification.setIsRead(notificationDTO.getIsRead());
+           notificationService.saveNotiToUser(notification);
+        }
+        return new ResponseEntity<>(true,HttpStatus.OK);
+    }
+
+    @PostMapping
+    public ResponseEntity<?> addNotification(@RequestBody NotificationDTO notification){
+
+        Notification notificationEntity = new Notification();
+        notificationEntity.setContent(notification.getContent());
+        notificationEntity.setTimestamp(notification.getTimeCreate());
+        notificationEntity.setCreator(userRepository.findById(notification.getCreatorId()).get());
+
+        try {
+            notificationEntity = notificationService.addNotification(notificationEntity);
+        } catch (Exception e){
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        List<User> users = new ArrayList<>();
+        if (notification.getListReceiverId() != null){
+            for (Long id : notification.getListReceiverId()){
+                User user = userRepository.findById(id).get();
+                users.add(user);
+            }
+        }
+        if (notification.getRoleReceiver() != null){
+            users = userRepository.findAllByRoles(roleRepository.findByName(notification.getRoleReceiver()));
+        }
+        for (User user : users) {
+            NotificationToUser notificationToUser = new NotificationToUser();
+            notificationToUser.setNotification(notificationEntity);
+            notificationToUser.setUser(user);
+            notificationToUser.setIsRead(false);
+            notificationService.saveNotiToUser(notificationToUser);
+        }
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+}
