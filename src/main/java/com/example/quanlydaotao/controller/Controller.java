@@ -193,4 +193,10 @@ public class Controller {
         userService.save(user);
         return new ResponseEntity<>("User added!", HttpStatus.CREATED);
     }
+
+    @GetMapping("/admin/users/check-email/{email}")
+    public ResponseEntity<Map<String, Boolean>> checkEmail(@PathVariable String email) {
+        boolean exists = userService.checkEmailExists(email);
+        return ResponseEntity.ok(Collections.singletonMap("exists", exists));
+    }
 }
