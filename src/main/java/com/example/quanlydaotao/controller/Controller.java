@@ -59,6 +59,7 @@ public class Controller {
         if (user.getRoles() == null) {
             Role roleUser = roleService.findByName("ROLE_HR");
             user.setRoles(Collections.singletonList(roleUser));
+            user.setStatus(true);
         }
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
