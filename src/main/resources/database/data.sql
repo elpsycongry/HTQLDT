@@ -8,8 +8,7 @@ values ('ROLE_ADMIN', 'Super Admin'),
        ('ROLE_DM', 'Trưởng bộ phận/nhóm'),
        ('ROLE_QLĐT', 'Quản lí đào tạo'),
        ('ROLE_KSCL', 'Kiểm soát chất lượng'),
-       ('ROLE_HR', 'Nhân sự'),
-       ('ROLE', 'Nhân viên');
+       ('ROLE_HR', 'Nhân sự');
 
 insert into intern_profiles(end_date,
                             is_pass,

@@ -12,7 +12,7 @@ public interface InternService {
     List<InternProfile> getListIntern();
     List<InternScore> getListInternScore();
     InternProfile getInternProfile(Long internID);
-    List<InternScore> getInternScore(User user);
+//    List<InternScore> getInternScore(User user);
     List<InternSubject> getSubjects();
     Iterable<InternDTO> getAllInter();
     Iterable<InternDTO> findListInterWithNameInternAndTrainingState(String keyword, String trainingState);
@@ -39,4 +39,5 @@ public interface InternService {
     Optional<SubjectComment> getSubjectCommentByID(Long idComment);
 
     void saveSubjectComment(SubjectComment subjectComment);
+    void saveInterProfile(InternProfile internProfile);
 }

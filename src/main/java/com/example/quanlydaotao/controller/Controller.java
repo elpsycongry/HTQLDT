@@ -62,6 +62,7 @@ public class Controller {
         }
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setStatus(true);
         userService.save(user);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }

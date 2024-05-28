@@ -61,10 +61,15 @@ public class InternServiceImpl implements InternService {
         return internProfileRepository.findById(userID).get();
     }
 
-    @Override
-    public List<InternScore> getInternScore(User user) {
-        return internScoreRepository.getInternScoresByUser(user);
-    }
+//    @Override
+//    public List<InternScore> getInternScore(User user) {
+//        return null;
+//    }
+
+//    @Override
+//    public List<InternScore> getInternScore(User user) {
+//        return internScoreRepository.getInternScoresByUser(user);
+//    }
 
 
     @Override
@@ -73,9 +78,14 @@ public class InternServiceImpl implements InternService {
     }
 
     @Override
-    public List<Object[]> getAllByUserId(Long id) {
-        return internScoreRepository.getAllByUserId(id);
+    public Iterable<InternDTO> getAllInter() {
+        return null;
     }
+
+//    @Override
+//    public List<Object[]> getAllByUserId(Long id) {
+//        return internScoreRepository.getAllByUserId(id);
+//    }
 
     @Override
     public InternProfile save(InternProfile internProfile) {
@@ -84,8 +94,13 @@ public class InternServiceImpl implements InternService {
 
     @Override
     public List<InternScore> getListInternScoreByUserID(Long userID) {
-        return internScoreRepository.getAllByUser(userRepository.findById(userID).get());
+        return null;
     }
+
+//    @Override
+//    public List<InternScore> getListInternScoreByUserID(Long userID) {
+//        return internScoreRepository.getAllByUser(userRepository.findById(userID).get());
+//    }
 
     @Override
     public InternSubject findInternSubjectByName(String name) {
@@ -93,15 +108,25 @@ public class InternServiceImpl implements InternService {
     }
 
     @Override
-    public Optional<InternScore> getInternScoreByUserAndSubjectAndType(User user, InternSubject subject,String type) {
-        return internScoreRepository.findByUserAndInternSubjectAndType(user , subject, type);
+    public Optional<InternScore> getInternScoreByUserAndSubjectAndType(User user, InternSubject subject, String type) {
+        return Optional.empty();
     }
+
+//    @Override
+//    public Optional<InternScore> getInternScoreByUserAndSubjectAndType(User user, InternSubject subject,String type) {
+//        return internScoreRepository.findByUserAndInternSubjectAndType(user , subject, type);
+//    }
 
     @Override
     public Optional<InternProfile> getInternProfileByUserID(Long userId) {
-
-        return internProfileRepository.findByUser(userRepository.findById(userId).get());
+        return Optional.empty();
     }
+
+//    @Override
+//    public Optional<InternProfile> getInternProfileByUserID(Long userId) {
+//
+//        return internProfileRepository.findByUser(userRepository.findById(userId).get());
+//    }
 
     @Override
     public void saveInternScore(InternScore internScore) {
@@ -110,8 +135,13 @@ public class InternServiceImpl implements InternService {
 
     @Override
     public List<SubjectComment> getListSubjectCommentByUserID(Long userID) {
-        return subjectCommentRepo.findAllByUser(userRepository.findById(userID).get());
+        return null;
     }
+
+//    @Override
+//    public List<SubjectComment> getListSubjectCommentByUserID(Long userID) {
+//        return subjectCommentRepo.findAllByUser(userRepository.findById(userID).get());
+//    }
 
     @Override
     public Optional<SubjectComment> getSubjectCommentByID(Long idComment) {
@@ -123,119 +153,124 @@ public class InternServiceImpl implements InternService {
         subjectCommentRepo.save(subjectComment);
     }
 
-
     @Override
-    public Iterable<InternDTO> getAllInter() {
-
-        //Tạo mới danh sách chứa các thông tin thực tập sinh
-        List<InternDTO> internDTOList = new ArrayList<>();
-
-        //Lấy ra danh sách thực tập sinh và thông tin của họ
-        List<InternProfile> internProfiles = internProfileRepository.findAll();
-
-        //Lấy ra danh sách môn học
-        List<InternSubject> internSubjects = getSubjects();
-
-        for (int i = 0; i < internProfiles.size(); i++) {
-            //Lấy ra thông tin TTS
-            InternProfile internProfile = internProfiles.get(i);
-            //Lấy ra danh sách điểm InterScore của 1 thực tập sinh
-            List<InternScore> internScores = internScoreRepository.findAllByUser(internProfile.getUser());
-            //Khai báo danh sách môn học và điểm lí thuyết, thực hành, thái độ
-            List<InternSubjectDTO> internSubjectDTOList = new ArrayList<>();            //Khai báo điểm trung bình chung cuối khoá học
-            boolean checkFinalScore = true;
-            double finalScore = 0;
-
-            for (int j = 0; j < internSubjects.size(); j++) {
-                Long id = (long) (j + 1);
-                InternSubjectDTO internSubjectDTO = new InternSubjectDTO(id, internSubjects.get(j).getName());
-                internSubjectDTOList.add(j, internSubjectDTO);
-            }
-
-            //Duyệt qua danh sách điểm với 27 con điểm cho 7 môn và 3 loại
-            for (int j = 0; j < internScores.size(); j++) {
-
-                //Lấy ra 3 giá trị từng đối tượng trong bảng điểm của 1 intern
-                String nameSubject = internScores.get(j).getInternSubject().getName();
-                String type = internScores.get(j).getType();
-                String value = internScores.get(j).getValue();
-
-                //Tìm vị trí môn học theo tên trong danh sách internScoreDTOList
-                int indexSubject = IntStream.range(0, internSubjectDTOList.size())
-                        .filter(k -> internSubjectDTOList.get(k).getNameSubject().equals(nameSubject))
-                        .findFirst().getAsInt();
-
-                //Lấy ra đối tượng môn học internSubjectDTO
-                InternSubjectDTO internSubjectDTO = internSubjectDTOList.get(indexSubject);
-
-                //Gán giá trị từng loại điểm cho môn học
-                if (type.equals("theory")) {
-                    if (value == null || value.isEmpty()) {
-                        internSubjectDTO.setTheoryScore("NA");
-                        internSubjectDTO.setTotalScore("NA");
-                    } else {
-                        internSubjectDTO.setTheoryScore(value);
-                    }
-                }
-                if (type.equals("practice")) {
-                    if (value == null || value.isEmpty()) {
-                        internSubjectDTO.setPracticeScore("NA");
-                        internSubjectDTO.setTotalScore("NA");
-                    } else {
-                        internSubjectDTO.setPracticeScore(value);
-                    }
-                }
-                if (type.equals("attitude")) {
-                    if (value == null || value.isEmpty()) {
-                        internSubjectDTO.setAttitudeScore("NA");
-                    } else {
-                        internSubjectDTO.setAttitudeScore(value);
-                        internSubjectDTO.setTotalScore("NA");
-                    }
-                }
-                internSubjectDTOList.set(indexSubject, internSubjectDTO);
-            }
-
-//          Tính điểm trung bình môn
-            for (int j = 0; j < internSubjectDTOList.size(); j++) {
-                InternSubjectDTO internSubjectDTO = internSubjectDTOList.get(j);
-                String theoryScore = internSubjectDTO.getTheoryScore();
-                String practiceScore = internSubjectDTO.getPracticeScore();
-                String attitudeScore = internSubjectDTO.getAttitudeScore();
-                if (theoryScore != "NA" && practiceScore != "NA" && attitudeScore != "NA") {
-                    double totalScore = Math.round(((
-                            Double.parseDouble(theoryScore) + (Double.parseDouble(practiceScore) + Double.parseDouble(attitudeScore)) * 2) / 5) * 100.0) / 100.0;
-                    internSubjectDTO.setTotalScore(String.valueOf(totalScore));
-                    internSubjectDTOList.set(j, internSubjectDTO);
-                }
-            }
-            int count = 0;
-            for (int j = 0; j < internSubjectDTOList.size(); j++) {
-                InternSubjectDTO internSubjectDTO = internSubjectDTOList.get(j);
-                if (internSubjectDTO.getTotalScore() != "NA") {
-                    count ++;
-                    finalScore = finalScore + Double.parseDouble(internSubjectDTO.getTotalScore());
-                }
-            }
-            if (count == 0) {
-                checkFinalScore = false;
-            } else {
-                finalScore = Math.round((finalScore / count) * 100.0) / 100.0;
-            }
-
-            InternDTO internDTO = new InternDTO(
-                    internProfile.getUser().getId(),
-                    internProfile.getUser().getName(),
-                    internProfile.getStartDate(),
-                    internProfile.getEndDate(),
-                    internProfile.getTrainingState(),
-                    (checkFinalScore ? String.valueOf(finalScore) : "NA"),
-                    internProfile.getScoreInTeam(),
-                    internSubjectDTOList);
-            internDTOList.add(i, internDTO);
-        }
-        return internDTOList;
+    public void saveInterProfile(InternProfile internProfile) {
+        internProfileRepository.save(internProfile);
     }
+
+
+//    @Override
+//    public Iterable<InternDTO> getAllInter() {
+//
+//        //Tạo mới danh sách chứa các thông tin thực tập sinh
+//        List<InternDTO> internDTOList = new ArrayList<>();
+//
+//        //Lấy ra danh sách thực tập sinh và thông tin của họ
+//        List<InternProfile> internProfiles = internProfileRepository.findAll();
+//
+//        //Lấy ra danh sách môn học
+//        List<InternSubject> internSubjects = getSubjects();
+//
+//        for (int i = 0; i < internProfiles.size(); i++) {
+//            //Lấy ra thông tin TTS
+//            InternProfile internProfile = internProfiles.get(i);
+//            //Lấy ra danh sách điểm InterScore của 1 thực tập sinh
+//            List<InternScore> internScores = internScoreRepository.findAllByUser(internProfile.getUser());
+//            //Khai báo danh sách môn học và điểm lí thuyết, thực hành, thái độ
+//            List<InternSubjectDTO> internSubjectDTOList = new ArrayList<>();            //Khai báo điểm trung bình chung cuối khoá học
+//            boolean checkFinalScore = true;
+//            double finalScore = 0;
+//
+//            for (int j = 0; j < internSubjects.size(); j++) {
+//                Long id = (long) (j + 1);
+//                InternSubjectDTO internSubjectDTO = new InternSubjectDTO(id, internSubjects.get(j).getName());
+//                internSubjectDTOList.add(j, internSubjectDTO);
+//            }
+//
+//            //Duyệt qua danh sách điểm với 27 con điểm cho 7 môn và 3 loại
+//            for (int j = 0; j < internScores.size(); j++) {
+//
+//                //Lấy ra 3 giá trị từng đối tượng trong bảng điểm của 1 intern
+//                String nameSubject = internScores.get(j).getInternSubject().getName();
+//                String type = internScores.get(j).getType();
+//                String value = internScores.get(j).getValue();
+//
+//                //Tìm vị trí môn học theo tên trong danh sách internScoreDTOList
+//                int indexSubject = IntStream.range(0, internSubjectDTOList.size())
+//                        .filter(k -> internSubjectDTOList.get(k).getNameSubject().equals(nameSubject))
+//                        .findFirst().getAsInt();
+//
+//                //Lấy ra đối tượng môn học internSubjectDTO
+//                InternSubjectDTO internSubjectDTO = internSubjectDTOList.get(indexSubject);
+//
+//                //Gán giá trị từng loại điểm cho môn học
+//                if (type.equals("theory")) {
+//                    if (value == null || value.isEmpty()) {
+//                        internSubjectDTO.setTheoryScore("NA");
+//                        internSubjectDTO.setTotalScore("NA");
+//                    } else {
+//                        internSubjectDTO.setTheoryScore(value);
+//                    }
+//                }
+//                if (type.equals("practice")) {
+//                    if (value == null || value.isEmpty()) {
+//                        internSubjectDTO.setPracticeScore("NA");
+//                        internSubjectDTO.setTotalScore("NA");
+//                    } else {
+//                        internSubjectDTO.setPracticeScore(value);
+//                    }
+//                }
+//                if (type.equals("attitude")) {
+//                    if (value == null || value.isEmpty()) {
+//                        internSubjectDTO.setAttitudeScore("NA");
+//                    } else {
+//                        internSubjectDTO.setAttitudeScore(value);
+//                        internSubjectDTO.setTotalScore("NA");
+//                    }
+//                }
+//                internSubjectDTOList.set(indexSubject, internSubjectDTO);
+//            }
+//
+////          Tính điểm trung bình môn
+//            for (int j = 0; j < internSubjectDTOList.size(); j++) {
+//                InternSubjectDTO internSubjectDTO = internSubjectDTOList.get(j);
+//                String theoryScore = internSubjectDTO.getTheoryScore();
+//                String practiceScore = internSubjectDTO.getPracticeScore();
+//                String attitudeScore = internSubjectDTO.getAttitudeScore();
+//                if (theoryScore != "NA" && practiceScore != "NA" && attitudeScore != "NA") {
+//                    double totalScore = Math.round(((
+//                            Double.parseDouble(theoryScore) + (Double.parseDouble(practiceScore) + Double.parseDouble(attitudeScore)) * 2) / 5) * 100.0) / 100.0;
+//                    internSubjectDTO.setTotalScore(String.valueOf(totalScore));
+//                    internSubjectDTOList.set(j, internSubjectDTO);
+//                }
+//            }
+//            int count = 0;
+//            for (int j = 0; j < internSubjectDTOList.size(); j++) {
+//                InternSubjectDTO internSubjectDTO = internSubjectDTOList.get(j);
+//                if (internSubjectDTO.getTotalScore() != "NA") {
+//                    count ++;
+//                    finalScore = finalScore + Double.parseDouble(internSubjectDTO.getTotalScore());
+//                }
+//            }
+//            if (count == 0) {
+//                checkFinalScore = false;
+//            } else {
+//                finalScore = Math.round((finalScore / count) * 100.0) / 100.0;
+//            }
+//
+//            InternDTO internDTO = new InternDTO(
+//                    internProfile.getUser().getId(),
+//                    internProfile.getUser().getName(),
+//                    internProfile.getStartDate(),
+//                    internProfile.getEndDate(),
+//                    internProfile.getTrainingState(),
+//                    (checkFinalScore ? String.valueOf(finalScore) : "NA"),
+//                    internProfile.getScoreInTeam(),
+//                    internSubjectDTOList);
+//            internDTOList.add(i, internDTO);
+//        }
+//        return internDTOList;
+//    }
 
     @Override
     public Iterable<InternDTO> findListInterWithNameInternAndTrainingState(String keyword, String trainingState) {
@@ -277,7 +312,11 @@ public class InternServiceImpl implements InternService {
     public Page<InternDTO> convertToPage(List<InternDTO> internDTOList, Pageable pageable) {
         int start = (int) pageable.getOffset();
         int end = Math.min(start + pageable.getPageSize(), internDTOList.size());
-
         return new PageImpl<>(internDTOList.subList(start, end), pageable, internDTOList.size());
+    }
+
+    @Override
+    public List<Object[]> getAllByUserId(Long id) {
+        return null;
     }
 }

@@ -67,165 +67,165 @@ public class InternRestController {
     }
 
 
-    @GetMapping("/")
-    public ResponseEntity<?> getInternDetailById(@RequestParam(value = "id", required = false) Long id) {
-        return getInternDetail(id);
-    }
+//    @GetMapping("/")
+//    public ResponseEntity<?> getInternDetailById(@RequestParam(value = "id", required = false) Long id) {
+//        return getInternDetail(id);
+//    }
 
 
-    @PutMapping
-    public ResponseEntity<?> editInternDetail(@RequestBody Map<String, Object> payload) {
-
-        InternProfile internProfile = internService.getInternProfile(Long.parseLong(payload.get("internID").toString()));
-        // Xử lý startDate
-        if (payload.get("startDate") != null) {
-            internProfile.setStartDate(LocalDate.parse(payload.get("startDate").toString()));
-        }
-
-        // Xử lý endDate
-        if (payload.get("endDate") != null) {
-            internProfile.setEndDate(LocalDate.parse(payload.get("endDate").toString()));
-        }
-
-        // Xử lý trainingState
-        if (payload.get("trainingState") != null) {
-            internProfile.setTrainingState(payload.get("trainingState").toString());
-        }
-
-        // Xử lý isPass
-        if (payload.get("isPass") != null) {
-            internProfile.setIsPass(Boolean.valueOf(payload.get("isPass").toString()));
-        }
-
-        // Xử lý scoreInTeam
-        if (payload.get("scoreInTeam") != null) {
-            internProfile.setScoreInTeam(payload.get("scoreInTeam").toString());
-        }
-        internService.save(internProfile);
-        // Lưu InternScore
-        User user = userService.findById(internProfile.getUser().getId()).orElseThrow(() -> new RuntimeException("User not found"));
-        List<Map<String, Object>> subjects = (List<Map<String, Object>>) payload.get("subjects");
-        String[] TYPE_SCORE = {"theory", "practice", "attitude"};
-        for (Map<String, Object> subj : subjects) {
-            String subjectName = subj.get("name").toString();
-            InternSubject internSubject = internService.findInternSubjectByName(subjectName);
-
-            handleScore(user, internSubject, TYPE_SCORE, subj.get("theoryScore"), subj.get("practiceScore"), subj.get("attitudeScore"));
-        }
-
-        // Lưu subject comment
-        for (Map<String, Object> subj : subjects) {
-            String json = subj.get("comment").toString();
-            int idIndex = json.indexOf("id=");
-            int commaIndex = json.indexOf(",");
-            int valueIndex = json.indexOf("value=");
-            if (idIndex != -1) {
-                // Lấy chuỗi từ vị trí của "id=" đến vị trí của dấu phẩy
-                String idString = json.substring(idIndex + 3, commaIndex).trim();
-                // Chuyển đổi chuỗi thành Long
-                Long idComment = Long.valueOf(idString);
-
-                int valueCommaIndex = json.indexOf(",", valueIndex);
-                if (valueCommaIndex == -1) {
-                    // Nếu không tìm thấy dấu phẩy, sử dụng dấu } thay thế
-                    valueCommaIndex = json.indexOf("}", valueIndex);
-                }
-                // Lấy chuỗi từ vị trí của "value=" đến vị trí của dấu phẩy hoặc dấu }
-                String valueComment = json.substring(valueIndex + 6, valueCommaIndex).trim();
-
-                SubjectComment subjectComment = internService.getSubjectCommentByID(idComment).get();
-                subjectComment.setValue(valueComment);
-                internService.saveSubjectComment(subjectComment);
-
-            } else {
-                //
-                int valueCommaIndex = json.indexOf("}", valueIndex);
-                String valueComment = json.substring(valueIndex + 6, valueCommaIndex).trim();
-                if (!valueComment.isEmpty() && !valueComment.equals("null")) { // Sử dụng phương thức equals() để so sánh chuỗi
-                    SubjectComment subjectComment = new SubjectComment();
-                    subjectComment.setValue(valueComment);
-                    subjectComment.setUser(user);
-                    subjectComment.setInternSubject(internService.findInternSubjectByName(subj.get("name").toString()));
-                    internService.saveSubjectComment(subjectComment);
-                }
-            }
-        }
-
-        return getInternDetail(user.getId());
-    }
-
-    private void handleScore(User user, InternSubject internSubject, String[] types, Object theoryScore, Object practiceScore, Object attitudeScore) {
-        InternScore internScore;
-        for (String type : types) {
-            try {
-                internScore = internService.getInternScoreByUserAndSubjectAndType(user, internSubject, type).get();
-            } catch (NoSuchElementException exception) {
-                internScore = new InternScore();
-                internScore.setUser(user);
-                internScore.setInternSubject(internSubject);
-                internScore.setType(type);
-            }
-            switch (type){
-                case "theory":
-                    if (theoryScore != null){
-                        internScore.setValue(theoryScore.toString());
-                    }
-                    break;
-                case "practice":
-                    if (practiceScore != null){
-                        internScore.setValue(practiceScore.toString());
-                    }
-                    break;
-                case "attitude":
-                    if (attitudeScore != null){
-                        internScore.setValue(attitudeScore.toString());
-                    }
-            }
-            internService.saveInternScore(internScore);
-        }
-    }
-
-    public ResponseEntity<?> getInternDetail(Long id) {
-        InternProfile profile = internService.getInternProfileByUserID(id).get();
-        List<SubjectComment> comments = internService.getListSubjectCommentByUserID(id);
-        List<Object[]> objects = internService.getAllByUserId(id);
-        List<InternSubject> subjects = internService.getSubjects();
-
-        Map<String, Object> map = new HashMap<String, Object>();
-        List<SubjectDTO> subjectDTOs = new ArrayList<>();
-
-        for (InternSubject subject : subjects) {
-            addSubjectIfNotExist(subjectDTOs, subject.getName(), comments);
-        }
-
-        // convert subject sang định dạng fe
-        for (Object[] obj : objects) {
-            String name = (String) obj[2];
-            String type = (String) obj[1];
-            String score = (String) obj[0];
-
-            // Nếu môn học
-            SubjectDTO subjectDTO = addSubjectIfNotExist(subjectDTOs, name, comments);
-
-            if (type.equals("theory")) {
-                subjectDTO.setTheoryScore(score);
-            } else if (type.equals("practice")) {
-                subjectDTO.setPracticeScore(score);
-            } else if (type.equals("attitude")) {
-                subjectDTO.setAttitudeScore(score);
-            }
-        }
-        map.put("internID", profile.getId());
-        map.put("subjects", subjectDTOs);
-        map.put("name", profile.getUser().getName());
-        map.put("startDate", profile.getStartDate());
-        map.put("endDate", profile.getEndDate());
-        map.put("trainingState", profile.getTrainingState());
-        map.put("isPass", profile.getIsPass());
-        map.put("scoreInTeam", profile.getScoreInTeam());
-
-        return new ResponseEntity<>(map, HttpStatus.OK);
-    }
+//    @PutMapping
+//    public ResponseEntity<?> editInternDetail(@RequestBody Map<String, Object> payload) {
+//
+//        InternProfile internProfile = internService.getInternProfile(Long.parseLong(payload.get("internID").toString()));
+//        // Xử lý startDate
+//        if (payload.get("startDate") != null) {
+//            internProfile.setStartDate(LocalDate.parse(payload.get("startDate").toString()));
+//        }
+//
+//        // Xử lý endDate
+//        if (payload.get("endDate") != null) {
+//            internProfile.setEndDate(LocalDate.parse(payload.get("endDate").toString()));
+//        }
+//
+//        // Xử lý trainingState
+//        if (payload.get("trainingState") != null) {
+//            internProfile.setTrainingState(payload.get("trainingState").toString());
+//        }
+//
+//        // Xử lý isPass
+//        if (payload.get("isPass") != null) {
+//            internProfile.setIsPass(Boolean.valueOf(payload.get("isPass").toString()));
+//        }
+//
+//        // Xử lý scoreInTeam
+//        if (payload.get("scoreInTeam") != null) {
+//            internProfile.setScoreInTeam(payload.get("scoreInTeam").toString());
+//        }
+//        internService.save(internProfile);
+//        // Lưu InternScore
+//        User user = userService.findById(internProfile.getUser().getId()).orElseThrow(() -> new RuntimeException("User not found"));
+//        List<Map<String, Object>> subjects = (List<Map<String, Object>>) payload.get("subjects");
+//        String[] TYPE_SCORE = {"theory", "practice", "attitude"};
+//        for (Map<String, Object> subj : subjects) {
+//            String subjectName = subj.get("name").toString();
+//            InternSubject internSubject = internService.findInternSubjectByName(subjectName);
+//
+//            handleScore(user, internSubject, TYPE_SCORE, subj.get("theoryScore"), subj.get("practiceScore"), subj.get("attitudeScore"));
+//        }
+//
+//        // Lưu subject comment
+//        for (Map<String, Object> subj : subjects) {
+//            String json = subj.get("comment").toString();
+//            int idIndex = json.indexOf("id=");
+//            int commaIndex = json.indexOf(",");
+//            int valueIndex = json.indexOf("value=");
+//            if (idIndex != -1) {
+//                // Lấy chuỗi từ vị trí của "id=" đến vị trí của dấu phẩy
+//                String idString = json.substring(idIndex + 3, commaIndex).trim();
+//                // Chuyển đổi chuỗi thành Long
+//                Long idComment = Long.valueOf(idString);
+//
+//                int valueCommaIndex = json.indexOf(",", valueIndex);
+//                if (valueCommaIndex == -1) {
+//                    // Nếu không tìm thấy dấu phẩy, sử dụng dấu } thay thế
+//                    valueCommaIndex = json.indexOf("}", valueIndex);
+//                }
+//                // Lấy chuỗi từ vị trí của "value=" đến vị trí của dấu phẩy hoặc dấu }
+//                String valueComment = json.substring(valueIndex + 6, valueCommaIndex).trim();
+//
+//                SubjectComment subjectComment = internService.getSubjectCommentByID(idComment).get();
+//                subjectComment.setValue(valueComment);
+//                internService.saveSubjectComment(subjectComment);
+//
+//            } else {
+//                //
+//                int valueCommaIndex = json.indexOf("}", valueIndex);
+//                String valueComment = json.substring(valueIndex + 6, valueCommaIndex).trim();
+//                if (!valueComment.isEmpty() && !valueComment.equals("null")) { // Sử dụng phương thức equals() để so sánh chuỗi
+//                    SubjectComment subjectComment = new SubjectComment();
+//                    subjectComment.setValue(valueComment);
+//                    subjectComment.setUser(user);
+//                    subjectComment.setInternSubject(internService.findInternSubjectByName(subj.get("name").toString()));
+//                    internService.saveSubjectComment(subjectComment);
+//                }
+//            }
+//        }
+//
+//        return getInternDetail(user.getId());
+//    }
+//
+//    private void handleScore(User user, InternSubject internSubject, String[] types, Object theoryScore, Object practiceScore, Object attitudeScore) {
+//        InternScore internScore;
+//        for (String type : types) {
+//            try {
+//                internScore = internService.getInternScoreByUserAndSubjectAndType(user, internSubject, type).get();
+//            } catch (NoSuchElementException exception) {
+//                internScore = new InternScore();
+//                internScore.setUser(user);
+//                internScore.setInternSubject(internSubject);
+//                internScore.setType(type);
+//            }
+//            switch (type){
+//                case "theory":
+//                    if (theoryScore != null){
+//                        internScore.setValue(theoryScore.toString());
+//                    }
+//                    break;
+//                case "practice":
+//                    if (practiceScore != null){
+//                        internScore.setValue(practiceScore.toString());
+//                    }
+//                    break;
+//                case "attitude":
+//                    if (attitudeScore != null){
+//                        internScore.setValue(attitudeScore.toString());
+//                    }
+//            }
+//            internService.saveInternScore(internScore);
+//        }
+//    }
+//
+//    public ResponseEntity<?> getInternDetail(Long id) {
+//        InternProfile profile = internService.getInternProfileByUserID(id).get();
+//        List<SubjectComment> comments = internService.getListSubjectCommentByUserID(id);
+//        List<Object[]> objects = internService.getAllByUserId(id);
+//        List<InternSubject> subjects = internService.getSubjects();
+//
+//        Map<String, Object> map = new HashMap<String, Object>();
+//        List<SubjectDTO> subjectDTOs = new ArrayList<>();
+//
+//        for (InternSubject subject : subjects) {
+//            addSubjectIfNotExist(subjectDTOs, subject.getName(), comments);
+//        }
+//
+//        // convert subject sang định dạng fe
+//        for (Object[] obj : objects) {
+//            String name = (String) obj[2];
+//            String type = (String) obj[1];
+//            String score = (String) obj[0];
+//
+//            // Nếu môn học
+//            SubjectDTO subjectDTO = addSubjectIfNotExist(subjectDTOs, name, comments);
+//
+//            if (type.equals("theory")) {
+//                subjectDTO.setTheoryScore(score);
+//            } else if (type.equals("practice")) {
+//                subjectDTO.setPracticeScore(score);
+//            } else if (type.equals("attitude")) {
+//                subjectDTO.setAttitudeScore(score);
+//            }
+//        }
+//        map.put("internID", profile.getId());
+//        map.put("subjects", subjectDTOs);
+//        map.put("name", profile.getUser().getName());
+//        map.put("startDate", profile.getStartDate());
+//        map.put("endDate", profile.getEndDate());
+//        map.put("trainingState", profile.getTrainingState());
+//        map.put("isPass", profile.getIsPass());
+//        map.put("scoreInTeam", profile.getScoreInTeam());
+//
+//        return new ResponseEntity<>(map, HttpStatus.OK);
+//    }
 
     private static SubjectDTO addSubjectIfNotExist(List<SubjectDTO> subjectDTOs, String name, List<SubjectComment> comments) {
 
