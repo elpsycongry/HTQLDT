@@ -9,9 +9,14 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface IInternRepository extends JpaRepository<Intern,Long>, JpaSpecificationExecutor<Intern> {
     Page<Intern> findAllByOrderByIdDesc(Pageable pageable);
     Iterable<Intern> findByRecruitmentPlan(RecruitmentPlan recruitmentPlan);
     int countByRecruitmentPlanId(long idRecruitmentPlan);
+    List<Intern> findByCheckInterviewEquals(boolean checkInterview);
+    List<Intern> findByFinalResultEquals(String finalResult);
+    List<Intern> findByStatusEquals(String status);
 }

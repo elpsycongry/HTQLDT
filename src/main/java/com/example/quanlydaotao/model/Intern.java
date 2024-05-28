@@ -24,6 +24,7 @@ public class Intern {
 
     private String linkCv;
     private LocalDateTime interviewTime;
+    private LocalDateTime applyCVTime;
     private boolean checkInterview;
     private String comment;
     private String note;
@@ -156,5 +157,13 @@ public class Intern {
     public Intern setId(Long id) {
         this.id = id;
         return this;
+    }
+
+    public LocalDateTime getApplyCVTime() {
+        return applyCVTime;
+    }
+
+    public void setApplyCVTime(LocalDateTime applyCVTime) {
+        this.applyCVTime = applyCVTime;
     }
 }

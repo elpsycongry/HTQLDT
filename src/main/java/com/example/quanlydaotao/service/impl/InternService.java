@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -57,6 +58,7 @@ public class InternService implements IInternService {
 
     public void addIntern(Intern intern) throws Exception{
         RecruitmentPlan plan = recruitmentPlanService.findById(intern.getRecruitmentPlan().getId()).get();
+        intern.setApplyCVTime(LocalDateTime.now());
         intern.setRecruitmentPlan(plan);
         if (!isFullIntern(intern.getRecruitmentPlan().getId())) {
             iInternRepository.save(intern);
