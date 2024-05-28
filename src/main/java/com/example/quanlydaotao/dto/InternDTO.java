@@ -13,7 +13,7 @@ import java.util.List;
 
 public class InternDTO {
     private Long id;
-    private String userName;
+    private String internName;
     private LocalDate startDate;
     private LocalDate endDate;
     private Long numberDate;
@@ -48,9 +48,9 @@ public class InternDTO {
 
     public InternDTO(){}
 
-    public InternDTO(Long id, String userName, LocalDate startDate, LocalDate endDate, String trainingState, String finalScore, String scoreInTeam, List<InternSubjectDTO> internSubjectDTOList) {
+    public InternDTO(Long id, String internName, LocalDate startDate, LocalDate endDate, String trainingState, String finalScore, String scoreInTeam, List<InternSubjectDTO> internSubjectDTOList) {
         this.id = id;
-        this.userName = userName;
+        this.internName = internName;
         this.startDate = startDate;
         this.endDate = endDate;
         this.numberDate = countDay(startDate, endDate);
@@ -79,11 +79,12 @@ public class InternDTO {
         if (trainingState.equals("stop_training")) {
             return false;
         }
+        if (finalScoreIntern == "NA") {
+            return false;
+        }
         if (finalScoreIntern == null || scoreInTeamIntern == null || finalScoreIntern.isEmpty() || scoreInTeamIntern.isEmpty()) {
             return null;
         }
-
-
 
         if (countDay(startDate, endDate) > 50) {
             return false;
@@ -116,12 +117,12 @@ public class InternDTO {
         this.internSubjectDTOList = internSubjectDTOList;
     }
 
-    public String getUserName() {
-        return userName;
+    public String getInternName() {
+        return internName;
     }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
+    public void setInternName(String internName) {
+        this.internName = internName;
     }
 
     public LocalDate getStartDate() {
