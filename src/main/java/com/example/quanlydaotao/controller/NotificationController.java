@@ -3,6 +3,7 @@ package com.example.quanlydaotao.controller;
 import com.example.quanlydaotao.dto.NotificationDTO;
 import com.example.quanlydaotao.model.Notification;
 import com.example.quanlydaotao.model.NotificationToUser;
+import com.example.quanlydaotao.model.Role;
 import com.example.quanlydaotao.model.User;
 import com.example.quanlydaotao.repository.RoleRepository;
 import com.example.quanlydaotao.repository.UserRepository;
@@ -55,18 +56,19 @@ public class NotificationController {
 
     @PutMapping("/{id}")
     public ResponseEntity<?> setStatusNotification (@RequestBody List<NotificationDTO> notificationlist){
-
-        for (NotificationDTO notificationDTO : notificationlist) {
-           NotificationToUser notification =   notificationService.findNotificationToUserById(notificationDTO.getId()).get();
-           notification.setIsRead(notificationDTO.getIsRead());
-           notificationService.saveNotiToUser(notification);
+        if (notificationlist != null && !notificationlist.isEmpty()) {
+            for (NotificationDTO notificationDTO : notificationlist) {
+                System.out.println(notificationDTO);
+                NotificationToUser notification = notificationService.findNotificationToUserById(notificationDTO.getId()).get();
+                notification.setIsRead(notificationDTO.getIsRead());
+                notificationService.saveNotiToUser(notification);
+            }
         }
         return new ResponseEntity<>(true,HttpStatus.OK);
     }
 
     @PostMapping
     public ResponseEntity<?> addNotification(@RequestBody NotificationDTO notification){
-
         Notification notificationEntity = new Notification();
         notificationEntity.setContent(notification.getContent());
         notificationEntity.setTimestamp(notification.getTimeCreate());
@@ -86,16 +88,30 @@ public class NotificationController {
                 users.add(user);
             }
         }
-        if (notification.getRoleReceiver() != null){
-            users = userRepository.findAllByRoles(roleRepository.findByName(notification.getRoleReceiver()));
+
+        List<String> roles = notification.getListRoleReceiver();
+        if (roles != null){;
+            users = userRepository.findAllByRoles(roleRepository.findByName(roles.getFirst()));
+
+           for (int i = 1; i < roles.size(); i++){
+               List<User> userList = userRepository.findAllByRoles(roleRepository.findByName(roles.get(i)));
+               for (User user : userList){
+                   if (!users.contains(user)){
+                       users.add(user);
+                   }
+               }
+           }
         }
+
         for (User user : users) {
+            System.out.println(user);
             NotificationToUser notificationToUser = new NotificationToUser();
             notificationToUser.setNotification(notificationEntity);
             notificationToUser.setUser(user);
             notificationToUser.setIsRead(false);
             notificationService.saveNotiToUser(notificationToUser);
         }
+
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

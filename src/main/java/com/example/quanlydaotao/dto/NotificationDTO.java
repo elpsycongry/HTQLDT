@@ -25,4 +25,5 @@ public class NotificationDTO {
     private String roleReceiver;
     private List<NotificationToUser> notificationToUserList;
     private List<Long> listReceiverId;
+    private List<String> listRoleReceiver;
 }
