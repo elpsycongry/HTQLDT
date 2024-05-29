@@ -13,5 +13,5 @@ import java.util.List;
 @Repository
 public interface IRecruitmentPlanRepository extends JpaRepository<RecruitmentPlan, Long>, JpaSpecificationExecutor<RecruitmentPlan> {
     List<RecruitmentPlan> findAllByOrderByDateCreatePlanDesc(Sort sort);
-
+    List<RecruitmentPlan> findByStatusEquals(String status);
 }
