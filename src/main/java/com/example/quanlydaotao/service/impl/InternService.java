@@ -2,6 +2,7 @@ package com.example.quanlydaotao.service.impl;
 
 import com.example.quanlydaotao.dto.*;
 import com.example.quanlydaotao.model.Intern;
+import com.example.quanlydaotao.model.InternProfile;
 import com.example.quanlydaotao.model.RecruitmentPlan;
 import com.example.quanlydaotao.repository.IInternRepository;
 import com.example.quanlydaotao.service.IInternService;
@@ -26,7 +27,8 @@ public class InternService implements IInternService {
     private RecruitmentPlanService recruitmentPlanService;
     @Autowired
     private RecruitmentPlanDetailService recruitmentPlanDetailService;
-
+    @Autowired
+    private InternServiceImpl internServiceImpl;
     @Override
     public void createIntern(Intern intern) {
         iInternRepository.save(intern);
@@ -41,6 +43,10 @@ public class InternService implements IInternService {
     public void updateIntern(Intern intern) {
         Optional<RecruitmentPlan> recruitmentPlan = recruitmentPlanService.findById(intern.getRecruitmentPlan().getId());
         intern.setRecruitmentPlan(recruitmentPlan.get());
+        if (intern.getStatus().equals("Đã nhận việc")) {
+            InternProfile internProfile = new InternProfile(intern);
+            internServiceImpl.save(internProfile);
+        }
         iInternRepository.saveAndFlush(intern);
     }
 

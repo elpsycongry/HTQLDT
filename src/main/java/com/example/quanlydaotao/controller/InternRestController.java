@@ -2,10 +2,12 @@ package com.example.quanlydaotao.controller;
 
 import com.example.quanlydaotao.dto.InternDTO;
 import com.example.quanlydaotao.model.*;
+import com.example.quanlydaotao.service.IInternService;
 import com.example.quanlydaotao.service.InternService;
 import com.example.quanlydaotao.dto.SubjectDTO;
 import com.example.quanlydaotao.service.InternService;
 import com.example.quanlydaotao.service.UserService;
+import com.example.quanlydaotao.service.impl.InternServiceImpl;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -103,14 +105,14 @@ public class InternRestController {
         }
         internService.save(internProfile);
         // Lưu InternScore
-        User user = userService.findById(internProfile.getUser().getId()).orElseThrow(() -> new RuntimeException("User not found"));
+        Intern intern = internService.findById(internProfile.getIntern().getId()).orElseThrow(() -> new RuntimeException("Intern not found"));
         List<Map<String, Object>> subjects = (List<Map<String, Object>>) payload.get("subjects");
         String[] TYPE_SCORE = {"theory", "practice", "attitude"};
         for (Map<String, Object> subj : subjects) {
             String subjectName = subj.get("name").toString();
             InternSubject internSubject = internService.findInternSubjectByName(subjectName);
 
-            handleScore(user, internSubject, TYPE_SCORE, subj.get("theoryScore"), subj.get("practiceScore"), subj.get("attitudeScore"));
+            handleScore(intern, internSubject, TYPE_SCORE, subj.get("theoryScore"), subj.get("practiceScore"), subj.get("attitudeScore"));
         }
 
         // Lưu subject comment
@@ -144,24 +146,24 @@ public class InternRestController {
                 if (!valueComment.isEmpty() && !valueComment.equals("null")) { // Sử dụng phương thức equals() để so sánh chuỗi
                     SubjectComment subjectComment = new SubjectComment();
                     subjectComment.setValue(valueComment);
-                    subjectComment.setUser(user);
+                    subjectComment.setIntern(intern);
                     subjectComment.setInternSubject(internService.findInternSubjectByName(subj.get("name").toString()));
                     internService.saveSubjectComment(subjectComment);
                 }
             }
         }
 
-        return getInternDetail(user.getId());
+        return getInternDetail(intern.getId());
     }
 
-    private void handleScore(User user, InternSubject internSubject, String[] types, Object theoryScore, Object practiceScore, Object attitudeScore) {
+    private void handleScore(Intern intern, InternSubject internSubject, String[] types, Object theoryScore, Object practiceScore, Object attitudeScore) {
         InternScore internScore;
         for (String type : types) {
             try {
-                internScore = internService.getInternScoreByUserAndSubjectAndType(user, internSubject, type).get();
+                internScore = internService.getInternScoreByInternAndSubjectAndType(intern, internSubject, type).get();
             } catch (NoSuchElementException exception) {
                 internScore = new InternScore();
-                internScore.setUser(user);
+                internScore.setIntern(intern);
                 internScore.setInternSubject(internSubject);
                 internScore.setType(type);
             }
@@ -186,9 +188,9 @@ public class InternRestController {
     }
 
     public ResponseEntity<?> getInternDetail(Long id) {
-        InternProfile profile = internService.getInternProfileByUserID(id).get();
-        List<SubjectComment> comments = internService.getListSubjectCommentByUserID(id);
-        List<Object[]> objects = internService.getAllByUserId(id);
+        InternProfile profile = internService.getInternProfileByInternID(id).get();
+        List<SubjectComment> comments = internService.getListSubjectCommentByInternID(id);
+        List<Object[]> objects = internService.getAllByInternId(id);
         List<InternSubject> subjects = internService.getSubjects();
 
         Map<String, Object> map = new HashMap<String, Object>();
@@ -217,7 +219,7 @@ public class InternRestController {
         }
         map.put("internID", profile.getId());
         map.put("subjects", subjectDTOs);
-        map.put("name", profile.getUser().getName());
+        map.put("name", profile.getIntern().getName());
         map.put("startDate", profile.getStartDate());
         map.put("endDate", profile.getEndDate());
         map.put("trainingState", profile.getTrainingState());

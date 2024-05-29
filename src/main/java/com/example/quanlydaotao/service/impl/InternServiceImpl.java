@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.relational.core.sql.In;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -39,6 +40,9 @@ public class InternServiceImpl implements InternService {
     private InternSubjectRepository internSubjectRepository;
 
     @Autowired
+    private IInternRepository iInternRepository;
+
+    @Autowired
     private UserRepository userRepository;
     @Autowired
     private UserService userService;
@@ -57,13 +61,13 @@ public class InternServiceImpl implements InternService {
     }
 
     @Override
-    public InternProfile getInternProfile(Long userID) {
-        return internProfileRepository.findById(userID).get();
+    public InternProfile getInternProfile(Long internID) {
+        return internProfileRepository.findById(internID).get();
     }
 
     @Override
-    public List<InternScore> getInternScore(User user) {
-        return internScoreRepository.getInternScoresByUser(user);
+    public List<InternScore> getInternScore(Intern intern) {
+        return internScoreRepository.getInternScoreByIntern(intern);
     }
 
 
@@ -73,8 +77,8 @@ public class InternServiceImpl implements InternService {
     }
 
     @Override
-    public List<Object[]> getAllByUserId(Long id) {
-        return internScoreRepository.getAllByUserId(id);
+    public List<Object[]> getAllByInternId(Long id) {
+        return internScoreRepository.getAllByInternId(id);
     }
 
     @Override
@@ -83,8 +87,8 @@ public class InternServiceImpl implements InternService {
     }
 
     @Override
-    public List<InternScore> getListInternScoreByUserID(Long userID) {
-        return internScoreRepository.getAllByUser(userRepository.findById(userID).get());
+    public List<InternScore> getListInternScoreByInternID(Long internID) {
+        return internScoreRepository.getAllByIntern(iInternRepository.findById(internID).get());
     }
 
     @Override
@@ -93,24 +97,24 @@ public class InternServiceImpl implements InternService {
     }
 
     @Override
-    public Optional<InternScore> getInternScoreByUserAndSubjectAndType(User user, InternSubject subject,String type) {
-        return internScoreRepository.findByUserAndInternSubjectAndType(user , subject, type);
+    public Optional<InternScore> getInternScoreByInternAndSubjectAndType(Intern intern, InternSubject subject,String type) {
+        return internScoreRepository.findByInternAndInternSubjectAndType(intern , subject, type);
     }
 
     @Override
-    public Optional<InternProfile> getInternProfileByUserID(Long userId) {
+    public Optional<InternProfile> getInternProfileByInternID(Long internID) {
 
-        return internProfileRepository.findByUser(userRepository.findById(userId).get());
+        return internProfileRepository.findInternProfileByIntern(iInternRepository.findById(internID).get());
     }
 
     @Override
     public void saveInternScore(InternScore internScore) {
-         internScoreRepository.save(internScore);
+        internScoreRepository.save(internScore);
     }
 
     @Override
-    public List<SubjectComment> getListSubjectCommentByUserID(Long userID) {
-        return subjectCommentRepo.findAllByUser(userRepository.findById(userID).get());
+    public List<SubjectComment> getListSubjectCommentByInternID(Long internID) {
+        return subjectCommentRepo.findAllByIntern(iInternRepository.findById(internID).get());
     }
 
     @Override
@@ -121,6 +125,11 @@ public class InternServiceImpl implements InternService {
     @Override
     public void saveSubjectComment(SubjectComment subjectComment) {
         subjectCommentRepo.save(subjectComment);
+    }
+
+    @Override
+    public Optional<Intern> findById(Long internID) {
+        return iInternRepository.findById(internID) ;
     }
 
 
@@ -140,7 +149,7 @@ public class InternServiceImpl implements InternService {
             //Lấy ra thông tin TTS
             InternProfile internProfile = internProfiles.get(i);
             //Lấy ra danh sách điểm InterScore của 1 thực tập sinh
-            List<InternScore> internScores = internScoreRepository.findAllByUser(internProfile.getUser());
+            List<InternScore> internScores = internScoreRepository.findAllByIntern(internProfile.getIntern());
             //Khai báo danh sách môn học và điểm lí thuyết, thực hành, thái độ
             List<InternSubjectDTO> internSubjectDTOList = new ArrayList<>();            //Khai báo điểm trung bình chung cuối khoá học
             boolean checkFinalScore = true;
@@ -224,8 +233,8 @@ public class InternServiceImpl implements InternService {
             }
 
             InternDTO internDTO = new InternDTO(
-                    internProfile.getUser().getId(),
-                    internProfile.getUser().getName(),
+                    internProfile.getIntern().getId(),
+                    internProfile.getIntern().getName(),
                     internProfile.getStartDate(),
                     internProfile.getEndDate(),
                     internProfile.getTrainingState(),
@@ -259,7 +268,7 @@ public class InternServiceImpl implements InternService {
     public Iterable<InternDTO> findListInterWithNameInter(String keyword, Iterable<InternDTO> internDTOIterable) {
         List<InternDTO> internDTOList = (List<InternDTO>) internDTOIterable;
         List<InternDTO> matchingInternDTO = internDTOList.stream()
-                .filter(f -> f.getUserName().toLowerCase().contains(String.valueOf(keyword).toLowerCase()))
+                .filter(f -> f.getInternName().toLowerCase().contains(String.valueOf(keyword).toLowerCase()))
                 .collect(Collectors.toList());
         return matchingInternDTO;
     }
