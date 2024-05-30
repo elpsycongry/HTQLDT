@@ -59,13 +59,13 @@ public class InternService implements IInternService {
         }
     }
 
-    public boolean isFullIntern(Long recruitmentPlanId){
+    public boolean isFullIntern(long recruitmentPlanId){
         boolean isFull = true;
 
         int totalInternNeed = recruitmentPlanDetailService.getTotalIntern(recruitmentPlanId);
-        int internPlanHave = iInternRepository.countByRecruitmentPlanId(recruitmentPlanId);
+        int applicants = applicantsByPlan(recruitmentPlanId);
 
-        if (internPlanHave < totalInternNeed) {
+        if (applicants < totalInternNeed) {
             isFull = false;
         }
         return isFull;
@@ -81,6 +81,39 @@ public class InternService implements IInternService {
                         Sort.by(Sort.Direction.DESC, "id")
                 )
         );
+    }
+
+    public int applicantsByPlan(long planId) {
+        int applicants = iInternRepository.countByRecruitmentPlanId(planId);
+        return applicants;
+    }
+
+    public int trainingByPlan(long planId) {
+        Iterable<Intern> interns = iInternRepository.findByRecruitmentPlanId(planId);
+        int training = 0;
+        for (Intern intern : interns) {
+            if (intern.getStatus().equals("Đã nhận việc")) {
+                training++;
+            }
+        }
+        return training;
+    }
+
+    public ProcessDTO showProcessIntern(ProcessDTO process) {
+        ProcessDTO newProcess = process;
+        int applicants = applicantsByPlan(process.getPlanId());
+        int training = trainingByPlan(process.getPlanId());
+
+        if (applicants > 0) {
+            newProcess.setApplicants(applicants)
+                    .setStep(3);
+        }
+
+        if (training > 0) {
+            newProcess.setTraining(training)
+                    .setStep(4);
+        }
+        return newProcess;
     }
 
 }

@@ -12,6 +12,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface IInternRepository extends JpaRepository<Intern,Long>, JpaSpecificationExecutor<Intern> {
     Page<Intern> findAllByOrderByIdDesc(Pageable pageable);
-    Iterable<Intern> findByRecruitmentPlan(RecruitmentPlan recruitmentPlan);
+    Iterable<Intern> findByRecruitmentPlanId(long recruitmentPlan);
     int countByRecruitmentPlanId(long idRecruitmentPlan);
 }
