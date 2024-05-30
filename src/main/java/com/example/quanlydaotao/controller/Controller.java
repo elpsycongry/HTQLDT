@@ -91,11 +91,22 @@ public class Controller {
     @PostMapping("/logoutUser")
     public ResponseEntity<String> logout(@RequestHeader HttpHeaders headers) {
         String authorization = headers.getFirst(HttpHeaders.AUTHORIZATION);
-        String token = authorization.substring(7);
-        JwtToken jwtToken = tokenRepository.findByTokenEquals(token);
-        jwtToken.setValid(false);
-        tokenRepository.save(jwtToken);
-        return ResponseEntity.ok("Logout success");
+
+        // Kiểm tra xem authorization có giá trị null không trước khi sử dụng
+        if (authorization != null && authorization.startsWith("Bearer ")) {
+            String token = authorization.substring(7);
+            JwtToken jwtToken = tokenRepository.findByTokenEquals(token);
+
+            if (jwtToken != null) {
+                jwtToken.setValid(false);
+                tokenRepository.save(jwtToken);
+                return ResponseEntity.ok("Logout success");
+            } else {
+                return ResponseEntity.badRequest().body("Invalid token");
+            }
+        } else {
+            return ResponseEntity.badRequest().body("Authorization header missing or invalid");
+        }
     }
 
     @GetMapping("/users")
@@ -153,6 +164,12 @@ public class Controller {
     @GetMapping("/admin/users/check-phone/{phone}")
     public ResponseEntity<Map<String, Boolean>> checkPhoneExists(@PathVariable String phone) {
         boolean exists = userService.checkPhoneExists(phone);
+        return ResponseEntity.ok(Collections.singletonMap("exists", exists));
+    }
+
+    @GetMapping("/admin/users/check-phone-add/{phone}")
+    public ResponseEntity<Map<String, Boolean>> checkAddPhoneExists(@PathVariable String phone) {
+        boolean exists = userService.checkAddPhoneExists(phone);
         return ResponseEntity.ok(Collections.singletonMap("exists", exists));
     }
 
