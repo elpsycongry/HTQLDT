@@ -16,10 +16,10 @@ public interface InternService {
     List<InternSubject> getSubjects();
     Iterable<InternDTO> getAllInter();
     Iterable<InternDTO> findListInterWithNameInternAndTrainingState(String keyword, String trainingState);
-    Iterable<InternDTO> findListInterWithNameInternAndTrainingStateAndRecruitmentPlan(String keyword, String trainingState, String idRecruitmentPlan);
+    Iterable<InternDTO> findListInterWithNameInternAndTrainingStateAndRecruitmentPlan(String keyword, String trainingState, String recruitmentPlan);
     Iterable<InternDTO> findListInterWithNameInter(String keyword, Iterable<InternDTO> internDTOIterable);
     Iterable<InternDTO> findListInterWithTrainingState(String trainingState, Iterable<InternDTO> internDTOIterable);
-    Iterable<InternDTO> findListInterWithRecruitmentPlan(String idRecruitmentPlan, Iterable<InternDTO> internDTOIterable);
+    Iterable<InternDTO> findListInterWithRecruitmentPlan(String recruitmentPlan, Iterable<InternDTO> internDTOIterable);
 
     Page<InternDTO> convertToPage(List<InternDTO> internDTOList, Pageable pageable);
 

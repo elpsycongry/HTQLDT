@@ -270,28 +270,28 @@ public class InternServiceImpl implements InternService {
         return internDTOIterable;
     }
     @Override
-    public Iterable<InternDTO> findListInterWithNameInternAndTrainingStateAndRecruitmentPlan(String keyword, String trainingState, String recruitmentPlanId) {
+    public Iterable<InternDTO> findListInterWithNameInternAndTrainingStateAndRecruitmentPlan(String keyword, String trainingState, String recruitmentPlan) {
         Iterable<InternDTO> internDTOIterable = getAllInter();
 
         boolean hasKeyword = !keyword.isEmpty();
         boolean hasTrainingState = !trainingState.isEmpty();
-        boolean hasRecruitmentPlanId = recruitmentPlanId != null && !recruitmentPlanId.isEmpty();
+        boolean hasRecruitmentPlanId = recruitmentPlan != null && !recruitmentPlan.isEmpty();
 
         if (hasKeyword && hasTrainingState && hasRecruitmentPlanId) {
             internDTOIterable = findListInterWithNameInter(keyword, internDTOIterable);
             internDTOIterable = findListInterWithTrainingState(trainingState, internDTOIterable);
-            internDTOIterable = findListInterWithRecruitmentPlan(recruitmentPlanId, internDTOIterable);
+            internDTOIterable = findListInterWithRecruitmentPlan(recruitmentPlan, internDTOIterable);
             return internDTOIterable;
         } else if (!hasKeyword && hasTrainingState && hasRecruitmentPlanId) {
             internDTOIterable = findListInterWithTrainingState(trainingState, internDTOIterable);
-            internDTOIterable = findListInterWithRecruitmentPlan(recruitmentPlanId, internDTOIterable);
+            internDTOIterable = findListInterWithRecruitmentPlan(recruitmentPlan, internDTOIterable);
             return internDTOIterable;
         } else if (hasKeyword && !hasTrainingState && hasRecruitmentPlanId) {
             internDTOIterable = findListInterWithNameInter(keyword, internDTOIterable);
-            internDTOIterable = findListInterWithRecruitmentPlan(recruitmentPlanId, internDTOIterable);
+            internDTOIterable = findListInterWithRecruitmentPlan(recruitmentPlan, internDTOIterable);
             return internDTOIterable;
         } else if (!hasKeyword && !hasTrainingState && hasRecruitmentPlanId) {
-            internDTOIterable = findListInterWithRecruitmentPlan(recruitmentPlanId, internDTOIterable);
+            internDTOIterable = findListInterWithRecruitmentPlan(recruitmentPlan, internDTOIterable);
             return internDTOIterable;
         } else if (hasKeyword && hasTrainingState && !hasRecruitmentPlanId) {
             internDTOIterable = findListInterWithNameInter(keyword, internDTOIterable);
@@ -327,10 +327,10 @@ public class InternServiceImpl implements InternService {
 
 
     @Override
-    public Iterable<InternDTO> findListInterWithRecruitmentPlan(String recruitmentPlanId, Iterable<InternDTO> internDTOIterable) {
+    public Iterable<InternDTO> findListInterWithRecruitmentPlan(String recruitmentPlan, Iterable<InternDTO> internDTOIterable) {
         List<InternDTO> internDTOList = (List<InternDTO>) internDTOIterable;
         List<InternDTO> matchingInternDTO = internDTOList.stream()
-                .filter(f -> f.getRecruitmentPlanDTO().getId().toString().equals(recruitmentPlanId))
+                .filter(f -> f.getRecruitmentPlanDTO().getName().equals(recruitmentPlan))
                 .collect(Collectors.toList());
         return matchingInternDTO;
     }

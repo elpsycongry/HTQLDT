@@ -83,9 +83,9 @@ public class InternRestController {
             @RequestParam(name = "size") int size,
             @RequestParam(name = "keyword") String keyword,
             @RequestParam(name = "trainingState") String trainingState,
-            @RequestParam(name = "recruitmentPlan") String idRecruitmentPlan) {
+            @RequestParam(name = "recruitmentPlan") String recruitmentPlan) {
         Pageable pageable = PageRequest.of(page, size);
-        Iterable<InternDTO> internDTOIterable = internService.findListInterWithNameInternAndTrainingStateAndRecruitmentPlan(keyword, trainingState, idRecruitmentPlan);
+        Iterable<InternDTO> internDTOIterable = internService.findListInterWithNameInternAndTrainingStateAndRecruitmentPlan(keyword, trainingState, recruitmentPlan);
         Page<InternDTO> internDTOPage = internService.convertToPage((List<InternDTO>) internDTOIterable, pageable);
         return new ResponseEntity<>(internDTOPage, HttpStatus.OK);
     }
