@@ -1,6 +1,7 @@
 package com.example.quanlydaotao.service.impl;
 
 import com.example.quanlydaotao.dto.RecruitmentStatsDTO;
+import com.example.quanlydaotao.dto.TrainingStatsDTO;
 import com.example.quanlydaotao.model.Intern;
 import com.example.quanlydaotao.repository.IInternRepository;
 import com.example.quanlydaotao.service.RecruitmentStatsService;
@@ -273,5 +274,187 @@ public class RecruitmentStatsServiceIMPL implements RecruitmentStatsService {
         recruitmentStatsDTO.setCandidatesAcceptJobYet(candidatesPass.size() - candidatesAcceptJob.size() - candidatesRejectJob.size() );
 
         return recruitmentStatsDTO;
+    }
+
+    @Override
+    public RecruitmentStatsDTO getMaxRecruitmentStatsWithYear() {
+        RecruitmentStatsDTO recruitmentStatsDTO = getRecruitmentStatsByYear(2020);
+        RecruitmentStatsDTO recruitmentStatsDTO1 = getRecruitmentStatsByYear(2021);
+        RecruitmentStatsDTO recruitmentStatsDTO2 = getRecruitmentStatsByYear(2022);
+        RecruitmentStatsDTO recruitmentStatsDTO3 = getRecruitmentStatsByYear(2023);
+        RecruitmentStatsDTO recruitmentStatsDTO4 = getRecruitmentStatsByYear(2024);
+        List<RecruitmentStatsDTO> recruitmentStatsDTOList = new ArrayList<>();
+        recruitmentStatsDTOList.add(recruitmentStatsDTO);
+        recruitmentStatsDTOList.add(recruitmentStatsDTO1);
+        recruitmentStatsDTOList.add(recruitmentStatsDTO2);
+        recruitmentStatsDTOList.add(recruitmentStatsDTO3);
+        recruitmentStatsDTOList.add(recruitmentStatsDTO4);
+
+        int totalCV = 0;
+        int totalInterviewCV = 0;
+        int candidatesInterview = 0;
+        int candidatesDoNotInterview = 0;
+        int candidatesPass = 0;
+        int candidatesFail = 0;
+        int candidatesAcceptJob = 0;
+        int candidatesRejectJob = 0;
+        int candidatesAcceptJobYet = 0;
+
+        for (RecruitmentStatsDTO res : recruitmentStatsDTOList) {
+            if (totalCV < res.getTotalCV()) {
+                totalCV = res.getTotalCV();
+            }
+            if (totalInterviewCV < res.getTotalInterviewCV()) {
+                totalInterviewCV = res.getTotalInterviewCV();
+            }
+            if (candidatesInterview < res.getCandidatesInterview()) {
+                candidatesInterview = res.getCandidatesInterview();
+            }
+            if (candidatesDoNotInterview < res.getCandidatesDoNotInterview()) {
+                candidatesDoNotInterview = res.getCandidatesDoNotInterview();
+            }
+            if (candidatesPass < res.getCandidatesPass()) {
+                candidatesPass = res.getCandidatesPass();
+            }
+            if (candidatesFail < res.getCandidatesFail()) {
+                candidatesFail = res.getCandidatesFail();
+            }
+            if (candidatesAcceptJob < res.getCandidatesAcceptJob()) {
+                candidatesAcceptJob = res.getCandidatesAcceptJob();
+            }
+            if (candidatesRejectJob < res.getCandidatesRejectJob()) {
+                candidatesRejectJob = res.getCandidatesRejectJob();
+            }
+            if (candidatesAcceptJobYet < res.getCandidatesAcceptJobYet()) {
+                candidatesAcceptJobYet = res.getCandidatesAcceptJobYet();
+            }
+        }
+        RecruitmentStatsDTO maxRecruitmentStatsDTO = new RecruitmentStatsDTO(totalCV, totalInterviewCV, candidatesInterview, candidatesDoNotInterview, candidatesPass, candidatesFail, candidatesAcceptJob, candidatesRejectJob, candidatesAcceptJobYet);
+        return maxRecruitmentStatsDTO;
+    }
+
+    @Override
+    public RecruitmentStatsDTO getMaxRecruitmentStatsWithMonth() {
+        RecruitmentStatsDTO recruitmentStatsDTO = getRecruitmentStatsByMonth(1,2024);
+        RecruitmentStatsDTO recruitmentStatsDTO1 = getRecruitmentStatsByMonth(2,2024);
+        RecruitmentStatsDTO recruitmentStatsDTO2 = getRecruitmentStatsByMonth(3,2024);
+        RecruitmentStatsDTO recruitmentStatsDTO3 = getRecruitmentStatsByMonth(4,2024);
+        RecruitmentStatsDTO recruitmentStatsDTO4 = getRecruitmentStatsByMonth(5,2024);
+        RecruitmentStatsDTO recruitmentStatsDTO5 = getRecruitmentStatsByMonth(6,2024);
+        RecruitmentStatsDTO recruitmentStatsDTO6 = getRecruitmentStatsByMonth(7,2024);
+        RecruitmentStatsDTO recruitmentStatsDTO7 = getRecruitmentStatsByMonth(8,2024);
+        RecruitmentStatsDTO recruitmentStatsDTO8 = getRecruitmentStatsByMonth(9,2024);
+        RecruitmentStatsDTO recruitmentStatsDTO9 = getRecruitmentStatsByMonth(10,2024);
+        RecruitmentStatsDTO recruitmentStatsDTO10 = getRecruitmentStatsByMonth(11,2024);
+        RecruitmentStatsDTO recruitmentStatsDTO11 = getRecruitmentStatsByMonth(12,2024);
+        List<RecruitmentStatsDTO> list = new ArrayList<>();
+        list.add(recruitmentStatsDTO);
+        list.add(recruitmentStatsDTO1);
+        list.add(recruitmentStatsDTO2);
+        list.add(recruitmentStatsDTO3);
+        list.add(recruitmentStatsDTO4);
+        list.add(recruitmentStatsDTO5);
+        list.add(recruitmentStatsDTO6);
+        list.add(recruitmentStatsDTO7);
+        list.add(recruitmentStatsDTO8);
+        list.add(recruitmentStatsDTO9);
+        list.add(recruitmentStatsDTO10);
+        list.add(recruitmentStatsDTO11);
+
+        int totalCV = 0;
+        int totalInterviewCV = 0;
+        int candidatesInterview = 0;
+        int candidatesDoNotInterview = 0;
+        int candidatesPass = 0;
+        int candidatesFail = 0;
+        int candidatesAcceptJob = 0;
+        int candidatesRejectJob = 0;
+        int candidatesAcceptJobYet = 0;
+
+        for (RecruitmentStatsDTO res : list) {
+            if (totalCV < res.getTotalCV()) {
+                totalCV = res.getTotalCV();
+            }
+            if (totalInterviewCV < res.getTotalInterviewCV()) {
+                totalInterviewCV = res.getTotalInterviewCV();
+            }
+            if (candidatesInterview < res.getCandidatesInterview()) {
+                candidatesInterview = res.getCandidatesInterview();
+            }
+            if (candidatesDoNotInterview < res.getCandidatesDoNotInterview()) {
+                candidatesDoNotInterview = res.getCandidatesDoNotInterview();
+            }
+            if (candidatesPass < res.getCandidatesPass()) {
+                candidatesPass = res.getCandidatesPass();
+            }
+            if (candidatesFail < res.getCandidatesFail()) {
+                candidatesFail = res.getCandidatesFail();
+            }
+            if (candidatesAcceptJob < res.getCandidatesAcceptJob()) {
+                candidatesAcceptJob = res.getCandidatesAcceptJob();
+            }
+            if (candidatesRejectJob < res.getCandidatesRejectJob()) {
+                candidatesRejectJob = res.getCandidatesRejectJob();
+            }
+            if (candidatesAcceptJobYet < res.getCandidatesAcceptJobYet()) {
+                candidatesAcceptJobYet = res.getCandidatesAcceptJobYet();
+            }
+        }
+        RecruitmentStatsDTO maxRecruitmentStatsDTO = new RecruitmentStatsDTO(totalCV, totalInterviewCV, candidatesInterview, candidatesDoNotInterview, candidatesPass, candidatesFail, candidatesAcceptJob, candidatesRejectJob, candidatesAcceptJobYet);
+        return maxRecruitmentStatsDTO;
+    }
+
+    @Override
+    public RecruitmentStatsDTO getMaxRecruitmentStatsWithQuarter() {
+        RecruitmentStatsDTO recruitmentStatsDTO = getRecruitmentStatsByQuarter(1,2024);
+        RecruitmentStatsDTO recruitmentStatsDTO1 = getRecruitmentStatsByQuarter(2,2024);
+        RecruitmentStatsDTO recruitmentStatsDTO2 = getRecruitmentStatsByQuarter(3,2024);
+        RecruitmentStatsDTO recruitmentStatsDTO3 = getRecruitmentStatsByQuarter(4,2024);
+        List<RecruitmentStatsDTO> list = new ArrayList<>();
+        list.add(recruitmentStatsDTO);
+        list.add(recruitmentStatsDTO1);
+        list.add(recruitmentStatsDTO2);
+        list.add(recruitmentStatsDTO3);
+        int totalCV = 0;
+        int totalInterviewCV = 0;
+        int candidatesInterview = 0;
+        int candidatesDoNotInterview = 0;
+        int candidatesPass = 0;
+        int candidatesFail = 0;
+        int candidatesAcceptJob = 0;
+        int candidatesRejectJob = 0;
+        int candidatesAcceptJobYet = 0;
+
+        for (RecruitmentStatsDTO res : list) {
+            if (totalCV < res.getTotalCV()) {
+                totalCV = res.getTotalCV();
+            }
+            if (totalInterviewCV < res.getTotalInterviewCV()) {
+                totalInterviewCV = res.getTotalInterviewCV();
+            }
+            if (candidatesInterview < res.getCandidatesInterview()) {
+                candidatesInterview = res.getCandidatesInterview();
+            }
+            if (candidatesDoNotInterview < res.getCandidatesDoNotInterview()) {
+                candidatesDoNotInterview = res.getCandidatesDoNotInterview();
+            }
+            if (candidatesPass < res.getCandidatesPass()) {
+                candidatesPass = res.getCandidatesPass();
+            }
+            if (candidatesFail < res.getCandidatesFail()) {
+                candidatesFail = res.getCandidatesFail();
+            }
+            if (candidatesAcceptJob < res.getCandidatesAcceptJob()) {
+                candidatesAcceptJob = res.getCandidatesAcceptJob();
+            }
+            if (candidatesRejectJob < res.getCandidatesRejectJob()) {
+                candidatesRejectJob = res.getCandidatesRejectJob();
+            }
+            if (candidatesAcceptJobYet < res.getCandidatesAcceptJobYet()) {
+                candidatesAcceptJobYet = res.getCandidatesAcceptJobYet();
+            }
+        }
+        RecruitmentStatsDTO maxRecruitmentStatsDTO = new RecruitmentStatsDTO(totalCV, totalInterviewCV, candidatesInterview, candidatesDoNotInterview, candidatesPass, candidatesFail, candidatesAcceptJob, candidatesRejectJob, candidatesAcceptJobYet);
+        return maxRecruitmentStatsDTO;
     }
 }

@@ -7,4 +7,7 @@ public interface RecruitmentStatsService {
     public RecruitmentStatsDTO getRecruitmentStatsByQuarter(int quarter, int year);
     public RecruitmentStatsDTO getRecruitmentStatsByYear(int year);
     public RecruitmentStatsDTO getAllRecruitmentStats();
+    public RecruitmentStatsDTO getMaxRecruitmentStatsWithYear();
+    public RecruitmentStatsDTO getMaxRecruitmentStatsWithMonth();
+    public RecruitmentStatsDTO getMaxRecruitmentStatsWithQuarter();
 }
