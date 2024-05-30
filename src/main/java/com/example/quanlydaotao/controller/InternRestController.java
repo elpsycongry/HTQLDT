@@ -2,12 +2,14 @@ package com.example.quanlydaotao.controller;
 
 import com.example.quanlydaotao.dto.InternDTO;
 import com.example.quanlydaotao.model.*;
+import com.example.quanlydaotao.repository.IRecruitmentPlanRepository;
 import com.example.quanlydaotao.service.IInternService;
 import com.example.quanlydaotao.service.InternService;
 import com.example.quanlydaotao.dto.SubjectDTO;
 import com.example.quanlydaotao.service.InternService;
 import com.example.quanlydaotao.service.UserService;
 import com.example.quanlydaotao.service.impl.InternServiceImpl;
+import com.example.quanlydaotao.service.impl.RecruitmentPlanService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -31,6 +33,8 @@ public class InternRestController {
     private InternService internService;
     @Autowired
     private UserService userService;
+    @Autowired
+    private RecruitmentPlanService recruitmentPlanService;
 
     @GetMapping
     public ResponseEntity<?> getAllIntern(){
@@ -44,6 +48,11 @@ public class InternRestController {
     @GetMapping("/subject")
     public ResponseEntity<?> getAllInternSubject(){
         return new ResponseEntity<>(internService.getSubjects(), HttpStatus.OK);
+    }
+
+    @GetMapping("/recruitment_plan")
+    public ResponseEntity<?> getAllRecruitmentPlan(){
+        return new ResponseEntity<>(recruitmentPlanService.getAllRecruitmentPlan(), HttpStatus.OK);
     }
 
     @GetMapping("/findIntern")
@@ -64,6 +73,19 @@ public class InternRestController {
             @RequestParam(name = "trainingState") String trainingState) {
         Pageable pageable = PageRequest.of(page, size);
         Iterable<InternDTO> internDTOIterable = internService.findListInterWithNameInternAndTrainingState(keyword, trainingState);
+        Page<InternDTO> internDTOPage = internService.convertToPage((List<InternDTO>) internDTOIterable, pageable);
+        return new ResponseEntity<>(internDTOPage, HttpStatus.OK);
+    }
+
+    @GetMapping("/searchValue")
+    public ResponseEntity<Page<InternDTO>> findListInterWithNameOrTrainingStateOrRecruitmentPlan(
+            @RequestParam(name = "page") int page,
+            @RequestParam(name = "size") int size,
+            @RequestParam(name = "keyword") String keyword,
+            @RequestParam(name = "trainingState") String trainingState,
+            @RequestParam(name = "recruitmentPlan") String idRecruitmentPlan) {
+        Pageable pageable = PageRequest.of(page, size);
+        Iterable<InternDTO> internDTOIterable = internService.findListInterWithNameInternAndTrainingStateAndRecruitmentPlan(keyword, trainingState, idRecruitmentPlan);
         Page<InternDTO> internDTOPage = internService.convertToPage((List<InternDTO>) internDTOIterable, pageable);
         return new ResponseEntity<>(internDTOPage, HttpStatus.OK);
     }

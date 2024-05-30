@@ -21,6 +21,7 @@ public class InternDTO {
     private Boolean isPass;
     private String finalScore;
     private String scoreInTeam;
+    private RecruitmentPlanDTO recruitmentPlanDTO;
     private List<InternSubjectDTO> internSubjectDTOList;
 
 
@@ -48,7 +49,7 @@ public class InternDTO {
 
     public InternDTO(){}
 
-    public InternDTO(Long id, String internName, LocalDate startDate, LocalDate endDate, String trainingState, String finalScore, String scoreInTeam, List<InternSubjectDTO> internSubjectDTOList) {
+    public InternDTO(Long id, String internName, LocalDate startDate, LocalDate endDate, String trainingState, String finalScore, String scoreInTeam, RecruitmentPlanDTO recruitmentPlanDTO, List<InternSubjectDTO> internSubjectDTOList) {
         this.id = id;
         this.internName = internName;
         this.startDate = startDate;
@@ -58,6 +59,7 @@ public class InternDTO {
         this.isPass = setIsPass(finalScore, scoreInTeam, startDate, endDate, trainingState);
         this.finalScore = finalScore;
         this.scoreInTeam = scoreInTeam;
+        this.recruitmentPlanDTO = recruitmentPlanDTO;
         this.internSubjectDTOList = internSubjectDTOList;
     }
     
@@ -79,10 +81,11 @@ public class InternDTO {
         if (trainingState.equals("stop_training")) {
             return false;
         }
-        if (finalScoreIntern == "NA") {
-            return false;
-        }
-        if (finalScoreIntern == null || scoreInTeamIntern == null || finalScoreIntern.isEmpty() || scoreInTeamIntern.isEmpty()) {
+        if (finalScoreIntern == "NA" ||
+                finalScoreIntern == null ||
+                scoreInTeamIntern == null ||
+                finalScoreIntern.isEmpty() ||
+                scoreInTeamIntern.isEmpty()) {
             return null;
         }
 
@@ -181,4 +184,11 @@ public class InternDTO {
         this.scoreInTeam = scoreInTeam;
     }
 
+    public RecruitmentPlanDTO getRecruitmentPlanDTO() {
+        return recruitmentPlanDTO;
+    }
+
+    public void setRecruitmentPlanDTO(RecruitmentPlanDTO recruitmentPlanDTO) {
+        this.recruitmentPlanDTO = recruitmentPlanDTO;
+    }
 }
