@@ -167,6 +167,12 @@ public class Controller {
         return ResponseEntity.ok(Collections.singletonMap("exists", exists));
     }
 
+    @GetMapping("/admin/users/check-phone-add/{phone}")
+    public ResponseEntity<Map<String, Boolean>> checkAddPhoneExists(@PathVariable String phone) {
+        boolean exists = userService.checkAddPhoneExists(phone);
+        return ResponseEntity.ok(Collections.singletonMap("exists", exists));
+    }
+
     @PostMapping("/admin/block/{id}")
     public ResponseEntity<String> blockUser(@PathVariable Long id) {
         //true - Người dùng được cấp quyền

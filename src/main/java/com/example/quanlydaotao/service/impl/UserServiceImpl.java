@@ -68,7 +68,7 @@ public class UserServiceImpl implements UserService {
     public Iterable<User> remoteRoleAdminDisplay(Iterable<User> users) {
         List<User> userList = (List<User>) users;
         userList.removeIf(user -> user.getRoles().stream().anyMatch(role -> role.getName().equals("ROLE_ADMIN")));
-        userList.removeIf(user -> user.getRoles().stream().anyMatch(role -> role.getName().equals("ROLE_HR")));
+//        userList.removeIf(user -> user.getRoles().stream().anyMatch(role -> role.getName().equals("ROLE_HR")));
         users = userList;
         return users;
     }
@@ -184,9 +184,16 @@ public class UserServiceImpl implements UserService {
         return userRepository.findAll(pageable);
     }
 
+    @Override
     public boolean checkPhoneExists(String phone) {
         long numberOfPhone = userRepository.countByPhone(phone);
         return numberOfPhone >= 2;
+    }
+
+    @Override
+    public boolean checkAddPhoneExists(String phone) {
+        long numberOfPhone = userRepository.countByPhone(phone);
+        return numberOfPhone >= 1;
     }
 
     @Override

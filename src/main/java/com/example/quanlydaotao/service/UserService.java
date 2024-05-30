@@ -45,5 +45,7 @@ public interface UserService extends UserDetailsService {
     boolean checkPhoneExists(String phone);
 
 
+    boolean checkAddPhoneExists(String phone);
+
     boolean checkEmailExists(String email);
 }
