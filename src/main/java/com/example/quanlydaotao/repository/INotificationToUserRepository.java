@@ -10,4 +10,5 @@ public interface INotificationToUserRepository extends JpaRepository<Notificatio
     List<NotificationToUser> findAllByUser(User user);
     List<NotificationToUser> findAllByUserAndIsRead(User user, Boolean isRead);
 
+
 }

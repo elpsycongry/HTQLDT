@@ -41,6 +41,9 @@ public class NotificationController {
         } else if (type.equals("un_read")) {
             listData = notificationService.findAllNotiWithUserIdAndStatus(id, false);
         }
+
+           listData.sort((n1, n2) -> n2.getNotification().getTimestamp().compareTo(n1.getNotification().getTimestamp()));
+
         ArrayList<NotificationDTO> list = new ArrayList<>();
         for (NotificationToUser notificationToUser : listData) {
             NotificationDTO notificationDTO = new NotificationDTO();
@@ -58,7 +61,6 @@ public class NotificationController {
     public ResponseEntity<?> setStatusNotification (@RequestBody List<NotificationDTO> notificationlist){
         if (notificationlist != null && !notificationlist.isEmpty()) {
             for (NotificationDTO notificationDTO : notificationlist) {
-                System.out.println(notificationDTO);
                 NotificationToUser notification = notificationService.findNotificationToUserById(notificationDTO.getId()).get();
                 notification.setIsRead(notificationDTO.getIsRead());
                 notificationService.saveNotiToUser(notification);
@@ -90,9 +92,9 @@ public class NotificationController {
         }
 
         List<String> roles = notification.getListRoleReceiver();
-        if (roles != null){;
-            users = userRepository.findAllByRoles(roleRepository.findByName(roles.getFirst()));
 
+        if (roles != null){;
+            users = userRepository.findAllByRoles(roleRepository.findByName(roles.get(0)));
            for (int i = 1; i < roles.size(); i++){
                List<User> userList = userRepository.findAllByRoles(roleRepository.findByName(roles.get(i)));
                for (User user : userList){
@@ -104,7 +106,6 @@ public class NotificationController {
         }
 
         for (User user : users) {
-            System.out.println(user);
             NotificationToUser notificationToUser = new NotificationToUser();
             notificationToUser.setNotification(notificationEntity);
             notificationToUser.setUser(user);
