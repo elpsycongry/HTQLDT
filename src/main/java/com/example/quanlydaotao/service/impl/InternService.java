@@ -45,6 +45,7 @@ public class InternService implements IInternService {
         intern.setRecruitmentPlan(recruitmentPlan.get());
         if (intern.getStatus().equals("Đã nhận việc")) {
             InternProfile internProfile = new InternProfile(intern);
+            internProfile.setIsPass(null);
             internServiceImpl.save(internProfile);
         }
         iInternRepository.saveAndFlush(intern);

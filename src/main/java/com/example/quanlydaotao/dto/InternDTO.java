@@ -76,11 +76,12 @@ public class InternDTO {
 
     private Boolean setIsPass(String finalScoreIntern, String scoreInTeamIntern,
                               LocalDate startDate, LocalDate endDate, String trainingState) {
+
         if (trainingState.equals("stop_training")) {
             return false;
         }
         if (finalScoreIntern == "NA") {
-            return false;
+            return null;
         }
         if (finalScoreIntern == null || scoreInTeamIntern == null || finalScoreIntern.isEmpty() || scoreInTeamIntern.isEmpty()) {
             return null;

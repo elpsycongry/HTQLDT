@@ -78,4 +78,19 @@ public class RecruitmentStatsController {
 
         return new ResponseEntity<>(recruitmentStatsDTOList, HttpStatus.OK);
     }
+
+    @GetMapping("/maxRecruitmentWithYear")
+    public ResponseEntity<RecruitmentStatsDTO> getMaxRecruitmentWithYear(){
+        return new ResponseEntity<>(recruitmentStatsService.getMaxRecruitmentStatsWithYear(), HttpStatus.OK);
+    }
+
+    @GetMapping("/maxRecruitmentWithQuarter")
+    public ResponseEntity<RecruitmentStatsDTO> getMaxRecruitmentWithQuarter(){
+        return new ResponseEntity<>(recruitmentStatsService.getMaxRecruitmentStatsWithQuarter(), HttpStatus.OK);
+    }
+
+    @GetMapping("/maxRecruitmentWithMonth")
+    public ResponseEntity<RecruitmentStatsDTO> getMaxRecruitmentWithMonth(){
+        return new ResponseEntity<>(recruitmentStatsService.getMaxRecruitmentStatsWithMonth(), HttpStatus.OK);
+    }
 }
