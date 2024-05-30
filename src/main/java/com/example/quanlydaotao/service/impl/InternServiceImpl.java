@@ -2,6 +2,7 @@ package com.example.quanlydaotao.service.impl;
 
 import com.example.quanlydaotao.dto.InternDTO;
 import com.example.quanlydaotao.dto.InternSubjectDTO;
+import com.example.quanlydaotao.dto.RecruitmentPlanDTO;
 import com.example.quanlydaotao.model.*;
 import com.example.quanlydaotao.model.InternProfile;
 import com.example.quanlydaotao.model.InternScore;
@@ -25,6 +26,7 @@ import java.util.Optional;
 
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.stream.StreamSupport;
 
 @Service
 public class InternServiceImpl implements InternService {
@@ -232,6 +234,8 @@ public class InternServiceImpl implements InternService {
                 finalScore = Math.round((finalScore / count) * 100.0) / 100.0;
             }
 
+            RecruitmentPlanDTO recruitmentPlanDTO = getRecruitmentPlanDTO(internProfiles.get(i).getIntern().getRecruitmentPlan());
+
             InternDTO internDTO = new InternDTO(
                     internProfile.getIntern().getId(),
                     internProfile.getIntern().getName(),
@@ -240,6 +244,7 @@ public class InternServiceImpl implements InternService {
                     internProfile.getTrainingState(),
                     (checkFinalScore ? String.valueOf(finalScore) : "NA"),
                     internProfile.getScoreInTeam(),
+                    recruitmentPlanDTO,
                     internSubjectDTOList);
             internDTOList.add(i, internDTO);
         }
@@ -265,6 +270,44 @@ public class InternServiceImpl implements InternService {
         return internDTOIterable;
     }
     @Override
+    public Iterable<InternDTO> findListInterWithNameInternAndTrainingStateAndRecruitmentPlan(String keyword, String trainingState, String recruitmentPlan) {
+        Iterable<InternDTO> internDTOIterable = getAllInter();
+
+        boolean hasKeyword = !keyword.isEmpty();
+        boolean hasTrainingState = !trainingState.isEmpty();
+        boolean hasRecruitmentPlanId = recruitmentPlan != null && !recruitmentPlan.isEmpty();
+
+        if (hasKeyword && hasTrainingState && hasRecruitmentPlanId) {
+            internDTOIterable = findListInterWithNameInter(keyword, internDTOIterable);
+            internDTOIterable = findListInterWithTrainingState(trainingState, internDTOIterable);
+            internDTOIterable = findListInterWithRecruitmentPlan(recruitmentPlan, internDTOIterable);
+            return internDTOIterable;
+        } else if (!hasKeyword && hasTrainingState && hasRecruitmentPlanId) {
+            internDTOIterable = findListInterWithTrainingState(trainingState, internDTOIterable);
+            internDTOIterable = findListInterWithRecruitmentPlan(recruitmentPlan, internDTOIterable);
+            return internDTOIterable;
+        } else if (hasKeyword && !hasTrainingState && hasRecruitmentPlanId) {
+            internDTOIterable = findListInterWithNameInter(keyword, internDTOIterable);
+            internDTOIterable = findListInterWithRecruitmentPlan(recruitmentPlan, internDTOIterable);
+            return internDTOIterable;
+        } else if (!hasKeyword && !hasTrainingState && hasRecruitmentPlanId) {
+            internDTOIterable = findListInterWithRecruitmentPlan(recruitmentPlan, internDTOIterable);
+            return internDTOIterable;
+        } else if (hasKeyword && hasTrainingState && !hasRecruitmentPlanId) {
+            internDTOIterable = findListInterWithNameInter(keyword, internDTOIterable);
+            internDTOIterable = findListInterWithTrainingState(trainingState, internDTOIterable);
+            return internDTOIterable;
+        } else if (hasKeyword && !hasTrainingState && !hasRecruitmentPlanId) {
+            internDTOIterable = findListInterWithNameInter(keyword, internDTOIterable);
+            return internDTOIterable;
+        } else if (!hasKeyword && hasTrainingState && !hasRecruitmentPlanId) {
+            internDTOIterable = findListInterWithTrainingState(trainingState, internDTOIterable);
+            return internDTOIterable;
+        } else {
+            return internDTOIterable;
+        }
+    }
+    @Override
     public Iterable<InternDTO> findListInterWithNameInter(String keyword, Iterable<InternDTO> internDTOIterable) {
         List<InternDTO> internDTOList = (List<InternDTO>) internDTOIterable;
         List<InternDTO> matchingInternDTO = internDTOList.stream()
@@ -282,11 +325,25 @@ public class InternServiceImpl implements InternService {
         return matchingInternDTO;
     }
 
+
+    @Override
+    public Iterable<InternDTO> findListInterWithRecruitmentPlan(String recruitmentPlan, Iterable<InternDTO> internDTOIterable) {
+        List<InternDTO> internDTOList = (List<InternDTO>) internDTOIterable;
+        List<InternDTO> matchingInternDTO = internDTOList.stream()
+                .filter(f -> f.getRecruitmentPlanDTO().getName().equals(recruitmentPlan))
+                .collect(Collectors.toList());
+        return matchingInternDTO;
+    }
+
     @Override
     public Page<InternDTO> convertToPage(List<InternDTO> internDTOList, Pageable pageable) {
         int start = (int) pageable.getOffset();
         int end = Math.min(start + pageable.getPageSize(), internDTOList.size());
 
         return new PageImpl<>(internDTOList.subList(start, end), pageable, internDTOList.size());
+    }
+
+    public RecruitmentPlanDTO getRecruitmentPlanDTO(RecruitmentPlan recruitmentPlan) {
+        return new RecruitmentPlanDTO(recruitmentPlan.getId(), recruitmentPlan.getName(), recruitmentPlan.getStatus());
     }
 }

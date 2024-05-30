@@ -137,6 +137,18 @@ public class RecruitmentPlanService implements IRecruitmentPlanService {
         );
     }
 
+    @Override
+    public Iterable<RecruitmentPlanDTO> getAllRecruitmentPlan() {
+        List<RecruitmentPlanDTO> recruitmentPlanDTOS = new ArrayList<>();
+        List<RecruitmentPlan> recruitmentPlans = recruitmentPlanRepository.findAll();
+        for (int i = 0; i < recruitmentPlans.size(); i++) {
+            RecruitmentPlan recruitmentPlan = recruitmentPlans.get(i);
+            RecruitmentPlanDTO recruitmentPlanDTO = new RecruitmentPlanDTO((long) i + 1, recruitmentPlan.getName(), recruitmentPlan.getStatus());
+            recruitmentPlanDTOS.add(i, recruitmentPlanDTO);
+        }
+        return recruitmentPlanDTOS;
+    }
+
     public void DeniedRecruitmentPlan(long idPlan, long idUser, String status, String reason) {
         RecruitmentPlan recruitmentPlan = recruitmentPlanRepository.findById(idPlan).get();
         recruitmentPlan.setStatus(status)
@@ -158,4 +170,6 @@ public class RecruitmentPlanService implements IRecruitmentPlanService {
                 .setAction(action);
         userPlanActionService.save(userAction);
     }
+
+
 }
