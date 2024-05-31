@@ -4,15 +4,16 @@ public class ProcessDTO {
     private long requestId;
     private String requestName;
     private String requestCreator;
-    private boolean detAccept;
+    private String detAccept;
 
     private long planId;
     private String planName;
-    private boolean decanAccept;
+    private String decanAccept;
 
     private int applicants;
     private int training;
     private int intern;
+    private int totalIntern;
 
     private String reason;
     private int step;
@@ -82,20 +83,20 @@ public class ProcessDTO {
         return this;
     }
 
-    public boolean isDetAccept() {
+    public String getDetAccept() {
         return detAccept;
     }
 
-    public ProcessDTO setDetAccept(boolean detAccept) {
+    public ProcessDTO setDetAccept(String detAccept) {
         this.detAccept = detAccept;
         return this;
     }
 
-    public boolean isDecanAccept() {
+    public String getDecanAccept() {
         return decanAccept;
     }
 
-    public ProcessDTO setDecanAccept(boolean decanAccept) {
+    public ProcessDTO setDecanAccept(String decanAccept) {
         this.decanAccept = decanAccept;
         return this;
     }
@@ -124,6 +125,15 @@ public class ProcessDTO {
 
     public ProcessDTO setStep(int step) {
         this.step = step;
+        return this;
+    }
+
+    public int getTotalIntern() {
+        return totalIntern;
+    }
+
+    public ProcessDTO setTotalIntern(int totalIntern) {
+        this.totalIntern = totalIntern;
         return this;
     }
 }

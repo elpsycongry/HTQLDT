@@ -175,17 +175,22 @@ public class RecruitmentRequestService implements IRecruitmentRequestService {
         processDTO.setRequestId(request.getId())
                 .setRequestCreator(request.getUsers().getName() + "khởi tạo nhu cầu nhân sự:")
                 .setRequestName(request.getName())
-                .setDetAccept(true)
                 .setStep(2);
 
         if (request.getStatus().equals("Đã gửi")) {
-            processDTO.setStep(1);
+            processDTO.setStep(1)
+                    .setDetAccept("");
+        }
+
+        if (request.getStatus().equals("Đã xác nhận") || request.getStatus().equals("Đang tuyển dụng")) {
+            processDTO.setDetAccept("true");
         }
 
         String[] status = request.getStatus().split(" ");
         if (status[0].equals("Bị")) {
-            processDTO.setDetAccept(false)
+            processDTO.setDetAccept("false")
                 .setReason(request.getReason())
+                .setDetAccept("false")
                 .setStep(1);
         }
 

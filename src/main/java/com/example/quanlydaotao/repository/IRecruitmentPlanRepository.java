@@ -14,4 +14,6 @@ import java.util.Optional;
 @Repository
 public interface IRecruitmentPlanRepository extends JpaRepository<RecruitmentPlan, Long>, JpaSpecificationExecutor<RecruitmentPlan> {
     Optional<RecruitmentPlan> findByRecruitmentRequestId(long idRecruitmentRequest);
+    List<RecruitmentPlan> findAllByOrderByDateCreatePlanDesc(Sort sort);
+    List<RecruitmentPlan> findByStatusEquals(String status);
 }

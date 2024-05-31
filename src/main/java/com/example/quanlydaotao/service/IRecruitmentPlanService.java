@@ -12,4 +12,6 @@ public interface IRecruitmentPlanService {
     Page<RecruitmentPlan> showRecruitmentPlan(Pageable pageable);
     Optional<RecruitmentPlan> showRecruitmentPlanById(long id);
     Page<RecruitmentPlan> findAllByName(PaginateRequest paginateRequest, RecruitmentPlanDTO recruitmentPlanDTO);
+
+    Iterable<RecruitmentPlanDTO> getAllRecruitmentPlan();
 }

@@ -2,8 +2,10 @@ package com.example.quanlydaotao.service.impl;
 
 import com.example.quanlydaotao.dto.*;
 import com.example.quanlydaotao.model.Intern;
+import com.example.quanlydaotao.model.InternProfile;
 import com.example.quanlydaotao.model.RecruitmentPlan;
 import com.example.quanlydaotao.repository.IInternRepository;
+import com.example.quanlydaotao.repository.InternProfileRepository;
 import com.example.quanlydaotao.service.IInternService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -14,6 +16,8 @@ import org.springframework.stereotype.Service;
 
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,6 +29,10 @@ public class InternService implements IInternService {
     private RecruitmentPlanService recruitmentPlanService;
     @Autowired
     private RecruitmentPlanDetailService recruitmentPlanDetailService;
+    @Autowired
+    private InternServiceImpl internServiceImpl;
+    @Autowired
+    private InternProfileRepository internProfileRepository;
 
     @Override
     public void createIntern(Intern intern) {
@@ -40,6 +48,11 @@ public class InternService implements IInternService {
     public void updateIntern(Intern intern) {
         Optional<RecruitmentPlan> recruitmentPlan = recruitmentPlanService.findById(intern.getRecruitmentPlan().getId());
         intern.setRecruitmentPlan(recruitmentPlan.get());
+        if (intern.getStatus().equals("Đã nhận việc")) {
+            InternProfile internProfile = new InternProfile(intern);
+            internProfile.setIsPass(null);
+            internServiceImpl.save(internProfile);
+        }
         iInternRepository.saveAndFlush(intern);
     }
 
@@ -51,6 +64,7 @@ public class InternService implements IInternService {
 
     public void addIntern(Intern intern) throws Exception{
         RecruitmentPlan plan = recruitmentPlanService.findById(intern.getRecruitmentPlan().getId()).get();
+        intern.setApplyCVTime(LocalDateTime.now());
         intern.setRecruitmentPlan(plan);
         if (!isFullIntern(intern.getRecruitmentPlan().getId())) {
             iInternRepository.save(intern);
@@ -98,6 +112,22 @@ public class InternService implements IInternService {
         }
         return training;
     }
+    public int internPass(long planId) {
+        List<Long> interns = new ArrayList<>();
+        for (Intern intern : iInternRepository.findByRecruitmentPlanId(planId)) {
+            interns.add(intern.getId());
+        }
+        List<InternProfile> internProfiles = internProfileRepository.findByInternIdIn(interns);
+
+
+        int resultIntern = 0;
+        for (InternProfile internProfile : internProfiles) {
+            if (internProfile.getIsPass()) {
+                resultIntern++;
+            }
+        }
+        return resultIntern;
+    }
 
     public ProcessDTO showProcessIntern(ProcessDTO process) {
         ProcessDTO newProcess = process;
@@ -113,6 +143,10 @@ public class InternService implements IInternService {
             newProcess.setTraining(training)
                     .setStep(4);
         }
+
+        newProcess.setTotalIntern(recruitmentPlanDetailService.getTotalResult(newProcess.getPlanId()));
+        newProcess.setIntern(internPass(process.getPlanId()));
+
         return newProcess;
     }
 

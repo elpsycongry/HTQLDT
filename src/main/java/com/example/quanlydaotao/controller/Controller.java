@@ -71,6 +71,7 @@ public class Controller {
         }
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setStatus(true);
         userService.save(user);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
@@ -198,10 +199,33 @@ public class Controller {
 
 
     @GetMapping("/process/request/{idRequest}")
-    public ResponseEntity showProcess(@PathVariable long idRequest) {
+    public ResponseEntity showProcessRequest(@PathVariable long idRequest) {
         ProcessDTO processDTO = requestService.showProcessRequest(idRequest);
         processDTO = planService.showProcessPlan(processDTO);
         processDTO = internService.showProcessIntern(processDTO);
-        return new ResponseEntity(processDTO,HttpStatus.OK);
+        return new ResponseEntity(processDTO, HttpStatus.OK);
+    }
+
+    @GetMapping("/process/plan/{idPlan}")
+    public ResponseEntity showProcessPlan(@PathVariable long idPlan) {
+        RecruitmentPlan plan = planService.findById(idPlan).get();
+        long idRequest = plan.getRecruitmentRequest().getId();
+        ProcessDTO processDTO = requestService.showProcessRequest(idRequest);
+        processDTO = planService.showProcessPlan(processDTO);
+        processDTO = internService.showProcessIntern(processDTO);
+        return new ResponseEntity(processDTO, HttpStatus.OK);
+    }
+    @PostMapping("/admin/users/add")
+    public ResponseEntity<String> addUser(@RequestBody User user) {
+        // Save the new user
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        userService.save(user);
+        return new ResponseEntity<>("User added!", HttpStatus.CREATED);
+    }
+
+    @GetMapping("/admin/users/check-email/{email}")
+    public ResponseEntity<Map<String, Boolean>> checkEmail(@PathVariable String email) {
+        boolean exists = userService.checkEmailExists(email);
+        return ResponseEntity.ok(Collections.singletonMap("exists", exists));
     }
 }
