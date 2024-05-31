@@ -39,4 +39,17 @@ public class RecruitmentPlanDetailService implements IRecruitmentPlanDetailServi
 
         return totalIntern;
     }
+
+    public int getTotalResult(long recruitmentPlanId) {
+        int totalResult = 0;
+        Iterable<RecruitmentPlanDetail> planDetails = findByRecruitmentPlanId(recruitmentPlanId);
+
+        if (planDetails != null) {
+            for (RecruitmentPlanDetail planDetail : planDetails) {
+                totalResult += Integer.parseInt(planDetail.getNumberOfOutputPersonnel());
+            }
+        }
+
+        return totalResult;
+    }
 }

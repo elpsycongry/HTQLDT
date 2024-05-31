@@ -1,11 +1,8 @@
 package com.example.quanlydaotao.service.impl;
 
 import com.example.quanlydaotao.dto.*;
-import com.example.quanlydaotao.model.RecruitmentRequest;
-import com.example.quanlydaotao.model.UserRecruitmentAction;
+import com.example.quanlydaotao.model.*;
 import com.example.quanlydaotao.repository.IRecruitmentRequestRepository;
-import com.example.quanlydaotao.model.RecruitmentRequestDetail;
-import com.example.quanlydaotao.model.Users;
 import com.example.quanlydaotao.service.IRecruitmentRequestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -15,11 +12,8 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 @Service
 public class RecruitmentRequestService implements IRecruitmentRequestService {
@@ -33,6 +27,7 @@ public class RecruitmentRequestService implements IRecruitmentRequestService {
     private RecruitmentRequestDetailService recruitmentRequestDetailService;
     @Autowired
     private UserRecruitmentActionService userRecruitmentActionService;
+
 
     @Override
     public Iterable<RecruitmentRequest> getAllRecruitmentRequests() {
@@ -171,5 +166,34 @@ public class RecruitmentRequestService implements IRecruitmentRequestService {
         RecruitmentRequest activedRequest = iRecruitmentRequestRepository.findById(idRecruitmentRequest).get()
                 .setStatus("Đã xác nhận");
         iRecruitmentRequestRepository.save(activedRequest);
+    }
+
+    public ProcessDTO showProcessRequest(long idRecruitmentRequest) {
+        ProcessDTO processDTO = new ProcessDTO();
+
+        RecruitmentRequest request = iRecruitmentRequestRepository.findById(idRecruitmentRequest).get();
+        processDTO.setRequestId(request.getId())
+                .setRequestCreator(request.getUsers().getName() + "khởi tạo nhu cầu nhân sự:")
+                .setRequestName(request.getName())
+                .setStep(2);
+
+        if (request.getStatus().equals("Đã gửi")) {
+            processDTO.setStep(1)
+                    .setDetAccept("");
+        }
+
+        if (request.getStatus().equals("Đã xác nhận") || request.getStatus().equals("Đang tuyển dụng")) {
+            processDTO.setDetAccept("true");
+        }
+
+        String[] status = request.getStatus().split(" ");
+        if (status[0].equals("Bị")) {
+            processDTO.setDetAccept("false")
+                .setReason(request.getReason())
+                .setDetAccept("false")
+                .setStep(1);
+        }
+
+    return processDTO;
     }
 }

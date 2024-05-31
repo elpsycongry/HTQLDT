@@ -9,9 +9,11 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface IRecruitmentPlanRepository extends JpaRepository<RecruitmentPlan, Long>, JpaSpecificationExecutor<RecruitmentPlan> {
+    Optional<RecruitmentPlan> findByRecruitmentRequestId(long idRecruitmentRequest);
     List<RecruitmentPlan> findAllByOrderByDateCreatePlanDesc(Sort sort);
-
+    List<RecruitmentPlan> findByStatusEquals(String status);
 }
