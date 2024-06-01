@@ -37,9 +37,6 @@ dependencies {
 
     // Apache XMLBeans (required for poi-ooxml)
     implementation 'org.apache.xmlbeans:xmlbeans:5.1.1'
-
-    // Apache Commons Collections
-    implementation 'org.apache.commons:commons-collections4:4.4'
 }
 
 tasks.named('test') {

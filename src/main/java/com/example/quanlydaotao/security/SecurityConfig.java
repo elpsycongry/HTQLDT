@@ -90,7 +90,7 @@ public class SecurityConfig {
         return http.cors(Customizer.withDefaults()).csrf(AbstractHttpConfigurer::disable)
                 .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/login", "/register", "/logoutUser","/role", "/api/test/**").permitAll()
+                        .requestMatchers("/login", "/register", "/logoutUser","/role", "/api/test/**", "/generate-pdf").permitAll()
                         .requestMatchers("/users/**").hasAnyAuthority("ROLE_USER", "ROLE_QLĐT", "ROLE_ADMIN")
                         .requestMatchers("/admin/**").hasAnyAuthority("ROLE_ADMIN")
                         .requestMatchers("/api/interns/**").hasAnyAuthority("ROLE_ADMIN","ROLE_QLĐT")
@@ -101,6 +101,7 @@ public class SecurityConfig {
                         .requestMatchers("api/plansIntern/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_QLĐT"    )
                         .requestMatchers("/api/recruitmentStats/**").hasAnyAuthority("ROLE_ADMIN")
                         .requestMatchers("/api/dashboard/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_QLĐT")
+                        .requestMatchers("/api/notifications/**").permitAll()
                 )
                 .exceptionHandling(customizer -> customizer.accessDeniedHandler(customAccessDeniedHandler()))
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
