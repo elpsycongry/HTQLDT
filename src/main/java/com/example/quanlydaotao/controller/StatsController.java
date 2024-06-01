@@ -22,6 +22,8 @@ import java.util.List;
 public class StatsController {
     @Autowired
     private TrainingStatsService trainingStatsService;
+    @Autowired
+    private ExcelExportService excelExportService;
 
     @GetMapping("/trainingStats/all")
     public ResponseEntity<TrainingStatsDTO> getTrainingStats() {
@@ -123,10 +125,8 @@ public class StatsController {
 
     @GetMapping("/exportExcelTrainingStatsAll")
     public ResponseEntity<byte[]> exportTrainingStatsAll() {
-        TrainingStatsDTO trainingStatsDTO = trainingStatsService.getTrainingStats();
-
         try {
-            ByteArrayOutputStream outputStream = ExcelExportService.exportTrainingStatsToExcel(trainingStatsDTO);
+            ByteArrayOutputStream outputStream = excelExportService.exportTrainingStatsToExcel();
             byte[] excelBytes = outputStream.toByteArray();
 
             HttpHeaders headers = new HttpHeaders();

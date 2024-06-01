@@ -1,11 +1,16 @@
 package com.example.quanlydaotao.controller;
 import com.example.quanlydaotao.dto.RecruitmentStatsDTO;
 import com.example.quanlydaotao.service.RecruitmentStatsService;
+import com.example.quanlydaotao.service.impl.ExcelExportService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,6 +20,8 @@ import java.util.List;
 public class RecruitmentStatsController {
     @Autowired
     RecruitmentStatsService recruitmentStatsService;
+    @Autowired
+    private ExcelExportService excelExportService;
 
     @GetMapping("/month")
     public ResponseEntity<RecruitmentStatsDTO> getRecruitmentStatsWithMonth(@RequestParam int month){
@@ -92,5 +99,24 @@ public class RecruitmentStatsController {
     @GetMapping("/maxRecruitmentWithMonth")
     public ResponseEntity<RecruitmentStatsDTO> getMaxRecruitmentWithMonth(){
         return new ResponseEntity<>(recruitmentStatsService.getMaxRecruitmentStatsWithMonth(), HttpStatus.OK);
+    }
+
+    @GetMapping("/exportExcel")
+    public ResponseEntity<byte[]> exportRecruitmentStatsAll() {
+        try {
+            ByteArrayOutputStream outputStream = excelExportService.exportRecruitmentStatsToExcel();
+            byte[] excelBytes = outputStream.toByteArray();
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+            headers.setContentDispositionFormData("attachment", "recruitment_stats.xlsx");
+
+            return new ResponseEntity<>(excelBytes, headers, HttpStatus.OK);
+
+        } catch (IOException e) {
+            // Xử lý ngoại lệ
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }
