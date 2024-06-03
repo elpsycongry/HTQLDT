@@ -144,14 +144,17 @@ public class ExcelExportService {
         return outputStream;
     }
 
-//    Sửa chỗ nay!
     public ByteArrayOutputStream exportTrainingStatsToExcelByMonth(int month, int year) throws IOException {
-        TrainingStatsDTO trainingStatsWithMonth = trainingStatsService.getTrainingStatsWithMonth(month, year);
+        LocalDate currentDate = LocalDate.now();
+        int currentYear = currentDate.getYear();
+        TrainingStatsDTO trainingStatsWithMonth = trainingStatsService.getTrainingStatsWithMonth(month, currentYear);
         return createExcel(trainingStatsWithMonth, "Tháng");
     }
 
     public ByteArrayOutputStream exportTrainingStatsToExcelByQuarter(int quarter, int year) throws IOException {
-        TrainingStatsDTO trainingStatsWithQuarter = trainingStatsService.getTrainingStatsWithQuarter(quarter, year);
+        LocalDate currentDate = LocalDate.now();
+        int currentYear = currentDate.getYear();
+        TrainingStatsDTO trainingStatsWithQuarter = trainingStatsService.getTrainingStatsWithQuarter(quarter, currentYear);
         return createExcel(trainingStatsWithQuarter, "Quý");
     }
 
@@ -207,6 +210,18 @@ public class ExcelExportService {
 
         // Set column widths to 200 pixels
         setColumnWidths(sheet, 200);
+
+        // Populate "Các môn học" sheet
+        Sheet subjectSheet = workbook.createSheet("Các môn học");
+        createSubjectHeaderRow(subjectSheet, headerCellStyle);
+
+        int rowNum = 1;
+        for (AverageOfSubjectDTO subject : trainingStats.getAverageOfSubject()) {
+            createSubjectDataRow(subjectSheet, rowNum++, subject, dataCellStyle);
+        }
+
+        // Set column widths to 200 pixels
+        setColumnWidths(subjectSheet, 200);
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         workbook.write(outputStream);
@@ -388,5 +403,83 @@ public class ExcelExportService {
         recruitmentWorkBook.close();
 
         return outputStream;
+    }
+
+    private ByteArrayOutputStream createExcelRecruitment(RecruitmentStatsDTO recruitmentStats, String sheetName) throws IOException {
+        Workbook workbook = new XSSFWorkbook();
+        Sheet sheet = workbook.createSheet(sheetName);
+
+        // Create font for headers
+        Font headerFont = workbook.createFont();
+        headerFont.setBold(true);
+        headerFont.setFontHeightInPoints((short) 14); // Set font size to 14
+
+        // Create style for headers
+        CellStyle headerCellStyle = workbook.createCellStyle();
+        headerCellStyle.setFont(headerFont);
+        headerCellStyle.setBorderBottom(BorderStyle.MEDIUM);
+        headerCellStyle.setBorderTop(BorderStyle.MEDIUM);
+        headerCellStyle.setBorderRight(BorderStyle.MEDIUM);
+        headerCellStyle.setBorderLeft(BorderStyle.MEDIUM);
+        headerCellStyle.setAlignment(HorizontalAlignment.CENTER);
+        headerCellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+
+        Row headerRow = sheet.createRow(0);
+        headerRow.createCell(0).setCellValue("ID");
+        headerRow.createCell(1).setCellValue("Tiêu chí");
+        headerRow.createCell(2).setCellValue("Giá trị");
+        headerRow.getCell(0).setCellStyle(headerCellStyle);
+        headerRow.getCell(1).setCellStyle(headerCellStyle);
+        headerRow.getCell(2).setCellStyle(headerCellStyle);
+
+        // Create style for data
+        CellStyle dataCellStyle = workbook.createCellStyle();
+        dataCellStyle.setBorderBottom(BorderStyle.THIN);
+        dataCellStyle.setBorderTop(BorderStyle.THIN);
+        dataCellStyle.setBorderRight(BorderStyle.THIN);
+        dataCellStyle.setBorderLeft(BorderStyle.THIN);
+        dataCellStyle.setAlignment(HorizontalAlignment.CENTER);
+        dataCellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+
+        // Populate the sheet
+        createDataRow(sheet, 1, 1, "Số CV mới", recruitmentStats.getTotalCV(), dataCellStyle);
+        createDataRow(sheet, 2, 2, "Số CV phỏng vấn", recruitmentStats.getTotalInterviewCV(), dataCellStyle);
+        createDataRow(sheet, 3, 3, "Số ứng viên đã phỏng vấn", recruitmentStats.getCandidatesInterview(), dataCellStyle);
+        createDataRow(sheet, 4, 4, "Số ứng iên không đến phỏng vấn", recruitmentStats.getCandidatesDoNotInterview(), dataCellStyle);
+        createDataRow(sheet, 5, 5, "Số pass", recruitmentStats.getCandidatesPass(), dataCellStyle);
+        createDataRow(sheet, 6, 6, "Số fail", recruitmentStats.getCandidatesFail(), dataCellStyle);
+        createDataRow(sheet, 7, 7, "Số ứng viên nhận việc", recruitmentStats.getCandidatesAcceptJob(), dataCellStyle);
+        createDataRow(sheet, 8, 8, "Số ứng viên không nhận việc", recruitmentStats.getCandidatesRejectJob(), dataCellStyle);
+        createDataRow(sheet, 9, 9, "Số ứng viên chưa nhận việc", recruitmentStats.getCandidatesAcceptJobYet(), dataCellStyle);
+
+        // Set column widths to 200 pixels
+        setColumnWidths(sheet, 200);
+
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        workbook.write(outputStream);
+        workbook.close();
+
+        return outputStream;
+    }
+
+    public ByteArrayOutputStream exportRecruitmentStatsToExcelByMonth(int month, int year) throws IOException {
+        LocalDate currentDate = LocalDate.now();
+        int currentYear = currentDate.getYear();
+        RecruitmentStatsDTO recruitmentStatsWithMonth = recruitmentStatsService.getRecruitmentStatsByMonth(month, currentYear);
+        return createExcelRecruitment(recruitmentStatsWithMonth, "Tháng");
+    }
+
+    public ByteArrayOutputStream exportRecruitmentStatsToExcelByQuarter(int quarter, int year) throws IOException {
+        LocalDate currentDate = LocalDate.now();
+        int currentYear = currentDate.getYear();
+        RecruitmentStatsDTO recruitmentStatsWithQuarter = recruitmentStatsService.getRecruitmentStatsByQuarter(quarter, currentYear);
+        return createExcelRecruitment(recruitmentStatsWithQuarter, "Quý");
+    }
+
+    public ByteArrayOutputStream exportRecruitmentStatsToExcelByYear(int year) throws IOException {
+        LocalDate currentDate = LocalDate.now();
+        int currentYear = currentDate.getYear();
+        RecruitmentStatsDTO recruitmentStatsWithYear = recruitmentStatsService.getRecruitmentStatsByYear(currentYear);
+        return createExcelRecruitment(recruitmentStatsWithYear, "Năm");
     }
 }

@@ -234,7 +234,7 @@ public class InternServiceImpl implements InternService {
                 finalScore = Math.round((finalScore / count) * 100.0) / 100.0;
             }
 
-            RecruitmentPlanDTO recruitmentPlanDTO = getRecruitmentPlanDTO(internProfiles.get(i).getIntern().getRecruitmentPlan());
+            RecruitmentPlanDTO recruitmentPlanDTO = getRecruitmentPlanDTO(  internProfiles.get(i).getIntern().getRecruitmentPlan());
 
             InternDTO internDTO = new InternDTO(
                     internProfile.getIntern().getId(),

@@ -119,4 +119,58 @@ public class RecruitmentStatsController {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @GetMapping("/monthExportExcel")
+    public ResponseEntity<byte[]> exportRecruitmentStatsByMonth(@RequestParam int month, @RequestParam int year) {
+        try {
+            ByteArrayOutputStream outputStream = excelExportService.exportRecruitmentStatsToExcelByMonth(month, year);
+            byte[] excelBytes = outputStream.toByteArray();
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+            headers.setContentDispositionFormData("attachment", "recruitment_stats_month.xlsx");
+
+            return new ResponseEntity<>(excelBytes, headers, HttpStatus.OK);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/quarterExportExcel")
+    public ResponseEntity<byte[]> exportRecruitmentStatsByQuarter(@RequestParam int quarter, @RequestParam int year) {
+        try {
+            ByteArrayOutputStream outputStream = excelExportService.exportRecruitmentStatsToExcelByQuarter(quarter, year);
+            byte[] excelBytes = outputStream.toByteArray();
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+            headers.setContentDispositionFormData("attachment", "recruitment_stats_quarter.xlsx");
+
+            return new ResponseEntity<>(excelBytes, headers, HttpStatus.OK);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/yearExportExcel")
+    public ResponseEntity<byte[]> exportRecruitmentStatsByYear(@RequestParam int year) {
+        try {
+            ByteArrayOutputStream outputStream = excelExportService.exportRecruitmentStatsToExcelByYear(year);
+            byte[] excelBytes = outputStream.toByteArray();
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+            headers.setContentDispositionFormData("attachment", "recruitment_stats_year.xlsx");
+
+            return new ResponseEntity<>(excelBytes, headers, HttpStatus.OK);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }
