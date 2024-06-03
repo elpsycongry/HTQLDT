@@ -52,6 +52,7 @@ public class NotificationController {
             notificationDTO.setIsRead(notificationToUser.getIsRead());
             notificationDTO.setTimeCreate(notificationToUser.getNotification().getTimestamp());
             notificationDTO.setTimestamp(notificationService.getTimestamp(notificationToUser.getNotification().getTimestamp()));
+            notificationDTO.setLink(notificationToUser.getNotification().getLink());
             list.add(notificationDTO);
         }
         return new ResponseEntity<>(list,HttpStatus.OK);
@@ -76,6 +77,10 @@ public class NotificationController {
         notificationEntity.setTimestamp(notification.getTimeCreate());
         notificationEntity.setCreator(userRepository.findById(notification.getCreatorId()).get());
 
+        // Link chuển trang khi click vào notification
+        if (notification.getContent() != null){
+            notificationEntity.setLink(notification.getLink());
+        }
         try {
             notificationEntity = notificationService.addNotification(notificationEntity);
         } catch (Exception e){

@@ -26,4 +26,5 @@ public class NotificationDTO {
     private List<NotificationToUser> notificationToUserList;
     private List<Long> listReceiverId;
     private List<String> listRoleReceiver;
+    private String link;
 }

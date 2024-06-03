@@ -29,6 +29,19 @@ public class RecruitmentRequest {
     private String division;
     private String status;
 
+    @Override
+    public String toString() {
+        return "RecruitmentRequest{" +
+                "id=" + id +
+                ", users=" + users +
+                ", dateStart=" + dateStart +
+                ", dateEnd=" + dateEnd +
+                ", name='" + name + '\'' +
+                ", reason='" + reason + '\'' +
+                ", division='" + division + '\'' +
+                ", status='" + status + '\'' +
+                '}';
+    }
 
     public Users getUsers() {
         return users;

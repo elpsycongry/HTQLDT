@@ -87,13 +87,14 @@ public class RecruitmentPlanController {
     }
 
     @PostMapping()
-    public ResponseEntity createRecruitmentPlan(@RequestBody PlanFormDTO planFormDTO) {
+    public ResponseEntity<?> createRecruitmentPlan(@RequestBody PlanFormDTO planFormDTO) {
+        RecruitmentPlan recruitmentPlan;
         try {
-            recruitmentPlanService.createRecruitmentPlan(planFormDTO);
+             recruitmentPlan = recruitmentPlanService.createRecruitmentPlan(planFormDTO);
         } catch (Exception e) {
             return new ResponseEntity<>("Thêm kế hoạch thất bại", HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<>("Thêm kế hoạch thành công", HttpStatus.OK);
+        return new ResponseEntity<>(recruitmentPlan, HttpStatus.OK);
     }
 
     @PutMapping("/{planId}/users/{userId}")
