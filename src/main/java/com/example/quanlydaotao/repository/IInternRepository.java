@@ -14,7 +14,7 @@ import java.util.List;
 @Repository
 public interface IInternRepository extends JpaRepository<Intern,Long>, JpaSpecificationExecutor<Intern> {
     Page<Intern> findAllByOrderByIdDesc(Pageable pageable);
-    Iterable<Intern> findByRecruitmentPlan(RecruitmentPlan recruitmentPlan);
+    Iterable<Intern> findByRecruitmentPlanId(long recruitmentPlan);
     int countByRecruitmentPlanId(long idRecruitmentPlan);
     List<Intern> findByCheckInterviewEquals(boolean checkInterview);
     List<Intern> findByFinalResultEquals(String finalResult);

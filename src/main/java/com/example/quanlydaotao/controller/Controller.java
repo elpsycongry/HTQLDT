@@ -1,12 +1,14 @@
 package com.example.quanlydaotao.controller;
 
-import com.example.quanlydaotao.dto.TrainingStatsDTO;
+import com.example.quanlydaotao.dto.ProcessDTO;
 import com.example.quanlydaotao.model.*;
 import com.example.quanlydaotao.repository.JwtTokenRepository;
 import com.example.quanlydaotao.service.RoleService;
-import com.example.quanlydaotao.service.TrainingStatsService;
 import com.example.quanlydaotao.service.UserService;
+import com.example.quanlydaotao.service.impl.InternService;
 import com.example.quanlydaotao.service.impl.JwtService;
+import com.example.quanlydaotao.service.impl.RecruitmentPlanService;
+import com.example.quanlydaotao.service.impl.RecruitmentRequestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -47,7 +49,13 @@ public class Controller {
     private PasswordEncoder passwordEncoder;
 
     @Autowired
-    private TrainingStatsService trainingStatsService;
+    private RecruitmentRequestService requestService;
+
+    @Autowired
+    private RecruitmentPlanService planService;
+
+    @Autowired
+    private InternService internService;
 
     @PostMapping("/register")
     public ResponseEntity<String> createUser(@RequestBody User user, BindingResult bindingResult) {
@@ -59,6 +67,7 @@ public class Controller {
         if (user.getRoles() == null) {
             Role roleUser = roleService.findByName("ROLE_HR");
             user.setRoles(Collections.singletonList(roleUser));
+            user.setStatus(true);
         }
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
@@ -76,7 +85,7 @@ public class Controller {
             );
             SecurityContextHolder.getContext().setAuthentication(authentication);
             String jwt = jwtService.generateTokenLogin(authentication);
-            if (jwt.equals("Tài khoản của bạn đã bị chặn")){
+            if (jwt.equals("Tài khoản của bạn đã bị chặn")) {
                 return ResponseEntity.ok(new Response("202", "Tài khoản của bạn đã bị chặn", null));
             }
             UserDetails userDetails = (UserDetails) authentication.getPrincipal();
@@ -205,6 +214,24 @@ public class Controller {
         return new ResponseEntity<>(message, HttpStatus.OK);
     }
 
+
+    @GetMapping("/process/request/{idRequest}")
+    public ResponseEntity showProcessRequest(@PathVariable long idRequest) {
+        ProcessDTO processDTO = requestService.showProcessRequest(idRequest);
+        processDTO = planService.showProcessPlan(processDTO);
+        processDTO = internService.showProcessIntern(processDTO);
+        return new ResponseEntity(processDTO, HttpStatus.OK);
+    }
+
+    @GetMapping("/process/plan/{idPlan}")
+    public ResponseEntity showProcessPlan(@PathVariable long idPlan) {
+        RecruitmentPlan plan = planService.findById(idPlan).get();
+        long idRequest = plan.getRecruitmentRequest().getId();
+        ProcessDTO processDTO = requestService.showProcessRequest(idRequest);
+        processDTO = planService.showProcessPlan(processDTO);
+        processDTO = internService.showProcessIntern(processDTO);
+        return new ResponseEntity(processDTO, HttpStatus.OK);
+    }
     @PostMapping("/admin/users/add")
     public ResponseEntity<String> addUser(@RequestBody User user) {
         // Save the new user
