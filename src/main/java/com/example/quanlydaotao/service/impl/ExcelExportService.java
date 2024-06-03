@@ -144,6 +144,77 @@ public class ExcelExportService {
         return outputStream;
     }
 
+//    Sửa chỗ nay!
+    public ByteArrayOutputStream exportTrainingStatsToExcelByMonth(int month, int year) throws IOException {
+        TrainingStatsDTO trainingStatsWithMonth = trainingStatsService.getTrainingStatsWithMonth(month, year);
+        return createExcel(trainingStatsWithMonth, "Tháng");
+    }
+
+    public ByteArrayOutputStream exportTrainingStatsToExcelByQuarter(int quarter, int year) throws IOException {
+        TrainingStatsDTO trainingStatsWithQuarter = trainingStatsService.getTrainingStatsWithQuarter(quarter, year);
+        return createExcel(trainingStatsWithQuarter, "Quý");
+    }
+
+    public ByteArrayOutputStream exportTrainingStatsToExcelByYear(int year) throws IOException {
+        TrainingStatsDTO trainingStatsWithYear = trainingStatsService.getTrainingStatsWithYear(year);
+        return createExcel(trainingStatsWithYear, "Năm");
+    }
+
+    private ByteArrayOutputStream createExcel(TrainingStatsDTO trainingStats, String sheetName) throws IOException {
+        Workbook workbook = new XSSFWorkbook();
+        Sheet sheet = workbook.createSheet(sheetName);
+
+        // Create font for headers
+        Font headerFont = workbook.createFont();
+        headerFont.setBold(true);
+        headerFont.setFontHeightInPoints((short) 14); // Set font size to 14
+
+        // Create style for headers
+        CellStyle headerCellStyle = workbook.createCellStyle();
+        headerCellStyle.setFont(headerFont);
+        headerCellStyle.setBorderBottom(BorderStyle.MEDIUM);
+        headerCellStyle.setBorderTop(BorderStyle.MEDIUM);
+        headerCellStyle.setBorderRight(BorderStyle.MEDIUM);
+        headerCellStyle.setBorderLeft(BorderStyle.MEDIUM);
+        headerCellStyle.setAlignment(HorizontalAlignment.CENTER);
+        headerCellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+
+        Row headerRow = sheet.createRow(0);
+        headerRow.createCell(0).setCellValue("ID");
+        headerRow.createCell(1).setCellValue("Tiêu chí");
+        headerRow.createCell(2).setCellValue("Giá trị");
+        headerRow.getCell(0).setCellStyle(headerCellStyle);
+        headerRow.getCell(1).setCellStyle(headerCellStyle);
+        headerRow.getCell(2).setCellStyle(headerCellStyle);
+
+        // Create style for data
+        CellStyle dataCellStyle = workbook.createCellStyle();
+        dataCellStyle.setBorderBottom(BorderStyle.THIN);
+        dataCellStyle.setBorderTop(BorderStyle.THIN);
+        dataCellStyle.setBorderRight(BorderStyle.THIN);
+        dataCellStyle.setBorderLeft(BorderStyle.THIN);
+        dataCellStyle.setAlignment(HorizontalAlignment.CENTER);
+        dataCellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+
+        // Populate the sheet
+        createDataRow(sheet, 1, 1, "Thực tập sinh nhập học", trainingStats.getInternsEnrolled(), dataCellStyle);
+        createDataRow(sheet, 2, 2, "Thực tập sinh tốt nghiệp", trainingStats.getGraduatingInterns(), dataCellStyle);
+        createDataRow(sheet, 3, 3, "Thực tập sinh fail", trainingStats.getInternsFailed(), dataCellStyle);
+        createDataRow(sheet, 4, 4, "Tỷ lệ pass/ fail", trainingStats.getRate(), dataCellStyle);
+        createDataRow(sheet, 5, 5, "Thực tập sinh đang thực tập", trainingStats.getInternsCurrentlyPracticing(), dataCellStyle);
+        createDataRow(sheet, 6, 6, "Thực tập sinh nghỉ thực tập", trainingStats.getInternsQuitInternship(), dataCellStyle);
+        createDataRow(sheet, 7, 7, "Điểm tốt nghiệp trung bình", trainingStats.getAverageGraduationScore(), dataCellStyle);
+
+        // Set column widths to 200 pixels
+        setColumnWidths(sheet, 200);
+
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        workbook.write(outputStream);
+        workbook.close();
+
+        return outputStream;
+    }
+
     private void createHeaderRow(Sheet sheet, CellStyle headerCellStyle) {
         Row headerRow = sheet.createRow(0);
         headerRow.createCell(0).setCellValue("ID");

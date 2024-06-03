@@ -141,4 +141,58 @@ public class StatsController {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @GetMapping("/exportExcelTrainingStats/monthExportExcel")
+    public ResponseEntity<byte[]> exportTrainingStatsByMonth(@RequestParam int month, @RequestParam int year) {
+        try {
+            ByteArrayOutputStream outputStream = excelExportService.exportTrainingStatsToExcelByMonth(month, year);
+            byte[] excelBytes = outputStream.toByteArray();
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+            headers.setContentDispositionFormData("attachment", "training_stats_month.xlsx");
+
+            return new ResponseEntity<>(excelBytes, headers, HttpStatus.OK);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/exportExcelTrainingStats/quarterExportExcel")
+    public ResponseEntity<byte[]> exportTrainingStatsByQuarter(@RequestParam int quarter, @RequestParam int year) {
+        try {
+            ByteArrayOutputStream outputStream = excelExportService.exportTrainingStatsToExcelByQuarter(quarter, year);
+            byte[] excelBytes = outputStream.toByteArray();
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+            headers.setContentDispositionFormData("attachment", "training_stats_quarter.xlsx");
+
+            return new ResponseEntity<>(excelBytes, headers, HttpStatus.OK);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/exportExcelTrainingStats/year")
+    public ResponseEntity<byte[]> exportTrainingStatsByYear(@RequestParam int year) {
+        try {
+            ByteArrayOutputStream outputStream = excelExportService.exportTrainingStatsToExcelByYear(year);
+            byte[] excelBytes = outputStream.toByteArray();
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+            headers.setContentDispositionFormData("attachment", "training_stats_year.xlsx");
+
+            return new ResponseEntity<>(excelBytes, headers, HttpStatus.OK);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }
