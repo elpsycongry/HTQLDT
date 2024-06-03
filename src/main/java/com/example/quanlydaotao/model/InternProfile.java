@@ -17,11 +17,20 @@ public class InternProfile {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @OneToOne
-    @JoinColumn(name = "user_id")
-    private User user;
+    @JoinColumn(name = "intern_id")
+    private Intern intern;
     private LocalDate startDate;
     private LocalDate endDate;
     private String trainingState;
     private Boolean isPass;
     private String scoreInTeam;
+
+    public InternProfile(Intern intern) {
+        this.intern = intern;
+        this.startDate = LocalDate.now();
+        this.endDate = null;
+        this.trainingState = "training";
+        this.isPass = false;
+        this.scoreInTeam = null;
+    }
 }
