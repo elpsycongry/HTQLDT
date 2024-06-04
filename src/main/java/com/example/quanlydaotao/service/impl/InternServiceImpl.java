@@ -2,6 +2,7 @@ package com.example.quanlydaotao.service.impl;
 
 import com.example.quanlydaotao.dto.InternDTO;
 import com.example.quanlydaotao.dto.InternSubjectDTO;
+import com.example.quanlydaotao.dto.RecruitmentPlanDTO;
 import com.example.quanlydaotao.model.*;
 import com.example.quanlydaotao.model.InternProfile;
 import com.example.quanlydaotao.model.InternScore;
@@ -16,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.relational.core.sql.In;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -24,6 +26,7 @@ import java.util.Optional;
 
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.stream.StreamSupport;
 
 @Service
 public class InternServiceImpl implements InternService {
@@ -39,9 +42,8 @@ public class InternServiceImpl implements InternService {
     private InternSubjectRepository internSubjectRepository;
 
     @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private UserService userService;
+    private IInternRepository iInternRepository;
+
     @Autowired
     private SubjectCommentRepo subjectCommentRepo;
 
@@ -57,13 +59,13 @@ public class InternServiceImpl implements InternService {
     }
 
     @Override
-    public InternProfile getInternProfile(Long userID) {
-        return internProfileRepository.findById(userID).get();
+    public InternProfile getInternProfile(Long internID) {
+        return internProfileRepository.findById(internID).get();
     }
 
     @Override
-    public List<InternScore> getInternScore(User user) {
-        return internScoreRepository.getInternScoresByUser(user);
+    public List<InternScore> getInternScore(Intern intern) {
+        return internScoreRepository.getInternScoreByIntern(intern);
     }
 
 
@@ -73,8 +75,8 @@ public class InternServiceImpl implements InternService {
     }
 
     @Override
-    public List<Object[]> getAllByUserId(Long id) {
-        return internScoreRepository.getAllByUserId(id);
+    public List<Object[]> getAllByInternId(Long id) {
+        return internScoreRepository.getAllByInternId(id);
     }
 
     @Override
@@ -83,8 +85,8 @@ public class InternServiceImpl implements InternService {
     }
 
     @Override
-    public List<InternScore> getListInternScoreByUserID(Long userID) {
-        return internScoreRepository.getAllByUser(userRepository.findById(userID).get());
+    public List<InternScore> getListInternScoreByInternID(Long internID) {
+        return internScoreRepository.getAllByIntern(iInternRepository.findById(internID).get());
     }
 
     @Override
@@ -93,24 +95,24 @@ public class InternServiceImpl implements InternService {
     }
 
     @Override
-    public Optional<InternScore> getInternScoreByUserAndSubjectAndType(User user, InternSubject subject,String type) {
-        return internScoreRepository.findByUserAndInternSubjectAndType(user , subject, type);
+    public Optional<InternScore> getInternScoreByInternAndSubjectAndType(Intern intern, InternSubject subject,String type) {
+        return internScoreRepository.findByInternAndInternSubjectAndType(intern , subject, type);
     }
 
     @Override
-    public Optional<InternProfile> getInternProfileByUserID(Long userId) {
+    public Optional<InternProfile> getInternProfileByInternID(Long internID) {
 
-        return internProfileRepository.findByUser(userRepository.findById(userId).get());
+        return internProfileRepository.findInternProfileByIntern(iInternRepository.findById(internID).get());
     }
 
     @Override
     public void saveInternScore(InternScore internScore) {
-         internScoreRepository.save(internScore);
+        internScoreRepository.save(internScore);
     }
 
     @Override
-    public List<SubjectComment> getListSubjectCommentByUserID(Long userID) {
-        return subjectCommentRepo.findAllByUser(userRepository.findById(userID).get());
+    public List<SubjectComment> getListSubjectCommentByInternID(Long internID) {
+        return subjectCommentRepo.findAllByIntern(iInternRepository.findById(internID).get());
     }
 
     @Override
@@ -121,6 +123,11 @@ public class InternServiceImpl implements InternService {
     @Override
     public void saveSubjectComment(SubjectComment subjectComment) {
         subjectCommentRepo.save(subjectComment);
+    }
+
+    @Override
+    public Optional<Intern> findById(Long internID) {
+        return iInternRepository.findById(internID) ;
     }
 
 
@@ -140,7 +147,7 @@ public class InternServiceImpl implements InternService {
             //Lấy ra thông tin TTS
             InternProfile internProfile = internProfiles.get(i);
             //Lấy ra danh sách điểm InterScore của 1 thực tập sinh
-            List<InternScore> internScores = internScoreRepository.findAllByUser(internProfile.getUser());
+            List<InternScore> internScores = internScoreRepository.findAllByIntern(internProfile.getIntern());
             //Khai báo danh sách môn học và điểm lí thuyết, thực hành, thái độ
             List<InternSubjectDTO> internSubjectDTOList = new ArrayList<>();            //Khai báo điểm trung bình chung cuối khoá học
             boolean checkFinalScore = true;
@@ -223,14 +230,17 @@ public class InternServiceImpl implements InternService {
                 finalScore = Math.round((finalScore / count) * 100.0) / 100.0;
             }
 
+            RecruitmentPlanDTO recruitmentPlanDTO = getRecruitmentPlanDTO(  internProfiles.get(i).getIntern().getRecruitmentPlan());
+
             InternDTO internDTO = new InternDTO(
-                    internProfile.getUser().getId(),
-                    internProfile.getUser().getName(),
+                    internProfile.getIntern().getId(),
+                    internProfile.getIntern().getName(),
                     internProfile.getStartDate(),
                     internProfile.getEndDate(),
                     internProfile.getTrainingState(),
                     (checkFinalScore ? String.valueOf(finalScore) : "NA"),
                     internProfile.getScoreInTeam(),
+                    recruitmentPlanDTO,
                     internSubjectDTOList);
             internDTOList.add(i, internDTO);
         }
@@ -256,10 +266,48 @@ public class InternServiceImpl implements InternService {
         return internDTOIterable;
     }
     @Override
+    public Iterable<InternDTO> findListInterWithNameInternAndTrainingStateAndRecruitmentPlan(String keyword, String trainingState, String recruitmentPlan) {
+        Iterable<InternDTO> internDTOIterable = getAllInter();
+
+        boolean hasKeyword = !keyword.isEmpty();
+        boolean hasTrainingState = !trainingState.isEmpty();
+        boolean hasRecruitmentPlanId = recruitmentPlan != null && !recruitmentPlan.isEmpty();
+
+        if (hasKeyword && hasTrainingState && hasRecruitmentPlanId) {
+            internDTOIterable = findListInterWithNameInter(keyword, internDTOIterable);
+            internDTOIterable = findListInterWithTrainingState(trainingState, internDTOIterable);
+            internDTOIterable = findListInterWithRecruitmentPlan(recruitmentPlan, internDTOIterable);
+            return internDTOIterable;
+        } else if (!hasKeyword && hasTrainingState && hasRecruitmentPlanId) {
+            internDTOIterable = findListInterWithTrainingState(trainingState, internDTOIterable);
+            internDTOIterable = findListInterWithRecruitmentPlan(recruitmentPlan, internDTOIterable);
+            return internDTOIterable;
+        } else if (hasKeyword && !hasTrainingState && hasRecruitmentPlanId) {
+            internDTOIterable = findListInterWithNameInter(keyword, internDTOIterable);
+            internDTOIterable = findListInterWithRecruitmentPlan(recruitmentPlan, internDTOIterable);
+            return internDTOIterable;
+        } else if (!hasKeyword && !hasTrainingState && hasRecruitmentPlanId) {
+            internDTOIterable = findListInterWithRecruitmentPlan(recruitmentPlan, internDTOIterable);
+            return internDTOIterable;
+        } else if (hasKeyword && hasTrainingState && !hasRecruitmentPlanId) {
+            internDTOIterable = findListInterWithNameInter(keyword, internDTOIterable);
+            internDTOIterable = findListInterWithTrainingState(trainingState, internDTOIterable);
+            return internDTOIterable;
+        } else if (hasKeyword && !hasTrainingState && !hasRecruitmentPlanId) {
+            internDTOIterable = findListInterWithNameInter(keyword, internDTOIterable);
+            return internDTOIterable;
+        } else if (!hasKeyword && hasTrainingState && !hasRecruitmentPlanId) {
+            internDTOIterable = findListInterWithTrainingState(trainingState, internDTOIterable);
+            return internDTOIterable;
+        } else {
+            return internDTOIterable;
+        }
+    }
+    @Override
     public Iterable<InternDTO> findListInterWithNameInter(String keyword, Iterable<InternDTO> internDTOIterable) {
         List<InternDTO> internDTOList = (List<InternDTO>) internDTOIterable;
         List<InternDTO> matchingInternDTO = internDTOList.stream()
-                .filter(f -> f.getUserName().toLowerCase().contains(String.valueOf(keyword).toLowerCase()))
+                .filter(f -> f.getInternName().toLowerCase().contains(String.valueOf(keyword).toLowerCase()))
                 .collect(Collectors.toList());
         return matchingInternDTO;
     }
@@ -273,6 +321,16 @@ public class InternServiceImpl implements InternService {
         return matchingInternDTO;
     }
 
+
+    @Override
+    public Iterable<InternDTO> findListInterWithRecruitmentPlan(String recruitmentPlan, Iterable<InternDTO> internDTOIterable) {
+        List<InternDTO> internDTOList = (List<InternDTO>) internDTOIterable;
+        List<InternDTO> matchingInternDTO = internDTOList.stream()
+                .filter(f -> f.getRecruitmentPlanDTO().getName().equals(recruitmentPlan))
+                .collect(Collectors.toList());
+        return matchingInternDTO;
+    }
+
     @Override
     public Page<InternDTO> convertToPage(List<InternDTO> internDTOList, Pageable pageable) {
         int start = (int) pageable.getOffset();
@@ -280,4 +338,10 @@ public class InternServiceImpl implements InternService {
 
         return new PageImpl<>(internDTOList.subList(start, end), pageable, internDTOList.size());
     }
+
+    public RecruitmentPlanDTO getRecruitmentPlanDTO(RecruitmentPlan recruitmentPlan) {
+        return new RecruitmentPlanDTO(recruitmentPlan.getId(), recruitmentPlan.getName(), recruitmentPlan.getStatus());
+    }
+
+    
 }

@@ -1,12 +1,14 @@
 package com.example.quanlydaotao.controller;
 
-import com.example.quanlydaotao.dto.TrainingStatsDTO;
+import com.example.quanlydaotao.dto.ProcessDTO;
 import com.example.quanlydaotao.model.*;
 import com.example.quanlydaotao.repository.JwtTokenRepository;
 import com.example.quanlydaotao.service.RoleService;
-import com.example.quanlydaotao.service.TrainingStatsService;
 import com.example.quanlydaotao.service.UserService;
+import com.example.quanlydaotao.service.impl.InternService;
 import com.example.quanlydaotao.service.impl.JwtService;
+import com.example.quanlydaotao.service.impl.RecruitmentPlanService;
+import com.example.quanlydaotao.service.impl.RecruitmentRequestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -47,7 +49,13 @@ public class Controller {
     private PasswordEncoder passwordEncoder;
 
     @Autowired
-    private TrainingStatsService trainingStatsService;
+    private RecruitmentRequestService requestService;
+
+    @Autowired
+    private RecruitmentPlanService planService;
+
+    @Autowired
+    private InternService internService;
 
     @PostMapping("/register")
     public ResponseEntity<String> createUser(@RequestBody User user, BindingResult bindingResult) {
@@ -59,9 +67,11 @@ public class Controller {
         if (user.getRoles() == null) {
             Role roleUser = roleService.findByName("ROLE_HR");
             user.setRoles(Collections.singletonList(roleUser));
+            user.setStatus(true);
         }
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setStatus(true);
         userService.save(user);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
@@ -75,7 +85,7 @@ public class Controller {
             );
             SecurityContextHolder.getContext().setAuthentication(authentication);
             String jwt = jwtService.generateTokenLogin(authentication);
-            if (jwt.equals("Tài khoản của bạn đã bị chặn")){
+            if (jwt.equals("Tài khoản của bạn đã bị chặn")) {
                 return ResponseEntity.ok(new Response("202", "Tài khoản của bạn đã bị chặn", null));
             }
             UserDetails userDetails = (UserDetails) authentication.getPrincipal();
@@ -90,11 +100,22 @@ public class Controller {
     @PostMapping("/logoutUser")
     public ResponseEntity<String> logout(@RequestHeader HttpHeaders headers) {
         String authorization = headers.getFirst(HttpHeaders.AUTHORIZATION);
-        String token = authorization.substring(7);
-        JwtToken jwtToken = tokenRepository.findByTokenEquals(token);
-        jwtToken.setValid(false);
-        tokenRepository.save(jwtToken);
-        return ResponseEntity.ok("Logout success");
+
+        // Kiểm tra xem authorization có giá trị null không trước khi sử dụng
+        if (authorization != null && authorization.startsWith("Bearer ")) {
+            String token = authorization.substring(7);
+            JwtToken jwtToken = tokenRepository.findByTokenEquals(token);
+
+            if (jwtToken != null) {
+                jwtToken.setValid(false);
+                tokenRepository.save(jwtToken);
+                return ResponseEntity.ok("Logout success");
+            } else {
+                return ResponseEntity.badRequest().body("Invalid token");
+            }
+        } else {
+            return ResponseEntity.badRequest().body("Authorization header missing or invalid");
+        }
     }
 
     @GetMapping("/users")
@@ -155,6 +176,12 @@ public class Controller {
         return ResponseEntity.ok(Collections.singletonMap("exists", exists));
     }
 
+    @GetMapping("/admin/users/check-phone-add/{phone}")
+    public ResponseEntity<Map<String, Boolean>> checkAddPhoneExists(@PathVariable String phone) {
+        boolean exists = userService.checkAddPhoneExists(phone);
+        return ResponseEntity.ok(Collections.singletonMap("exists", exists));
+    }
+
     @PostMapping("/admin/block/{id}")
     public ResponseEntity<String> blockUser(@PathVariable Long id) {
         //true - Người dùng được cấp quyền
@@ -185,5 +212,37 @@ public class Controller {
                 "Unblock user with id = " + id + " access!";
 
         return new ResponseEntity<>(message, HttpStatus.OK);
+    }
+
+
+    @GetMapping("/process/request/{idRequest}")
+    public ResponseEntity showProcessRequest(@PathVariable long idRequest) {
+        ProcessDTO processDTO = requestService.showProcessRequest(idRequest);
+        processDTO = planService.showProcessPlan(processDTO);
+        processDTO = internService.showProcessIntern(processDTO);
+        return new ResponseEntity(processDTO, HttpStatus.OK);
+    }
+
+    @GetMapping("/process/plan/{idPlan}")
+    public ResponseEntity showProcessPlan(@PathVariable long idPlan) {
+        RecruitmentPlan plan = planService.findById(idPlan).get();
+        long idRequest = plan.getRecruitmentRequest().getId();
+        ProcessDTO processDTO = requestService.showProcessRequest(idRequest);
+        processDTO = planService.showProcessPlan(processDTO);
+        processDTO = internService.showProcessIntern(processDTO);
+        return new ResponseEntity(processDTO, HttpStatus.OK);
+    }
+    @PostMapping("/admin/users/add")
+    public ResponseEntity<String> addUser(@RequestBody User user) {
+        // Save the new user
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        userService.save(user);
+        return new ResponseEntity<>("User added!", HttpStatus.CREATED);
+    }
+
+    @GetMapping("/admin/users/check-email/{email}")
+    public ResponseEntity<Map<String, Boolean>> checkEmail(@PathVariable String email) {
+        boolean exists = userService.checkEmailExists(email);
+        return ResponseEntity.ok(Collections.singletonMap("exists", exists));
     }
 }

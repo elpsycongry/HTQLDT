@@ -9,10 +9,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -53,6 +50,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void save(User user) {
+
         userRepository.save(user);
     }
 
@@ -70,11 +68,7 @@ public class UserServiceImpl implements UserService {
     public Iterable<User> remoteRoleAdminDisplay(Iterable<User> users) {
         List<User> userList = (List<User>) users;
         userList.removeIf(user -> user.getRoles().stream().anyMatch(role -> role.getName().equals("ROLE_ADMIN")));
-        userList.forEach(user -> {
-            List<Role> roles = user.getRoles();
-            roles.removeIf(role -> role.getName().equals("ROLE"));
-            user.setRoles(roles);
-        });
+//        userList.removeIf(user -> user.getRoles().stream().anyMatch(role -> role.getName().equals("ROLE_HR")));
         users = userList;
         return users;
     }
@@ -190,9 +184,21 @@ public class UserServiceImpl implements UserService {
         return userRepository.findAll(pageable);
     }
 
+    @Override
     public boolean checkPhoneExists(String phone) {
         long numberOfPhone = userRepository.countByPhone(phone);
         return numberOfPhone >= 2;
     }
 
+    @Override
+    public boolean checkAddPhoneExists(String phone) {
+        long numberOfPhone = userRepository.countByPhone(phone);
+        return numberOfPhone >= 1;
+    }
+
+    @Override
+    public boolean checkEmailExists(String email) {
+        User user = userRepository.findByEmail(email);
+        return user != null;
+    }
 }

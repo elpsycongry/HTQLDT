@@ -35,7 +35,7 @@ public class TestRestController {
         MailStructure mailStructure = new MailStructure();
         mailStructure.setSubject("Subject");
         mailStructure.setText("Text");
-        mailService.sendMail("vuthanhtungtd2@gmail.com",mailStructure);
+        mailService.sendMailHtml("vuthanhtungtd2@gmail.com",mailStructure);
         return new ResponseEntity<>(true,HttpStatus.OK);
     }
 
