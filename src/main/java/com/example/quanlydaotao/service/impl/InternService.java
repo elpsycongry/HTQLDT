@@ -53,7 +53,10 @@ public class InternService implements IInternService {
         if (intern.getStatus().equals("Đã nhận việc")) {
             InternProfile internProfile = new InternProfile(intern);
             internProfile.setIsPass(null);
-            internServiceImpl.save(internProfile);
+            Optional<InternProfile> internOptional = internServiceImpl.checkInternProfile(intern);
+            if (internOptional.isEmpty()) {
+                internServiceImpl.save(internProfile);
+            }
         }
 
         if (intern.getRecruitmentPlan().getId() == oldIntern.getRecruitmentPlan().getId()) {
@@ -64,6 +67,7 @@ public class InternService implements IInternService {
             throw new Exception("số lượng của kế hoạch này đã đủ");
         }
     }
+
 
     @Override
     public Optional<Intern> getIntern(long id) {

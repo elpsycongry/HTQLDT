@@ -19,4 +19,5 @@ public interface InternProfileRepository extends JpaRepository<InternProfile, Lo
     List<InternProfile> findByTrainingStateEquals(String trainingState);
 
     List<InternProfile> findByInternIdIn(List<Long> interns);
+    void deleteInternProfileByIntern(Intern intern);
 }
