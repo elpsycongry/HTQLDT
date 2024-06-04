@@ -64,16 +64,17 @@ public class RecruitmentRequestController {
     }
 
     @PostMapping
-    public ResponseEntity createRecruitmentRequest(@RequestBody RecruitmentFormDTO recruitmentFormDTO) {
+    public ResponseEntity<?> createRecruitmentRequest(@RequestBody RecruitmentFormDTO recruitmentFormDTO) {
         RecruitmentFormDTO request = recruitmentFormDTO;
+        RecruitmentRequest recruitmentRequest;
         try {
-            recruitmentRequestService.createRecruitmentRequest(recruitmentFormDTO);
+            recruitmentRequest = recruitmentRequestService.createRecruitmentRequest(recruitmentFormDTO);
         } catch (DataAccessException e) {
             return new ResponseEntity<>("Tên của yêu cầu nhân sự đã tồn tại!", HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(recruitmentRequest, HttpStatus.OK);
 
 
     }
