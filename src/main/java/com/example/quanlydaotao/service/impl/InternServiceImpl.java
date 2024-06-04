@@ -81,7 +81,7 @@ public class InternServiceImpl implements InternService {
 
     @Override
     public InternProfile save(InternProfile internProfile) {
-        return internProfileRepository.save(internProfile);
+        return internProfileRepository.saveAndFlush(internProfile);
     }
 
     @Override
@@ -342,6 +342,11 @@ public class InternServiceImpl implements InternService {
     public RecruitmentPlanDTO getRecruitmentPlanDTO(RecruitmentPlan recruitmentPlan) {
         return new RecruitmentPlanDTO(recruitmentPlan.getId(), recruitmentPlan.getName(), recruitmentPlan.getStatus());
     }
-
+    public Optional<InternProfile> checkInternProfile (Intern intern){
+        return internProfileRepository.findInternProfileByIntern(intern);
+    }
+    public void deleteInternProfile (Intern intern){
+        internProfileRepository.deleteInternProfileByIntern(intern);
+    }
     
 }
