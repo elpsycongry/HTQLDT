@@ -11,6 +11,7 @@ import com.example.quanlydaotao.model.User;
 import com.example.quanlydaotao.repository.*;
 import com.example.quanlydaotao.service.InternService;
 import com.example.quanlydaotao.service.UserService;
+import io.micrometer.common.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -273,39 +274,14 @@ public class InternServiceImpl implements InternService {
     public Iterable<InternDTO> findListInterWithNameInternAndTrainingStateAndRecruitmentPlan(String keyword, String trainingState, String recruitmentPlan) {
         Iterable<InternDTO> internDTOIterable = getAllInter();
 
-        boolean hasKeyword = !keyword.isEmpty();
-        boolean hasTrainingState = !trainingState.isEmpty();
-        boolean hasRecruitmentPlanId = recruitmentPlan != null && !recruitmentPlan.isEmpty();
-
-        if (hasKeyword && hasTrainingState && hasRecruitmentPlanId) {
-            internDTOIterable = findListInterWithNameInter(keyword, internDTOIterable);
-            internDTOIterable = findListInterWithTrainingState(trainingState, internDTOIterable);
-            internDTOIterable = findListInterWithRecruitmentPlan(recruitmentPlan, internDTOIterable);
-            return internDTOIterable;
-        } else if (!hasKeyword && hasTrainingState && hasRecruitmentPlanId) {
-            internDTOIterable = findListInterWithTrainingState(trainingState, internDTOIterable);
-            internDTOIterable = findListInterWithRecruitmentPlan(recruitmentPlan, internDTOIterable);
-            return internDTOIterable;
-        } else if (hasKeyword && !hasTrainingState && hasRecruitmentPlanId) {
-            internDTOIterable = findListInterWithNameInter(keyword, internDTOIterable);
-            internDTOIterable = findListInterWithRecruitmentPlan(recruitmentPlan, internDTOIterable);
-            return internDTOIterable;
-        } else if (!hasKeyword && !hasTrainingState && hasRecruitmentPlanId) {
-            internDTOIterable = findListInterWithRecruitmentPlan(recruitmentPlan, internDTOIterable);
-            return internDTOIterable;
-        } else if (hasKeyword && hasTrainingState && !hasRecruitmentPlanId) {
-            internDTOIterable = findListInterWithNameInter(keyword, internDTOIterable);
-            internDTOIterable = findListInterWithTrainingState(trainingState, internDTOIterable);
-            return internDTOIterable;
-        } else if (hasKeyword && !hasTrainingState && !hasRecruitmentPlanId) {
-            internDTOIterable = findListInterWithNameInter(keyword, internDTOIterable);
-            return internDTOIterable;
-        } else if (!hasKeyword && hasTrainingState && !hasRecruitmentPlanId) {
-            internDTOIterable = findListInterWithTrainingState(trainingState, internDTOIterable);
-            return internDTOIterable;
-        } else {
-            return internDTOIterable;
-        }
+        return ((List<InternDTO>) internDTOIterable).stream()
+                .filter(intern -> {
+                    boolean matchesKeyword = StringUtils.isEmpty(keyword) || intern.getInternName().toLowerCase().contains(keyword.toLowerCase());
+                    boolean matchesTrainingState = StringUtils.isEmpty(trainingState) || intern.getTrainingState().equals(trainingState);
+                    boolean matchesRecruitmentPlan = StringUtils.isEmpty(recruitmentPlan) || intern.getRecruitmentPlanDTO().getName().equals(recruitmentPlan);
+                    return matchesKeyword && matchesTrainingState && matchesRecruitmentPlan;
+                })
+                .collect(Collectors.toList());
     }
     @Override
     public Iterable<InternDTO> findListInterWithNameInter(String keyword, Iterable<InternDTO> internDTOIterable) {
