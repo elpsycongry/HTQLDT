@@ -48,18 +48,26 @@ public class InternService implements IInternService {
     public void updateIntern(Intern intern) throws Exception {
         Optional<RecruitmentPlan> recruitmentPlan = recruitmentPlanService.findById(intern.getRecruitmentPlan().getId());
         intern.setRecruitmentPlan(recruitmentPlan.get());
+        Intern oldIntern = iInternRepository.findById(intern.getId()).get();
+
         if (intern.getStatus().equals("Đã nhận việc")) {
             InternProfile internProfile = new InternProfile(intern);
             internProfile.setIsPass(null);
-            internServiceImpl.save(internProfile);
+            Optional<InternProfile> internOptional = internServiceImpl.checkInternProfile(intern);
+            if (internOptional.isEmpty()) {
+                internServiceImpl.save(internProfile);
+            }
         }
-        if (!isFullIntern(intern.getRecruitmentPlan().getId())) {
+
+        if (intern.getRecruitmentPlan().getId() == oldIntern.getRecruitmentPlan().getId()) {
+            iInternRepository.saveAndFlush(intern);
+        } else if (!isFullIntern(intern.getRecruitmentPlan().getId())) {
             iInternRepository.saveAndFlush(intern);
         }else {
             throw new Exception("số lượng của kế hoạch này đã đủ");
         }
-
     }
+
 
     @Override
     public Optional<Intern> getIntern(long id) {
