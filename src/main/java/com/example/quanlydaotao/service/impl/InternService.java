@@ -75,6 +75,7 @@ public class InternService implements IInternService {
         RecruitmentPlan plan = recruitmentPlanService.findById(intern.getRecruitmentPlan().getId()).get();
         intern.setApplyCVTime(LocalDateTime.now());
         intern.setRecruitmentPlan(plan);
+
         if (!isFullIntern(intern.getRecruitmentPlan().getId())) {
             iInternRepository.save(intern);
         }else {
@@ -84,11 +85,10 @@ public class InternService implements IInternService {
 
     public boolean isFullIntern(long recruitmentPlanId){
         boolean isFull = true;
+        int training = trainingByPlan(recruitmentPlanId);
+        int total = recruitmentPlanDetailService.getTotalResult(recruitmentPlanId);
 
-        int totalInternNeed = recruitmentPlanDetailService.getTotalIntern(recruitmentPlanId);
-        int applicants = applicantsByPlan(recruitmentPlanId);
-
-        if (applicants < totalInternNeed) {
+        if (training < total) {
             isFull = false;
         }
         return isFull;
@@ -131,6 +131,9 @@ public class InternService implements IInternService {
 
         int resultIntern = 0;
         for (InternProfile internProfile : internProfiles) {
+            if (internProfile.getIsPass() == null) {
+                continue;
+            }
             if (internProfile.getIsPass()) {
                 resultIntern++;
             }
