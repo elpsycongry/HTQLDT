@@ -66,6 +66,12 @@ public class InternService implements IInternService {
         }else {
             throw new Exception("số lượng của kế hoạch này đã đủ");
         }
+        if (!isFullIntern(intern.getRecruitmentPlan().getId())) {
+            iInternRepository.saveAndFlush(intern);
+        }else {
+            throw new Exception("số lượng của kế hoạch này đã đủ");
+        }
+
     }
 
 
@@ -149,6 +155,8 @@ public class InternService implements IInternService {
         ProcessDTO newProcess = process;
         int applicants = applicantsByPlan(process.getPlanId());
         int training = trainingByPlan(process.getPlanId());
+        int totalIntern = recruitmentPlanDetailService.getTotalResult(newProcess.getPlanId());
+        int intern = internPass(process.getPlanId());
 
         if (applicants > 0) {
             newProcess.setApplicants(applicants)
@@ -160,8 +168,12 @@ public class InternService implements IInternService {
                     .setStep(4);
         }
 
-        newProcess.setTotalIntern(recruitmentPlanDetailService.getTotalResult(newProcess.getPlanId()));
-        newProcess.setIntern(internPass(process.getPlanId()));
+        if (intern > 0) {
+            newProcess.setIntern(intern)
+                    .setStep(5);
+        }
+
+        newProcess.setTotalIntern(totalIntern);
 
         return newProcess;
     }

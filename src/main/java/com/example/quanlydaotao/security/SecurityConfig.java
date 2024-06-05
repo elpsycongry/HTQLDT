@@ -103,7 +103,7 @@ public class SecurityConfig {
                                 .requestMatchers("/api/recruitmentStats/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_QC")
                                 .requestMatchers("/api/dashboard/**").permitAll()
                                 .requestMatchers("/api/notifications/**").permitAll()
-                                .requestMatchers("/process/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_QC")
+                                .requestMatchers("/process/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_QC", "ROLE_TM", "ROLE_HR",  "ROLE_DM")
                 )
                 .exceptionHandling(customizer -> customizer.accessDeniedHandler(customAccessDeniedHandler()))
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

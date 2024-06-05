@@ -67,4 +67,11 @@ public class InternController {
         Page<Intern> internPage = internService.findAllByNameOrEmail(paginateRequest, internDTO);
         return new ResponseEntity<>(internPage, HttpStatus.OK);
     }
+
+    @GetMapping("/isFull/{idRecruitmentPlan}")
+    public ResponseEntity isFullIntern(@PathVariable long idRecruitmentPlan) {
+
+        boolean isFull = internService.isFullIntern(idRecruitmentPlan);
+        return new ResponseEntity<>(isFull, HttpStatus.OK);
+    }
 }
