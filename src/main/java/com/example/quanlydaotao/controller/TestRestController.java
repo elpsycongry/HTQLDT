@@ -1,12 +1,8 @@
 package com.example.quanlydaotao.controller;
 
 import com.example.quanlydaotao.dto.SubjectDTO;
-import com.example.quanlydaotao.model.InternProfile;
-import com.example.quanlydaotao.model.InternSubject;
-import com.example.quanlydaotao.model.MailStructure;
-import com.example.quanlydaotao.model.SubjectComment;
-import com.example.quanlydaotao.repository.InternScoreRepository;
-import com.example.quanlydaotao.repository.InternSubjectRepository;
+import com.example.quanlydaotao.model.*;
+import com.example.quanlydaotao.repository.*;
 import com.example.quanlydaotao.service.InternService;
 import com.example.quanlydaotao.service.MailService;
 import com.example.quanlydaotao.service.UserService;
@@ -40,9 +36,8 @@ public class TestRestController {
     }
 
     @GetMapping("/api/send/")
-    public ResponseEntity<?> sendMail() throws MessagingException {
-        String htmlTable = mailService.createHtmlTable();
-        mailService.sendEmailWithTable(htmlTable);
-        return new ResponseEntity<>(true, HttpStatus.OK);
+    public ResponseEntity<SendEmail> sendMail() {
+        SendEmail sendEmail = mailService.sendEmail();
+        return new ResponseEntity<>(sendEmail, HttpStatus.OK);
     }
 }

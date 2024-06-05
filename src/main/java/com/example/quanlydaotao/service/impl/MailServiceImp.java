@@ -1,25 +1,27 @@
 package com.example.quanlydaotao.service.impl;
 
 import com.example.quanlydaotao.model.MailStructure;
-import com.example.quanlydaotao.model.User;
-import com.example.quanlydaotao.repository.IUserRecruitmentActionRepository;
+import com.example.quanlydaotao.model.RecruitmentPlanDetail;
+import com.example.quanlydaotao.model.Role;
+import com.example.quanlydaotao.model.SendEmail;
+import com.example.quanlydaotao.repository.IRecruitmentPlanDetailRepository;
+import com.example.quanlydaotao.repository.IRecruitmentRequestRepository;
 import com.example.quanlydaotao.repository.UserRepository;
 import com.example.quanlydaotao.service.MailService;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
-import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 @Service
 public class MailServiceImp implements MailService {
@@ -28,7 +30,11 @@ public class MailServiceImp implements MailService {
     @Autowired
     private SpringTemplateEngine templateEngine;
     @Autowired
-    private UserRepository repository;
+    private UserRepository userRepository;
+    @Autowired
+    private IRecruitmentPlanDetailRepository iRecruitmentPlanDetailRepository;
+    @Autowired
+    private IRecruitmentRequestRepository iRecruitmentRequestRepository;
 
     @Override
     public void sendMail(String mail, MailStructure mailStructure) {
@@ -61,49 +67,11 @@ public class MailServiceImp implements MailService {
     }
 
     @Override
-    public void sendEmailWithTable(String htmlTable) {
-        MimeMessage mimeMessage = mailSender.createMimeMessage();
-        String[] toCc = {"tronglai42@gmail.com", "nguyenhoanggiaminh24@gmail.com"};
-        String to = "vantuanvuong69@gmail.com";
-        String title = "Báo cáo tiến độ tuyển dụng";
-        try {
-            MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, true);
-            mimeMessageHelper.setTo(to);
-            mimeMessageHelper.setCc(toCc);
-            mimeMessageHelper.setSubject(title);
-            String htmlContent = "<html><body>" + htmlTable + "</body></html>";
-            mimeMessageHelper.setText(htmlContent, true);
-            mailSender.send(mimeMessage);
-        } catch (MessagingException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public String createHtmlTable() {
-        List<String> headers = Arrays.asList("Name", "Email");
-        Iterable<User> users = repository.findAll();
-        List<List<String>> rows = new ArrayList<>();
-
-        for (User user : users) {
-            List<String> row = new ArrayList<>();
-            row.add(user.getName());
-            row.add(user.getEmail());
-            rows.add(row);
-        }
-
-        StringBuilder htmlTable = new StringBuilder("<table border='1'><tr>");
-        for (String header : headers) {
-            htmlTable.append("<th>").append(header).append("</th>");
-        }
-        htmlTable.append("</tr>");
-        for (List<?> row : rows) {
-            htmlTable.append("<tr>");
-            for (Object cell : row) {
-                htmlTable.append("<td>").append(cell).append("</td>");
-            }
-            htmlTable.append("</tr>");
-        }
-        htmlTable.append("</table>");
-        return htmlTable.toString();
+    public SendEmail sendEmail() {
+        SendEmail sendEmail = new SendEmail();
+        sendEmail.setUsers(userRepository.findAllUserRole());
+        sendEmail.setRecruitmentRequests(iRecruitmentRequestRepository.findAll());
+        sendEmail.setRecruitmentPlanDetails((List<RecruitmentPlanDetail>) iRecruitmentPlanDetailRepository.findAll());
+        return sendEmail;
     }
 }
