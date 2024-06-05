@@ -48,10 +48,23 @@ public class InternService implements IInternService {
     public void updateIntern(Intern intern) throws Exception {
         Optional<RecruitmentPlan> recruitmentPlan = recruitmentPlanService.findById(intern.getRecruitmentPlan().getId());
         intern.setRecruitmentPlan(recruitmentPlan.get());
+        Intern oldIntern = iInternRepository.findById(intern.getId()).get();
+
         if (intern.getStatus().equals("Đã nhận việc")) {
             InternProfile internProfile = new InternProfile(intern);
             internProfile.setIsPass(null);
-            internServiceImpl.save(internProfile);
+            Optional<InternProfile> internOptional = internServiceImpl.checkInternProfile(intern);
+            if (internOptional.isEmpty()) {
+                internServiceImpl.save(internProfile);
+            }
+        }
+
+        if (intern.getRecruitmentPlan().getId() == oldIntern.getRecruitmentPlan().getId()) {
+            iInternRepository.saveAndFlush(intern);
+        } else if (!isFullIntern(intern.getRecruitmentPlan().getId())) {
+            iInternRepository.saveAndFlush(intern);
+        }else {
+            throw new Exception("số lượng của kế hoạch này đã đủ");
         }
         if (!isFullIntern(intern.getRecruitmentPlan().getId())) {
             iInternRepository.saveAndFlush(intern);
@@ -60,6 +73,7 @@ public class InternService implements IInternService {
         }
 
     }
+
 
     @Override
     public Optional<Intern> getIntern(long id) {
@@ -71,6 +85,7 @@ public class InternService implements IInternService {
         RecruitmentPlan plan = recruitmentPlanService.findById(intern.getRecruitmentPlan().getId()).get();
         intern.setApplyCVTime(LocalDateTime.now());
         intern.setRecruitmentPlan(plan);
+
         if (!isFullIntern(intern.getRecruitmentPlan().getId())) {
             iInternRepository.save(intern);
         }else {
@@ -80,11 +95,10 @@ public class InternService implements IInternService {
 
     public boolean isFullIntern(long recruitmentPlanId){
         boolean isFull = true;
+        int training = trainingByPlan(recruitmentPlanId);
+        int total = recruitmentPlanDetailService.getTotalResult(recruitmentPlanId);
 
-        int totalInternNeed = recruitmentPlanDetailService.getTotalIntern(recruitmentPlanId);
-        int applicants = applicantsByPlan(recruitmentPlanId);
-
-        if (applicants < totalInternNeed) {
+        if (training < total) {
             isFull = false;
         }
         return isFull;
@@ -128,9 +142,9 @@ public class InternService implements IInternService {
         int resultIntern = 0;
         for (InternProfile internProfile : internProfiles) {
             if (internProfile.getIsPass() == null) {
-                  continue;
+                continue;
             }
-            if (internProfile.getIsPass() ) {
+            if (internProfile.getIsPass()) {
                 resultIntern++;
             }
         }
