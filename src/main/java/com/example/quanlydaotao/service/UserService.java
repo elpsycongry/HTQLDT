@@ -25,7 +25,8 @@ public interface UserService extends UserDetailsService {
     Iterable<User> findAllByNameOrEmail(String keyword);
 
     Iterable<User> findUsersByRoles(Role role);
-    Iterable<User> filterWithFields(String keyword, Long role_id);
+    Iterable<User> findUsersByState(String state);
+    Iterable<User> filterWithFields(String keyword, Long role_id, String state);
 
     Page<User> convertToPage(Iterable<User> users, Pageable pageable);
     User findByUsername(String username);
@@ -44,8 +45,9 @@ public interface UserService extends UserDetailsService {
 
     boolean checkPhoneExists(String phone);
 
-
     boolean checkAddPhoneExists(String phone);
 
     boolean checkEmailExists(String email);
+    Optional<User> findByNameOrPhoneOrAndEmail(String name, String phone, String email);
+
 }

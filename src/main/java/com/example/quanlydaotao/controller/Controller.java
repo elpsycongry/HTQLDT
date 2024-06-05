@@ -49,24 +49,61 @@ public class Controller {
     @Autowired
     private TrainingStatsService trainingStatsService;
 
+//    @PostMapping("/register")
+//    public ResponseEntity<String> createUser(@RequestBody User user, BindingResult bindingResult) {
+//        if (bindingResult.hasFieldErrors()) {
+//            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+//        }
+//
+//
+//        if (user.getRoles() == null) {
+//            Role roleUser = roleService.findByName("ROLE_HR");
+//            user.setRoles(Collections.singletonList(roleUser));
+//            user.setStatus(true);
+//        }
+//
+//        user.setPassword(passwordEncoder.encode(user.getPassword()));
+//        user.setStatus(true);
+//        userService.save(user);
+//        return new ResponseEntity<>(HttpStatus.CREATED);
+//    }
+
     @PostMapping("/register")
-    public ResponseEntity<String> createUser(@RequestBody User user, BindingResult bindingResult) {
-        if (bindingResult.hasFieldErrors()) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    public ResponseEntity<Response> createUser(@RequestBody User user, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return ResponseEntity.badRequest().body(new Response("400", "Dữ liệu người dùng không hợp lệ", bindingResult.getFieldErrors()));
         }
 
+        List<User> users = (List<User>) userService.findAll();
 
-        if (user.getRoles() == null) {
-            Role roleUser = roleService.findByName("ROLE_HR");
-            user.setRoles(Collections.singletonList(roleUser));
+        for (int i = 0; i < users.size(); i++) {
+            User existingUser = users.get(i);
+                if (existingUser.getName().equals(user.getName())) {
+                    return ResponseEntity.ok(new Response("409", "Tên người dùng đã tồn tại", null));
+                }
+                if (existingUser.getPhone().equals(user.getPhone())) {
+                    return ResponseEntity.ok(new Response("409", "Số điện thoại đã tồn tại", null));
+                }
+                if (existingUser.getEmail().equals(user.getEmail())) {
+                    return ResponseEntity.ok(new Response("409", "Địa chỉ email đã tồn tại", null));
+                }
         }
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        user.setStatus(true);
-        userService.save(user);
-        return new ResponseEntity<>(HttpStatus.CREATED);
-    }
 
+        String msg = "Tài khoản đã được tạo. Chờ xác nhận";
+        if (users.isEmpty()) {
+            Role roleUser = roleService.findByName("ROLE_ADMIN");
+            user.setRoles(Collections.singletonList(roleUser));
+            user.setStatus(true);
+            user.setState(true);
+            msg = "Tài khoản quản trị viên đã được tạo.";
+        }
+
+        userService.save(user);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(new Response("201", msg, null));
+    }
 
     @PostMapping("/login")
     public ResponseEntity<Response> login(@RequestBody User user) {
@@ -133,12 +170,13 @@ public class Controller {
             @RequestParam(name = "page") int page,
             @RequestParam(name = "size") int size,
             @RequestParam(name = "keyword") String keyword,
-            @RequestParam(name = "role_id") String roleId) {
+            @RequestParam(name = "role_id") String roleId,
+            @RequestParam(name = "state") String state) {
 
         Pageable pageable = PageRequest.of(page, size);
         Iterable<User> users = roleId.isEmpty() ?
                 userService.findAllByNameOrEmail(keyword) :
-                userService.filterWithFields(keyword, Long.valueOf(roleId));
+                userService.filterWithFields(keyword, Long.valueOf(roleId), state);
 
         return new ResponseEntity<>(userService.convertToPage(users, pageable), HttpStatus.OK);
     }
@@ -155,6 +193,8 @@ public class Controller {
         return userService.findById(id)
                 .map(existingUser -> {
                     user.setId(existingUser.getId());
+                    user.setStatus(user.getRoles().isEmpty() ? false : true);
+                    user.setState(true);
                     userService.save(user);
                     return new ResponseEntity<>("Updated!", HttpStatus.OK);
                 })

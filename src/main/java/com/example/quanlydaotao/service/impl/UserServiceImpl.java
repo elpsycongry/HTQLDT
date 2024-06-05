@@ -95,32 +95,63 @@ public class UserServiceImpl implements UserService {
         return userIterable;
     }
 
+    @Override
+    public Iterable<User> findUsersByState(String state) {
+        switch (state) {
+            case "await":
+                return remoteRoleAdminDisplay(userRepository.findAllByState(false));
+            case "action":
+                return remoteRoleAdminDisplay(userRepository.findAllByState(true));
+            case "block":
+                return remoteRoleAdminDisplay(userRepository.findAllByStatus(false));
+            default:
+                return remoteRoleAdminDisplay(userRepository.findAll());
+        }
+    }
+
 
     @Override
-    public Iterable<User> filterWithFields(String keyword, Long role_id) {
+    public Iterable<User> filterWithFields(String keyword, Long role_id, String state) {
         if (keyword.isEmpty()) {
             return remoteRoleAdminDisplay(findUsersByRoles(roleService.findById(role_id).orElseThrow()));
         }
 
         if (keyword.isEmpty() && role_id == 0) {
-            return remoteRoleAdminDisplay(findAll());
+            return remoteRoleAdminDisplay(findUsersByState(state));
         }
 
         Iterable<User> users = findAllByNameOrEmail(keyword);
 
         if (role_id == null) {
-            return remoteRoleAdminDisplay(users);
+            return remoteRoleAdminDisplay(StreamSupport.stream(users.spliterator(), false)
+                    .filter(user -> matchState(user, state))
+                    .collect(Collectors.toList()));
         }
 
         Optional<Role> optionalRole = roleService.findById(role_id);
 
         return optionalRole
                 .map(role -> remoteRoleAdminDisplay(StreamSupport.stream(users.spliterator(), false)
-                        .filter(user -> user.getRoles().contains(role))
+                        .filter(user -> user.getRoles().contains(role) && matchState(user, state))
                         .collect(Collectors.toList())))
                 .orElseGet(() -> remoteRoleAdminDisplay(Collections.emptyList()));
     }
 
+    private boolean matchState(User user, String state) {
+        if (state == null || state.isEmpty()) {
+            return true;
+        }
+        switch (state) {
+            case "await":
+                return !user.isState();
+            case "action":
+                return user.isState();
+            case "block":
+                return !user.isStatus();
+            default:
+                return true;
+        }
+    }
     @Override
     public Page<User> convertToPage(Iterable<User> users, Pageable pageable) {
         List<User> userList = StreamSupport.stream(users.spliterator(), false)
@@ -200,5 +231,10 @@ public class UserServiceImpl implements UserService {
     public boolean checkEmailExists(String email) {
         User user = userRepository.findByEmail(email);
         return user != null;
+    }
+
+    @Override
+    public Optional<User> findByNameOrPhoneOrAndEmail(String name, String phone, String email) {
+        return userRepository.findByNameOrPhoneOrAndEmail(name, phone, email);
     }
 }
