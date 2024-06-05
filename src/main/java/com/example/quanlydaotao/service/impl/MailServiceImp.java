@@ -26,18 +26,18 @@ public class MailServiceImp implements MailService {
     @Autowired
     private JavaMailSender mailSender;
     @Autowired
-    private SpringTemplateEngine templateEngine ;
+    private SpringTemplateEngine templateEngine;
     @Autowired
     private UserRepository repository;
 
     @Override
     public void sendMail(String mail, MailStructure mailStructure) {
-            SimpleMailMessage message = new SimpleMailMessage();
-            message.setTo(mail);
-            message.setSubject(mailStructure.getSubject());
-            message.setText(mailStructure.getText());
-            mailSender.send(message);
-            System.out.println("sent");
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(mail);
+        message.setSubject(mailStructure.getSubject());
+        message.setText(mailStructure.getText());
+        mailSender.send(message);
+        System.out.println("sent");
     }
 
     @Override
@@ -51,7 +51,7 @@ public class MailServiceImp implements MailService {
             message.setTo(mail);
             String htmlText = templateEngine.process("email-template.html", context);
             message.setSubject("subject");
-            message.setText(htmlText,true);
+            message.setText(htmlText, true);
             mailSender.send(mimeMessage);
         } catch (MessagingException e) {
             throw new RuntimeException(e);
@@ -61,22 +61,26 @@ public class MailServiceImp implements MailService {
     }
 
     @Override
-    public void sendEmailWithTable(String to, String subject, String htmlTable){
+    public void sendEmailWithTable(String htmlTable) {
         MimeMessage mimeMessage = mailSender.createMimeMessage();
+        String[] toCc = {"tronglai42@gmail.com", "nguyenhoanggiaminh24@gmail.com"};
+        String to = "vantuanvuong69@gmail.com";
+        String title = "Báo cáo tiến độ tuyển dụng";
         try {
             MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, true);
             mimeMessageHelper.setTo(to);
-            mimeMessageHelper.setSubject(subject);
-            String htmlContent ="<html><body>"+htmlTable+"</body></html>";
-            mimeMessageHelper.setText(htmlContent,true);
+            mimeMessageHelper.setCc(toCc);
+            mimeMessageHelper.setSubject(title);
+            String htmlContent = "<html><body>" + htmlTable + "</body></html>";
+            mimeMessageHelper.setText(htmlContent, true);
             mailSender.send(mimeMessage);
-        }catch (MessagingException e){
+        } catch (MessagingException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public String createHtmlTable(){
-        List<String> headers = Arrays.asList("Name","Email");
+    public String createHtmlTable() {
+        List<String> headers = Arrays.asList("Name", "Email");
         Iterable<User> users = repository.findAll();
         List<List<String>> rows = new ArrayList<>();
 

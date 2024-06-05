@@ -20,16 +20,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
 
 @CrossOrigin("*")
 @RestController
-public class TestRestController implements CommandLineRunner {
+public class TestRestController {
     @Autowired
     private MailService mailService;
 
@@ -42,12 +39,10 @@ public class TestRestController implements CommandLineRunner {
         return new ResponseEntity<>(true, HttpStatus.OK);
     }
 
-    @Scheduled(cron = "0 0 12 ? * FRI")
-    @Override
-    public void run(String... args) throws MessagingException {
+    @GetMapping("/api/send/")
+    public ResponseEntity<?> sendMail() throws MessagingException {
         String htmlTable = mailService.createHtmlTable();
-        String receiver = "vantuanvuong69@gmail.com";
-        String title = "data of day";
-        mailService.sendEmailWithTable(receiver, title, htmlTable);
+        mailService.sendEmailWithTable(htmlTable);
+        return new ResponseEntity<>(true, HttpStatus.OK);
     }
 }
