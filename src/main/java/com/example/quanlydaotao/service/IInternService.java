@@ -13,7 +13,7 @@ import java.util.Optional;
 public interface IInternService {
     void createIntern(Intern intern);
     Page<Intern> showIntern(Pageable pageable);
-    void updateIntern(Intern intern);
+    void updateIntern(Intern intern) throws Exception;
     Optional<Intern> getIntern(long id);
     Page<Intern> findAllByNameOrEmail(PaginateRequest paginateRequest, InternSearchDTO internSearchDTO);
 }

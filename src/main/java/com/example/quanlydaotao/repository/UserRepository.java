@@ -21,6 +21,6 @@ public interface UserRepository extends JpaRepository<User,Long> {
     long countByPhone(String phone);
     List<User> findAllByRoles(Role role);
     Optional<User> findByNameOrPhoneOrAndEmail(String name, String phone, String email);
-    Iterable<User> findAllByStatus(boolean status);
-    Iterable<User> findAllByState(boolean state);
+    Iterable<User> findUsersByStatusAndState(boolean status, boolean state);
+    Iterable<User> findUsersByState(boolean state);
 }

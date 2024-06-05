@@ -1,11 +1,8 @@
 package com.example.quanlydaotao.service.impl;
 
 import com.example.quanlydaotao.dto.*;
-import com.example.quanlydaotao.model.RecruitmentRequest;
-import com.example.quanlydaotao.model.UserRecruitmentAction;
+import com.example.quanlydaotao.model.*;
 import com.example.quanlydaotao.repository.IRecruitmentRequestRepository;
-import com.example.quanlydaotao.model.RecruitmentRequestDetail;
-import com.example.quanlydaotao.model.Users;
 import com.example.quanlydaotao.service.IRecruitmentRequestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -15,11 +12,8 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 @Service
 public class RecruitmentRequestService implements IRecruitmentRequestService {
@@ -34,6 +28,7 @@ public class RecruitmentRequestService implements IRecruitmentRequestService {
     @Autowired
     private UserRecruitmentActionService userRecruitmentActionService;
 
+
     @Override
     public Iterable<RecruitmentRequest> getAllRecruitmentRequests() {
         Iterable<RecruitmentRequest> recruitmentRequests = iRecruitmentRequestRepository.getAll();
@@ -47,7 +42,7 @@ public class RecruitmentRequestService implements IRecruitmentRequestService {
     }
 
 
-    public void createRecruitmentRequest(RecruitmentFormDTO recruitmentFormDTO) {
+    public RecruitmentRequest createRecruitmentRequest(RecruitmentFormDTO recruitmentFormDTO) {
         RecruitmentRequest request = recruitmentFormDTO.getRecruitmentRequest();
         request.setStatus("Đã gửi");
         Optional<Users> users = usersService.findById(recruitmentFormDTO.getIdUser());
@@ -62,7 +57,7 @@ public class RecruitmentRequestService implements IRecruitmentRequestService {
         LocalDateTime dateTime = LocalDateTime.of(year, month, day, hour, minute);
         request.setDateStart(dateTime);
         request = iRecruitmentRequestRepository.save(request);
-
+        System.out.println(request);
         createUserRecruitmentAction(recruitmentFormDTO.getIdUser(), request, UserAction.Demand.toString());
 
         List<RecruitmentRequestDetail> requestDetails = recruitmentFormDTO.getDetails();
@@ -71,8 +66,35 @@ public class RecruitmentRequestService implements IRecruitmentRequestService {
             detail.setRecruitmentRequest(request);
             recruitmentRequestDetailService.saveDetail(detail);
         }
-
+        return request;
     }
+
+//    public RecruitmentRequest createRecruitmentRequestGetReturn(RecruitmentFormDTO recruitmentFormDTO) {
+//        RecruitmentRequest request = recruitmentFormDTO.getRecruitmentRequest();
+//        request.setStatus("Đã gửi");
+//        Optional<Users> users = usersService.findById(recruitmentFormDTO.getIdUser());
+//        request.setUsers(users.get());
+//        LocalDateTime localDateTime = LocalDateTime.now();
+//        int day = localDateTime.getDayOfMonth();
+//        int month = localDateTime.getMonthValue();
+//        int year = localDateTime.getYear();
+//        int hour = localDateTime.getHour();
+//        int minute = localDateTime.getMinute();
+//
+//        LocalDateTime dateTime = LocalDateTime.of(year, month, day, hour, minute);
+//        request.setDateStart(dateTime);
+//        request = iRecruitmentRequestRepository.save(request);
+//
+//        createUserRecruitmentAction(recruitmentFormDTO.getIdUser(), request, UserAction.Demand.toString());
+//
+//        List<RecruitmentRequestDetail> requestDetails = recruitmentFormDTO.getDetails();
+//
+//        for (RecruitmentRequestDetail detail : requestDetails) {
+//            detail.setRecruitmentRequest(request);
+//            recruitmentRequestDetailService.saveDetail(detail);
+//        }
+//        return request;
+//    }
 
     public void deniedRequestRecruitment(long idRecruitment, long idUser, String status, String reason) {
         RecruitmentRequest recruitmentRequest = iRecruitmentRequestRepository.findById(idRecruitment).get();
@@ -171,5 +193,34 @@ public class RecruitmentRequestService implements IRecruitmentRequestService {
         RecruitmentRequest activedRequest = iRecruitmentRequestRepository.findById(idRecruitmentRequest).get()
                 .setStatus("Đã xác nhận");
         iRecruitmentRequestRepository.save(activedRequest);
+    }
+
+    public ProcessDTO showProcessRequest(long idRecruitmentRequest) {
+        ProcessDTO processDTO = new ProcessDTO();
+
+        RecruitmentRequest request = iRecruitmentRequestRepository.findById(idRecruitmentRequest).get();
+        processDTO.setRequestId(request.getId())
+                .setRequestCreator(request.getUsers().getName() + "khởi tạo nhu cầu nhân sự:")
+                .setRequestName(request.getName())
+                .setStep(2);
+
+        if (request.getStatus().equals("Đã gửi")) {
+            processDTO.setStep(1)
+                    .setDetAccept("");
+        }
+
+        if (request.getStatus().equals("Đã xác nhận") || request.getStatus().equals("Đang tuyển dụng")) {
+            processDTO.setDetAccept("true");
+        }
+
+        String[] status = request.getStatus().split(" ");
+        if (status[0].equals("Bị")) {
+            processDTO.setDetAccept("false")
+                .setReason(request.getReason())
+                .setDetAccept("false")
+                .setStep(1);
+        }
+
+    return processDTO;
     }
 }

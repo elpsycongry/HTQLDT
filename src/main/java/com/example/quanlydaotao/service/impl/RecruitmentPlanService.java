@@ -81,7 +81,7 @@ public class RecruitmentPlanService implements IRecruitmentPlanService {
         recruitmentPlanDetailService.deleteAllByRecruitmentPlanId(id);
     }
 
-    public void createRecruitmentPlan(PlanFormDTO planFormDTO) throws Exception {
+    public RecruitmentPlan createRecruitmentPlan(PlanFormDTO planFormDTO) throws Exception {
         Users users = usersService.findById(planFormDTO.getIdUser()).get();
         RecruitmentPlan recruitmentPlan = planFormDTO.getRecruitmentPlan();
         List<RecruitmentPlanDetail> recruitmentPlanDetails = planFormDTO.getPlanDetails();
@@ -111,8 +111,9 @@ public class RecruitmentPlanService implements IRecruitmentPlanService {
                 .setAction(UserAction.Plane.toString());
 
         userPlanActionService.save(userPlanAction);
-
         recruitmentRequestService.confimRequest(recruitmentPlan.getRecruitmentRequest().getId());
+
+        return recruitmentPlan;
     }
 
     public Optional<RecruitmentPlan> findById(Long id) {
@@ -169,6 +170,34 @@ public class RecruitmentPlanService implements IRecruitmentPlanService {
                 .setUser(user)
                 .setAction(action);
         userPlanActionService.save(userAction);
+    }
+    private Optional<RecruitmentPlan> findByRequestId(long idRequest) {
+        Optional<RecruitmentPlan> plan = recruitmentPlanRepository.findByRecruitmentRequestId(idRequest);
+        return plan;
+    }
+
+    public ProcessDTO showProcessPlan(ProcessDTO processDTO) {
+        Optional<RecruitmentPlan>  isPlan = findByRequestId(processDTO.getRequestId());
+        if (isPlan.isPresent()) {
+            RecruitmentPlan plan = isPlan.get();
+            ProcessDTO newProcessDTO = processDTO;
+            newProcessDTO.setPlanId(plan.getId())
+                    .setPlanName(plan.getName())
+                    .setStep(2);
+
+            String[] status = plan.getStatus().split(" ");
+            if (status[0].equals("Bị")) {
+                newProcessDTO.setDecanAccept("false")
+                        .setReason(plan.getReason())
+                        .setStep(2);
+            } else if (plan.getStatus().equals("Đã xác nhận")) {
+                newProcessDTO.setStep(3)
+                        .setDecanAccept("true");
+            }
+            return newProcessDTO;
+        }
+
+        return processDTO;
     }
 
 

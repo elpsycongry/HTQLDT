@@ -5,6 +5,7 @@ import com.example.quanlydaotao.model.Intern;
 import com.example.quanlydaotao.model.InternProfile;
 import com.example.quanlydaotao.model.RecruitmentPlan;
 import com.example.quanlydaotao.repository.IInternRepository;
+import com.example.quanlydaotao.repository.InternProfileRepository;
 import com.example.quanlydaotao.service.IInternService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,6 +31,9 @@ public class InternService implements IInternService {
     private RecruitmentPlanDetailService recruitmentPlanDetailService;
     @Autowired
     private InternServiceImpl internServiceImpl;
+    @Autowired
+    private InternProfileRepository internProfileRepository;
+
     @Override
     public void createIntern(Intern intern) {
         iInternRepository.save(intern);
@@ -40,7 +45,7 @@ public class InternService implements IInternService {
     }
 
     @Override
-    public void updateIntern(Intern intern) {
+    public void updateIntern(Intern intern) throws Exception {
         Optional<RecruitmentPlan> recruitmentPlan = recruitmentPlanService.findById(intern.getRecruitmentPlan().getId());
         intern.setRecruitmentPlan(recruitmentPlan.get());
         if (intern.getStatus().equals("Đã nhận việc")) {
@@ -48,7 +53,12 @@ public class InternService implements IInternService {
             internProfile.setIsPass(null);
             internServiceImpl.save(internProfile);
         }
-        iInternRepository.saveAndFlush(intern);
+        if (!isFullIntern(intern.getRecruitmentPlan().getId())) {
+            iInternRepository.saveAndFlush(intern);
+        }else {
+            throw new Exception("số lượng của kế hoạch này đã đủ");
+        }
+
     }
 
     @Override
@@ -68,13 +78,13 @@ public class InternService implements IInternService {
         }
     }
 
-    public boolean isFullIntern(Long recruitmentPlanId){
+    public boolean isFullIntern(long recruitmentPlanId){
         boolean isFull = true;
 
         int totalInternNeed = recruitmentPlanDetailService.getTotalIntern(recruitmentPlanId);
-        int internPlanHave = iInternRepository.countByRecruitmentPlanId(recruitmentPlanId);
+        int applicants = applicantsByPlan(recruitmentPlanId);
 
-        if (internPlanHave < totalInternNeed) {
+        if (applicants < totalInternNeed) {
             isFull = false;
         }
         return isFull;
@@ -90,6 +100,59 @@ public class InternService implements IInternService {
                         Sort.by(Sort.Direction.DESC, "id")
                 )
         );
+    }
+
+    public int applicantsByPlan(long planId) {
+        int applicants = iInternRepository.countByRecruitmentPlanId(planId);
+        return applicants;
+    }
+
+    public int trainingByPlan(long planId) {
+        Iterable<Intern> interns = iInternRepository.findByRecruitmentPlanId(planId);
+        int training = 0;
+        for (Intern intern : interns) {
+            if (intern.getStatus().equals("Đã nhận việc")) {
+                training++;
+            }
+        }
+        return training;
+    }
+    public int internPass(long planId) {
+        List<Long> interns = new ArrayList<>();
+        for (Intern intern : iInternRepository.findByRecruitmentPlanId(planId)) {
+            interns.add(intern.getId());
+        }
+        List<InternProfile> internProfiles = internProfileRepository.findByInternIdIn(interns);
+
+
+        int resultIntern = 0;
+        for (InternProfile internProfile : internProfiles) {
+            if (internProfile.getIsPass()) {
+                resultIntern++;
+            }
+        }
+        return resultIntern;
+    }
+
+    public ProcessDTO showProcessIntern(ProcessDTO process) {
+        ProcessDTO newProcess = process;
+        int applicants = applicantsByPlan(process.getPlanId());
+        int training = trainingByPlan(process.getPlanId());
+
+        if (applicants > 0) {
+            newProcess.setApplicants(applicants)
+                    .setStep(3);
+        }
+
+        if (training > 0) {
+            newProcess.setTraining(training)
+                    .setStep(4);
+        }
+
+        newProcess.setTotalIntern(recruitmentPlanDetailService.getTotalResult(newProcess.getPlanId()));
+        newProcess.setIntern(internPass(process.getPlanId()));
+
+        return newProcess;
     }
 
 }

@@ -96,62 +96,52 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Iterable<User> findUsersByState(String state) {
+    public Iterable<User> findUsersByStateAndStatus(String state, Iterable<User> userIterable) {
+        Iterable<User> users = userIterable;
         switch (state) {
             case "await":
-                return remoteRoleAdminDisplay(userRepository.findAllByState(false));
+                users = userRepository.findUsersByState(false);
+                break;
             case "action":
-                return remoteRoleAdminDisplay(userRepository.findAllByState(true));
+                users = userRepository.findUsersByStatusAndState(true, true);
+                break;
             case "block":
-                return remoteRoleAdminDisplay(userRepository.findAllByStatus(false));
+                users = userRepository.findUsersByStatusAndState(false, true);
+                break;
             default:
-                return remoteRoleAdminDisplay(userRepository.findAll());
+                break;
         }
+        return users;
     }
-
-
     @Override
     public Iterable<User> filterWithFields(String keyword, Long role_id, String state) {
-        if (keyword.isEmpty()) {
-            return remoteRoleAdminDisplay(findUsersByRoles(roleService.findById(role_id).orElseThrow()));
+        Iterable<User> users;
+
+        if (keyword.isEmpty() && role_id == 0 && (state == null || state.isEmpty())) {
+            return remoteRoleAdminDisplay(findAll());
         }
 
-        if (keyword.isEmpty() && role_id == 0) {
-            return remoteRoleAdminDisplay(findUsersByState(state));
+        if (!keyword.isEmpty()) {
+            users = findAllByNameOrEmail(keyword);
+        } else {
+            users = findAll();
         }
 
-        Iterable<User> users = findAllByNameOrEmail(keyword);
-
-        if (role_id == null) {
-            return remoteRoleAdminDisplay(StreamSupport.stream(users.spliterator(), false)
-                    .filter(user -> matchState(user, state))
-                    .collect(Collectors.toList()));
+        if (role_id != null) {
+            Optional<Role> optionalRole = roleService.findById(role_id);
+            if (optionalRole.isPresent()) {
+                List<User> filteredUsers = StreamSupport.stream(users.spliterator(), false)
+                        .filter(user -> user.getRoles().contains(optionalRole.get()))
+                        .collect(Collectors.toList());
+                users = remoteRoleAdminDisplay(filteredUsers);
+            } else {
+                users = remoteRoleAdminDisplay(Collections.emptyList());
+            }
         }
-
-        Optional<Role> optionalRole = roleService.findById(role_id);
-
-        return optionalRole
-                .map(role -> remoteRoleAdminDisplay(StreamSupport.stream(users.spliterator(), false)
-                        .filter(user -> user.getRoles().contains(role) && matchState(user, state))
-                        .collect(Collectors.toList())))
-                .orElseGet(() -> remoteRoleAdminDisplay(Collections.emptyList()));
+        users = findUsersByStateAndStatus(state, users);
+        return remoteRoleAdminDisplay(users);
     }
 
-    private boolean matchState(User user, String state) {
-        if (state == null || state.isEmpty()) {
-            return true;
-        }
-        switch (state) {
-            case "await":
-                return !user.isState();
-            case "action":
-                return user.isState();
-            case "block":
-                return !user.isStatus();
-            default:
-                return true;
-        }
-    }
     @Override
     public Page<User> convertToPage(Iterable<User> users, Pageable pageable) {
         List<User> userList = StreamSupport.stream(users.spliterator(), false)

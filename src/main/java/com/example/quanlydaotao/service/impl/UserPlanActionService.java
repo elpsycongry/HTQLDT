@@ -12,8 +12,7 @@ import java.util.Optional;
 public class UserPlanActionService {
     @Autowired
     private IUserPlanActionRepository userPlanActionRepository;
-    public void save(UserPlanAction userAction) {userPlanActionRepository.save(userAction);
-    }
+    public void save(UserPlanAction userAction) {userPlanActionRepository.save(userAction);}
 
     public Optional<UserPlanAction> findByRecruitmentPlanId(long id) {
         return userPlanActionRepository.findByRecruitmentPlanId(id);

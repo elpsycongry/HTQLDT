@@ -25,7 +25,7 @@ public interface UserService extends UserDetailsService {
     Iterable<User> findAllByNameOrEmail(String keyword);
 
     Iterable<User> findUsersByRoles(Role role);
-    Iterable<User> findUsersByState(String state);
+    Iterable<User> findUsersByStateAndStatus(String state, Iterable<User> userIterable);
     Iterable<User> filterWithFields(String keyword, Long role_id, String state);
 
     Page<User> convertToPage(Iterable<User> users, Pageable pageable);

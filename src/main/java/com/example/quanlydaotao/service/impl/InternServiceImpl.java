@@ -46,10 +46,6 @@ public class InternServiceImpl implements InternService {
     private IInternRepository iInternRepository;
 
     @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private UserService userService;
-    @Autowired
     private SubjectCommentRepo subjectCommentRepo;
 
     @Override
@@ -322,4 +318,6 @@ public class InternServiceImpl implements InternService {
     public RecruitmentPlanDTO getRecruitmentPlanDTO(RecruitmentPlan recruitmentPlan) {
         return new RecruitmentPlanDTO(recruitmentPlan.getId(), recruitmentPlan.getName(), recruitmentPlan.getStatus());
     }
+
+    
 }

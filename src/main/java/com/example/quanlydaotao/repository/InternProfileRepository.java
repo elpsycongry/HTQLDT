@@ -17,4 +17,6 @@ public interface InternProfileRepository extends JpaRepository<InternProfile, Lo
     List<InternProfile> findByIsPassEqualsAndTrainingStateEquals(boolean isPass, String trainingState);
 
     List<InternProfile> findByTrainingStateEquals(String trainingState);
+
+    List<InternProfile> findByInternIdIn(List<Long> interns);
 }
