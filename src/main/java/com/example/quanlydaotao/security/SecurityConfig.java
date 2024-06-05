@@ -73,11 +73,12 @@ public class SecurityConfig {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder(10);
     }
+
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.addAllowedOriginPattern("*");
-        configuration.setAllowedMethods(Arrays.asList("GET","POST","PUT","PATCH","DELETE","OPTIONS"));
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowCredentials(false);
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
@@ -90,18 +91,19 @@ public class SecurityConfig {
         return http.cors(Customizer.withDefaults()).csrf(AbstractHttpConfigurer::disable)
                 .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/login", "/register", "/logoutUser","/role", "/api/test/**").permitAll()
-                        .requestMatchers("/users/**").hasAnyAuthority("ROLE_USER", "ROLE_QLĐT", "ROLE_ADMIN")
-                        .requestMatchers("/admin/**").hasAnyAuthority("ROLE_ADMIN")
-                        .requestMatchers("/api/interns/**").hasAnyAuthority("ROLE_ADMIN","ROLE_TM","ROLE_KSCL")
-                        .requestMatchers("/api/stats/**").hasAnyAuthority("ROLE_ADMIN")
-                        .requestMatchers("/api/recruitmentRequests/**").hasAnyAuthority("ROLE_ADMIN","ROLE_DM","ROLE_HR","ROLE_QLĐT","ROLE_KSCL")
-                        .requestMatchers("/api/plans/**").hasAnyAuthority("ROLE_ADMIN","ROLE_QLĐT","ROLE_HR","ROLE_DM","ROLE_KSCL")
-                        .requestMatchers("/api/plansIntern/**").hasAnyAuthority("ROLE_ADMIN","ROLE_QLĐT","ROLE_HR","ROLE_KSCL","ROLE_DM")
-                        .requestMatchers("/process/**").hasAnyAuthority("ROLE_ADMIN","ROLE_KSCL")
-                        .requestMatchers("api/users/**").hasAnyAuthority("ROLE_ADMIN","ROLE_KSCL")
-                        .requestMatchers("/api/recruitmentStats/**").hasAnyAuthority("ROLE_ADMIN","ROLE_KSCL")
-                        .requestMatchers("/api/dashboard/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_QLĐT")
+                                .requestMatchers("/login", "/register", "/logoutUser", "/role", "/api/test/**", "/generate-pdf", "api/test/").permitAll()
+                                .requestMatchers("/users/**").hasAnyAuthority("ROLE_USER", "ROLE_TM", "ROLE_ADMIN")
+                                .requestMatchers("/admin/**").hasAnyAuthority("ROLE_ADMIN")
+                                .requestMatchers("/api/interns/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_TM")
+                                .requestMatchers("/api/stats/**").hasAnyAuthority("ROLE_ADMIN")
+                                .requestMatchers("api/users/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_QC")
+                                .requestMatchers("api/plans/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_TM", "ROLE_HR", "ROLE_DM", "ROLE_QC")
+                                .requestMatchers("api/recruitmentRequests/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_DM", "ROLE_HR", "ROLE_TM", "ROLE_QC")
+                                .requestMatchers("api/plansIntern/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_TM", "ROLE_HR", "ROLE_QC")
+                                .requestMatchers("/api/recruitmentStats/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_QC")
+                                .requestMatchers("/api/dashboard/**").permitAll()
+                                .requestMatchers("/api/notifications/**").permitAll()
+                                .requestMatchers("/process/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_QC")
                 )
                 .exceptionHandling(customizer -> customizer.accessDeniedHandler(customAccessDeniedHandler()))
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

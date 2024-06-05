@@ -42,7 +42,7 @@ public class RecruitmentRequestService implements IRecruitmentRequestService {
     }
 
 
-    public void createRecruitmentRequest(RecruitmentFormDTO recruitmentFormDTO) {
+    public RecruitmentRequest createRecruitmentRequest(RecruitmentFormDTO recruitmentFormDTO) {
         RecruitmentRequest request = recruitmentFormDTO.getRecruitmentRequest();
         request.setStatus("Đã gửi");
         Optional<Users> users = usersService.findById(recruitmentFormDTO.getIdUser());
@@ -57,7 +57,7 @@ public class RecruitmentRequestService implements IRecruitmentRequestService {
         LocalDateTime dateTime = LocalDateTime.of(year, month, day, hour, minute);
         request.setDateStart(dateTime);
         request = iRecruitmentRequestRepository.save(request);
-
+        System.out.println(request);
         createUserRecruitmentAction(recruitmentFormDTO.getIdUser(), request, UserAction.Demand.toString());
 
         List<RecruitmentRequestDetail> requestDetails = recruitmentFormDTO.getDetails();
@@ -66,8 +66,35 @@ public class RecruitmentRequestService implements IRecruitmentRequestService {
             detail.setRecruitmentRequest(request);
             recruitmentRequestDetailService.saveDetail(detail);
         }
-
+        return request;
     }
+
+//    public RecruitmentRequest createRecruitmentRequestGetReturn(RecruitmentFormDTO recruitmentFormDTO) {
+//        RecruitmentRequest request = recruitmentFormDTO.getRecruitmentRequest();
+//        request.setStatus("Đã gửi");
+//        Optional<Users> users = usersService.findById(recruitmentFormDTO.getIdUser());
+//        request.setUsers(users.get());
+//        LocalDateTime localDateTime = LocalDateTime.now();
+//        int day = localDateTime.getDayOfMonth();
+//        int month = localDateTime.getMonthValue();
+//        int year = localDateTime.getYear();
+//        int hour = localDateTime.getHour();
+//        int minute = localDateTime.getMinute();
+//
+//        LocalDateTime dateTime = LocalDateTime.of(year, month, day, hour, minute);
+//        request.setDateStart(dateTime);
+//        request = iRecruitmentRequestRepository.save(request);
+//
+//        createUserRecruitmentAction(recruitmentFormDTO.getIdUser(), request, UserAction.Demand.toString());
+//
+//        List<RecruitmentRequestDetail> requestDetails = recruitmentFormDTO.getDetails();
+//
+//        for (RecruitmentRequestDetail detail : requestDetails) {
+//            detail.setRecruitmentRequest(request);
+//            recruitmentRequestDetailService.saveDetail(detail);
+//        }
+//        return request;
+//    }
 
     public void deniedRequestRecruitment(long idRecruitment, long idUser, String status, String reason) {
         RecruitmentRequest recruitmentRequest = iRecruitmentRequestRepository.findById(idRecruitment).get();

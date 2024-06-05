@@ -45,7 +45,7 @@ public class InternService implements IInternService {
     }
 
     @Override
-    public void updateIntern(Intern intern) {
+    public void updateIntern(Intern intern) throws Exception {
         Optional<RecruitmentPlan> recruitmentPlan = recruitmentPlanService.findById(intern.getRecruitmentPlan().getId());
         intern.setRecruitmentPlan(recruitmentPlan.get());
         if (intern.getStatus().equals("Đã nhận việc")) {
@@ -53,7 +53,12 @@ public class InternService implements IInternService {
             internProfile.setIsPass(null);
             internServiceImpl.save(internProfile);
         }
-        iInternRepository.saveAndFlush(intern);
+        if (!isFullIntern(intern.getRecruitmentPlan().getId())) {
+            iInternRepository.saveAndFlush(intern);
+        }else {
+            throw new Exception("số lượng của kế hoạch này đã đủ");
+        }
+
     }
 
     @Override
@@ -122,7 +127,10 @@ public class InternService implements IInternService {
 
         int resultIntern = 0;
         for (InternProfile internProfile : internProfiles) {
-            if (internProfile.getIsPass()) {
+            if (internProfile.getIsPass() == null) {
+                  continue;
+            }
+            if (internProfile.getIsPass() ) {
                 resultIntern++;
             }
         }

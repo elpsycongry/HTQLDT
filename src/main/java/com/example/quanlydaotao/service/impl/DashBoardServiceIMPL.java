@@ -24,7 +24,7 @@ public class DashBoardServiceIMPL implements DashBoardService {
         PersonnelNeedsDTO personnelNeedsDTO = new PersonnelNeedsDTO();
         personnelNeedsDTO.setPersonnelNeeds(recruitmentRequestRepository.findAll().size());
         personnelNeedsDTO.setAwaitingApproval(recruitmentRequestRepository.findByStatusEquals("Đã gửi").size());
-        personnelNeedsDTO.setApproved(recruitmentRequestRepository.findByStatusEquals("Đã gửi").size());
+        personnelNeedsDTO.setApproved(recruitmentRequestRepository.findByStatusEquals("Đã xác nhận").size());
         personnelNeedsDTO.setHandedOver(recruitmentRequestRepository.findByStatusEquals("Đã bàn giao").size());
 
         return personnelNeedsDTO;
@@ -34,8 +34,8 @@ public class DashBoardServiceIMPL implements DashBoardService {
     public RecruitmentPlanDashBoardDTO getRecruitmentPlanDashBoardDTO() {
         RecruitmentPlanDashBoardDTO recruitmentPlanDTO = new RecruitmentPlanDashBoardDTO();
         recruitmentPlanDTO.setTotalRecruitmentPlan(recruitmentPlanRepository.findAll().size());
-        recruitmentPlanDTO.setAwaitingApproval(recruitmentPlanRepository.findByStatusEquals("Đang chờ duyệt").size());
-        recruitmentPlanDTO.setApproved(recruitmentRequestRepository.findByStatusEquals("Đã duyệt").size());
+        recruitmentPlanDTO.setAwaitingApproval(recruitmentPlanRepository.findByStatusEquals("Đã gửi").size());
+        recruitmentPlanDTO.setApproved(recruitmentPlanRepository.findByStatusEquals("Đã xác nhận").size());
         recruitmentPlanDTO.setAccomplished(recruitmentPlanRepository.findByStatusEquals("Đã hoàn thành").size());
 
         return recruitmentPlanDTO;

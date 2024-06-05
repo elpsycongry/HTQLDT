@@ -45,7 +45,7 @@ public class InternController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Intern> updateIntern(@RequestBody Intern intern, @PathVariable long id) {
+    public ResponseEntity<Intern> updateIntern(@RequestBody Intern intern, @PathVariable long id) throws Exception {
         intern.setId(id);
         internService.updateIntern(intern);
         return new ResponseEntity<>(intern, HttpStatus.OK);

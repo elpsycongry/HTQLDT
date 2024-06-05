@@ -184,9 +184,16 @@ public class UserServiceImpl implements UserService {
         return userRepository.findAll(pageable);
     }
 
+    @Override
     public boolean checkPhoneExists(String phone) {
         long numberOfPhone = userRepository.countByPhone(phone);
         return numberOfPhone >= 2;
+    }
+
+    @Override
+    public boolean checkAddPhoneExists(String phone) {
+        long numberOfPhone = userRepository.countByPhone(phone);
+        return numberOfPhone >= 1;
     }
 
     @Override
