@@ -66,6 +66,12 @@ public class InternService implements IInternService {
         }else {
             throw new Exception("số lượng của kế hoạch này đã đủ");
         }
+        if (!isFullIntern(intern.getRecruitmentPlan().getId())) {
+            iInternRepository.saveAndFlush(intern);
+        }else {
+            throw new Exception("số lượng của kế hoạch này đã đủ");
+        }
+
     }
 
 
