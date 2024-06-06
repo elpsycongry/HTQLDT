@@ -3,12 +3,14 @@ package com.example.quanlydaotao.controller;
 import com.example.quanlydaotao.dto.InternDTO;
 import com.example.quanlydaotao.model.*;
 import com.example.quanlydaotao.repository.IRecruitmentPlanRepository;
+import com.example.quanlydaotao.repository.IRecruitmentRequestRepository;
 import com.example.quanlydaotao.service.IInternService;
 import com.example.quanlydaotao.service.InternService;
 import com.example.quanlydaotao.dto.SubjectDTO;
 import com.example.quanlydaotao.service.InternService;
 import com.example.quanlydaotao.service.UserService;
 import com.example.quanlydaotao.service.impl.InternServiceImpl;
+import com.example.quanlydaotao.service.impl.RecruitmentPlanDetailService;
 import com.example.quanlydaotao.service.impl.RecruitmentPlanService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -32,9 +34,12 @@ public class InternRestController {
     @Autowired
     private InternService internService;
     @Autowired
+    private IInternService iInternService;
+    @Autowired
     private UserService userService;
     @Autowired
     private RecruitmentPlanService recruitmentPlanService;
+
 
     @GetMapping
     public ResponseEntity<?> getAllIntern(){
@@ -84,6 +89,7 @@ public class InternRestController {
             @RequestParam(name = "keyword") String keyword,
             @RequestParam(name = "trainingState") String trainingState,
             @RequestParam(name = "recruitmentPlan") String recruitmentPlan) {
+        internService.checkNumberOfRecruitment();
         Pageable pageable = PageRequest.of(page, size);
         Iterable<InternDTO> internDTOIterable = internService.findListInterWithNameInternAndTrainingStateAndRecruitmentPlan(keyword, trainingState, recruitmentPlan);
         Page<InternDTO> internDTOPage = internService.convertToPage((List<InternDTO>) internDTOIterable, pageable);
@@ -99,7 +105,6 @@ public class InternRestController {
 
     @PutMapping
     public ResponseEntity<?> editInternDetail(@RequestBody Map<String, Object> payload) {
-
         InternProfile internProfile = internService.getInternProfile(Long.parseLong(payload.get("internID").toString()));
         // Xử lý startDate
         if (payload.get("startDate") != null) {
@@ -174,7 +179,6 @@ public class InternRestController {
                 }
             }
         }
-
         return getInternDetail(intern.getId());
     }
 
@@ -269,5 +273,13 @@ public class InternRestController {
 
         subjectDTOs.add(newSubjectDTO);
         return newSubjectDTO;
+    }
+
+    @GetMapping("/checkNumberOfRecruitment")
+    public ResponseEntity<?> checkNumberOfRecruitment(@RequestParam(name = "id") Long id) {
+        if (internService.isFullIntern(internService.findById(id).get().getRecruitmentPlan().getId()) == "enough"){
+            return new ResponseEntity<>("enough", HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

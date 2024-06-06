@@ -42,4 +42,7 @@ public interface InternService {
 
     void saveSubjectComment(SubjectComment subjectComment);
     Optional<Intern> findById(Long internID);
+
+    String isFullIntern(long recruitmentPlanId);
+    void checkNumberOfRecruitment();
 }

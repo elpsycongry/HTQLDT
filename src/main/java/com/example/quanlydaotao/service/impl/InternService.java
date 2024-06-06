@@ -53,7 +53,7 @@ public class InternService implements IInternService {
             internProfile.setIsPass(null);
             internServiceImpl.save(internProfile);
         }
-        if (!isFullIntern(intern.getRecruitmentPlan().getId())) {
+        if (internServiceImpl.isFullIntern(intern.getRecruitmentPlan().getId()).equals("notEnough")) {
             iInternRepository.saveAndFlush(intern);
         }else {
             throw new Exception("số lượng của kế hoạch này đã đủ");
@@ -83,7 +83,6 @@ public class InternService implements IInternService {
 
         int totalInternNeed = recruitmentPlanDetailService.getTotalIntern(recruitmentPlanId);
         int applicants = applicantsByPlan(recruitmentPlanId);
-
         if (applicants < totalInternNeed) {
             isFull = false;
         }
