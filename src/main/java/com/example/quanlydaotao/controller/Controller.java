@@ -159,6 +159,13 @@ public class Controller {
                 .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
+    @GetMapping("/roles/users/view/{id}")
+    public ResponseEntity<User> viewRoles(@PathVariable Long id) {
+        return userService.findById(id)
+                .map(user -> new ResponseEntity<>(user, HttpStatus.OK))
+                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
+
     @PutMapping("/admin/users/update/{id}")
     public ResponseEntity<String> updateUserAccount(@PathVariable Long id, @RequestBody User user) {
         return userService.findById(id)
