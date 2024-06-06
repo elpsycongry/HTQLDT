@@ -1,30 +1,27 @@
 package com.example.quanlydaotao.controller;
 
-import com.example.quanlydaotao.dto.SubjectDTO;
+import com.example.quanlydaotao.dto.EmailDTO;
 import com.example.quanlydaotao.model.*;
-import com.example.quanlydaotao.repository.*;
-import com.example.quanlydaotao.service.InternService;
 import com.example.quanlydaotao.service.MailService;
-import com.example.quanlydaotao.service.UserService;
-import com.example.quanlydaotao.service.impl.MailServiceImp;
-import jakarta.mail.MessagingException;
+import com.example.quanlydaotao.service.impl.InternService;
+import com.example.quanlydaotao.service.impl.RecruitmentPlanDetailService;
+import com.example.quanlydaotao.service.impl.RecruitmentRequestService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.CommandLineRunner;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.*;
 
 @CrossOrigin("*")
 @RestController
 public class TestRestController {
     @Autowired
     private MailService mailService;
+    @Autowired
+    private RecruitmentRequestService recruitmentRequestService;
+    @Autowired
+    private RecruitmentPlanDetailService recruitmentPlanDetailService;
+    @Autowired
+    private InternService internService;
 
     @GetMapping("/api/test/")
     public ResponseEntity<?> getAllIntern(@RequestParam(value = "id", required = false) Long id) {
@@ -35,9 +32,9 @@ public class TestRestController {
         return new ResponseEntity<>(true, HttpStatus.OK);
     }
 
-    @GetMapping("/api/send/")
-    public ResponseEntity<SendEmail> sendMail() {
-        SendEmail sendEmail = mailService.sendEmail();
-        return new ResponseEntity<>(sendEmail, HttpStatus.OK);
+    @GetMapping("/api/send/{id}")
+    public EmailDTO get(@PathVariable long id){
+        EmailDTO emailDTO = new EmailDTO();
+       return emailDTO;
     }
 }

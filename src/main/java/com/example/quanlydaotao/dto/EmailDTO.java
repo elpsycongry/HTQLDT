@@ -1,124 +1,142 @@
 package com.example.quanlydaotao.dto;
 
 public class EmailDTO {
-    private String to_name;
-    private String name_personal_needs;
-    private String date_start;
-    private String date_end;
-    private int intern_needs;
-    private int intern_need_hand_over;
-    private int total_intern;
-    private int pass_intern;
-    private int training_intern;
-    private int hand_over_intern;
-    private int fail_intern;
-    private int not_training_intern;
+    private String toEmail;
+    private String toName;
+    private String namePersonalNeeds;
+    private String dateStart;
+    private String dateEnd;
+    private int internNeeds;
+    private int internNeedHandOver;
+    private int linkProgress;
+    private int totalIntern;
+    private int passIntern;
+    private int trainingIntern;
+    private int handOverIntern;
+    private int failIntern;
+    private int notTrainingIntern;
 
-    public String getTo_name() {
-        return to_name;
+    public String getToName() {
+        return toName;
+    }
+    public String getToEmail() {
+        return toEmail;
     }
 
-    public EmailDTO setTo_name(String to_name) {
-        this.to_name = to_name;
+    public EmailDTO setToEmail(String to_email) {
+        this.toEmail = to_email;
+        return this;
+    }
+    public EmailDTO setToName(String to_name) {
+        this.toName = to_name;
         return this;
     }
 
-    public String getName_personal_needs() {
-        return name_personal_needs;
+    public String getNamePersonalNeeds() {
+        return namePersonalNeeds;
     }
 
-    public EmailDTO setName_personal_needs(String name_personal_needs) {
-        this.name_personal_needs = name_personal_needs;
+    public EmailDTO setNamePersonalNeeds(String name_personal_needs) {
+        this.namePersonalNeeds = name_personal_needs;
         return this;
     }
 
-    public String getDate_start() {
-        return date_start;
+    public String getDateStart() {
+        return dateStart;
     }
 
-    public EmailDTO setDate_start(String date_start) {
-        this.date_start = date_start;
+    public EmailDTO setDateStart(String date_start) {
+        this.dateStart = date_start;
         return this;
     }
 
-    public String getDate_end() {
-        return date_end;
+    public String getDateEnd() {
+        return dateEnd;
     }
 
-    public EmailDTO setDate_end(String date_end) {
-        this.date_end = date_end;
+    public EmailDTO setDateEnd(String date_end) {
+        this.dateEnd = date_end;
         return this;
     }
 
-    public int getIntern_needs() {
-        return intern_needs;
+    public int getInternNeeds() {
+        return internNeeds;
     }
 
-    public EmailDTO setIntern_needs(int intern_needs) {
-        this.intern_needs = intern_needs;
+    public EmailDTO setInternNeeds(int intern_needs) {
+        this.internNeeds = intern_needs;
         return this;
     }
 
-    public int getIntern_need_hand_over() {
-        return intern_need_hand_over;
+    public int getLinkProgress() {
+        return linkProgress;
     }
 
-    public EmailDTO setIntern_need_hand_over(int intern_need_hand_over) {
-        this.intern_need_hand_over = intern_need_hand_over;
+    public EmailDTO setLinkProgress(int linkProgress) {
+        this.linkProgress = linkProgress;
         return this;
     }
 
-    public int getTotal_intern() {
-        return total_intern;
+    public int getInternNeedHandOver() {
+        return internNeedHandOver;
     }
 
-    public EmailDTO setTotal_intern(int total_intern) {
-        this.total_intern = total_intern;
+    public EmailDTO setInternNeedHandOver(int intern_need_hand_over) {
+        this.internNeedHandOver = intern_need_hand_over;
         return this;
     }
 
-    public int getPass_intern() {
-        return pass_intern;
+    public int getTotalIntern() {
+        return totalIntern;
     }
 
-    public EmailDTO setPass_intern(int pass_intern) {
-        this.pass_intern = pass_intern;
+    public EmailDTO setTotalIntern(int total_intern) {
+        this.totalIntern = total_intern;
         return this;
     }
 
-    public int getTraining_intern() {
-        return training_intern;
+    public int getPassIntern() {
+        return passIntern;
+    }
+
+    public EmailDTO setPassIntern(int pass_intern) {
+        this.passIntern = pass_intern;
+        return this;
+    }
+
+    public int getTrainingIntern() {
+        return trainingIntern;
     }
 
     public EmailDTO setTraining_intern(int training_intern) {
-        this.training_intern = training_intern;
+        this.trainingIntern = training_intern;
         return this;
     }
 
-    public int getHand_over_intern() {
-        return hand_over_intern;
+    public int getHandOverIntern() {
+        return handOverIntern;
     }
 
-    public EmailDTO setHand_over_intern(int hand_over_intern) {
-        this.hand_over_intern = hand_over_intern;
+    public EmailDTO setHandOverIntern(int hand_over_intern) {
+        this.handOverIntern = hand_over_intern;
         return this;
     }
 
     public int getFail_intern() {
-        return fail_intern;
+        return failIntern;
     }
 
     public EmailDTO setFail_intern(int fail_intern) {
-        this.fail_intern = fail_intern;
+        this.failIntern = fail_intern;
         return this;
     }
 
     public int getNot_training_intern() {
-        return not_training_intern;
+        return notTrainingIntern;
     }
 
     public EmailDTO setNot_training_intern(int not_training_intern) {
-        this.not_training_intern = not_training_intern;
+        this.notTrainingIntern = not_training_intern;
         return this;
     }
 }

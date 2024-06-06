@@ -28,7 +28,6 @@ public class RecruitmentRequest {
     private String reason;
     private String division;
     private String status;
-
     @Override
     public String toString() {
         return "RecruitmentRequest{" +

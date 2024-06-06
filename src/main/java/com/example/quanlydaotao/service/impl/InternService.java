@@ -150,6 +150,21 @@ public class InternService implements IInternService {
         }
         return resultIntern;
     }
+    public int internFail(long planId) {
+        List<Long> internsFail = new ArrayList<>();
+        for (Intern intern : iInternRepository.findByRecruitmentPlanId(planId)) {
+            internsFail.add(intern.getId());
+        }
+        List<InternProfile> internProfiles = internProfileRepository.findByInternIdIn(internsFail);
+
+        int resultIntern = 0;
+        for (InternProfile internProfile : internProfiles) {
+            if (!internProfile.getIsPass()) {
+                resultIntern++;
+            }
+        }
+        return resultIntern;
+    }
 
     public ProcessDTO showProcessIntern(ProcessDTO process) {
         ProcessDTO newProcess = process;

@@ -10,6 +10,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -41,6 +42,17 @@ public class RecruitmentRequestService implements IRecruitmentRequestService {
         return recruitmentRequest;
     }
 
+    @Override
+    public String getRecruitmentNameById(long recruitmentId) {
+        return iRecruitmentRequestRepository.findById(recruitmentId).map(RecruitmentRequest::getName).orElse(null);
+    }
+
+    public LocalDateTime getDateStart(long recruitmentId){
+        return iRecruitmentRequestRepository.findById(recruitmentId).map(RecruitmentRequest::getDateStart).orElse(null);
+    }
+    public LocalDate getDateEnd(long recruitmentId){
+        return iRecruitmentRequestRepository.findById(recruitmentId).map(RecruitmentRequest::getDateEnd).orElse(null);
+    }
 
     public RecruitmentRequest createRecruitmentRequest(RecruitmentFormDTO recruitmentFormDTO) {
         RecruitmentRequest request = recruitmentFormDTO.getRecruitmentRequest();

@@ -1,10 +1,9 @@
 package com.example.quanlydaotao.service.impl;
 
-import com.example.quanlydaotao.model.MailStructure;
-import com.example.quanlydaotao.model.RecruitmentPlanDetail;
-import com.example.quanlydaotao.model.Role;
-import com.example.quanlydaotao.model.SendEmail;
+import com.example.quanlydaotao.dto.EmailDTO;
+import com.example.quanlydaotao.model.*;
 import com.example.quanlydaotao.repository.IRecruitmentPlanDetailRepository;
+import com.example.quanlydaotao.repository.IRecruitmentPlanRepository;
 import com.example.quanlydaotao.repository.IRecruitmentRequestRepository;
 import com.example.quanlydaotao.repository.UserRepository;
 import com.example.quanlydaotao.service.MailService;
@@ -30,11 +29,19 @@ public class MailServiceImp implements MailService {
     @Autowired
     private SpringTemplateEngine templateEngine;
     @Autowired
+    private InternService internService;
+    @Autowired
+    private IRecruitmentPlanRepository recruitmentPlanService;
+    @Autowired
+    private RecruitmentPlanDetailService recruitmentPlanDetailService;
+    @Autowired
+    private RecruitmentRequestDetailService recruitmentRequestDetailService;
+    @Autowired
+    private RecruitmentRequestService recruitmentRequestService;
+    @Autowired
+    private UserServiceImpl userService;
+    @Autowired
     private UserRepository userRepository;
-    @Autowired
-    private IRecruitmentPlanDetailRepository iRecruitmentPlanDetailRepository;
-    @Autowired
-    private IRecruitmentRequestRepository iRecruitmentRequestRepository;
 
     @Override
     public void sendMail(String mail, MailStructure mailStructure) {
@@ -51,7 +58,6 @@ public class MailServiceImp implements MailService {
         MimeMessage mimeMessage = mailSender.createMimeMessage();
         Context context = new Context();
         context.setVariable("mail", mail);
-
         try {
             MimeMessageHelper message = new MimeMessageHelper(mimeMessage, true, "UTF-8");
             message.setTo(mail);
@@ -62,16 +68,30 @@ public class MailServiceImp implements MailService {
         } catch (MessagingException e) {
             throw new RuntimeException(e);
         }
-
         return true;
     }
 
     @Override
-    public SendEmail sendEmail() {
-        SendEmail sendEmail = new SendEmail();
-        sendEmail.setUsers(userRepository.findAllUserRole());
-        sendEmail.setRecruitmentRequests(iRecruitmentRequestRepository.findAll());
-        sendEmail.setRecruitmentPlanDetails((List<RecruitmentPlanDetail>) iRecruitmentPlanDetailRepository.findAll());
-        return sendEmail;
+    public EmailDTO getDataSendEmail() {
+        EmailDTO emailDTO = new EmailDTO();
+        emailDTO.setInternNeeds(Integer.parseInt(recruitmentPlanDetailService.getTotalInPersonalNeeds(Long.parseLong(String.valueOf(1)))));
+        emailDTO.setInternNeedHandOver(Integer.parseInt(recruitmentPlanDetailService.getTotalOutPersonalNeeds(Long.parseLong(String.valueOf(1)))));
+        emailDTO.setPassIntern(internService.internPass(1));
+        emailDTO.setDateStart(String.valueOf(recruitmentRequestService.getDateStart(5)));
+        emailDTO.setDateEnd(String.valueOf(recruitmentRequestService.getDateEnd(5)));
+        emailDTO.setNamePersonalNeeds(recruitmentRequestService.getRecruitmentNameById(5));
+        emailDTO.setLinkProgress((int) recruitmentPlanDetailService.getIdRecruitmentNeeds(2));
+        emailDTO.setTotalIntern(recruitmentPlanDetailService.getTotalIntern(Long.parseLong(String.valueOf(5))));
+        emailDTO.setPassIntern(internService.internPass(5));
+        emailDTO.setTraining_intern(internService.trainingByPlan(5));
+        emailDTO.setFail_intern(internService.internFail(5));
+        return emailDTO;
+    }
+
+    public EmailDTO getEmailAndName (){
+        EmailDTO emailDTO = new EmailDTO();
+        emailDTO.setToName(userService.getNameUserByRole());
+        emailDTO.setToEmail(userService.getEmailUserRole());
+        return emailDTO;
     }
 }
