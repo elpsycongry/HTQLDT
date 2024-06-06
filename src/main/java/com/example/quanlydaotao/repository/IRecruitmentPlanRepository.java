@@ -16,4 +16,5 @@ public interface IRecruitmentPlanRepository extends JpaRepository<RecruitmentPla
     Optional<RecruitmentPlan> findByRecruitmentRequestId(long idRecruitmentRequest);
     List<RecruitmentPlan> findAllByOrderByDateCreatePlanDesc(Sort sort);
     List<RecruitmentPlan> findByStatusEquals(String status);
+    List<RecruitmentPlan> findByRecruitmentRequestIdIn(List<Long> idRequests);
 }

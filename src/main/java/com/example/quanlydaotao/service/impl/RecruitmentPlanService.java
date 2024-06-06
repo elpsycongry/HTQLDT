@@ -200,5 +200,10 @@ public class RecruitmentPlanService implements IRecruitmentPlanService {
         return processDTO;
     }
 
+    public List<RecruitmentPlan> findPlansInListIdRequests(List<Long> idRequests) {
+        List<RecruitmentPlan> plans = recruitmentPlanRepository.findByRecruitmentRequestIdIn(idRequests);
+        return plans;
+    }
+
 
 }

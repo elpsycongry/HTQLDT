@@ -1,6 +1,5 @@
 package com.example.quanlydaotao.controller;
 
-import com.example.quanlydaotao.dto.EmailDTO;
 import com.example.quanlydaotao.model.*;
 import com.example.quanlydaotao.service.MailService;
 import com.example.quanlydaotao.service.impl.InternService;
@@ -32,9 +31,8 @@ public class TestRestController {
         return new ResponseEntity<>(true, HttpStatus.OK);
     }
 
-    @GetMapping("/api/send/{id}")
-    public EmailDTO get(@PathVariable long id){
-        EmailDTO emailDTO = new EmailDTO();
-       return emailDTO;
+    @GetMapping("/api/send/")
+    public ResponseEntity get(){
+       return new ResponseEntity<>(mailService.getDataSendEmail(),HttpStatus.OK);
     }
 }

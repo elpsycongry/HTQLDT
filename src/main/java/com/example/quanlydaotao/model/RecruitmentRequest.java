@@ -1,6 +1,5 @@
 package com.example.quanlydaotao.model;
 
-import com.example.quanlydaotao.dto.UserAction;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;

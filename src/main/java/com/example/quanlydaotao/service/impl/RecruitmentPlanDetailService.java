@@ -52,8 +52,8 @@ public class RecruitmentPlanDetailService implements IRecruitmentPlanDetailServi
 
         return totalResult;
     }
-    public String getTotalInPersonalNeeds(long recruitmentPlanId) {
-        return recruitmentPlanDetailRepository.findById(recruitmentPlanId).map(RecruitmentPlanDetail::getNumberOfPersonnelNeeded).orElse(null);
+    public String getTotalInPersonalNeeds(long recruitmentPlanDetailId) {
+        return recruitmentPlanDetailRepository.findById(recruitmentPlanDetailId).map(RecruitmentPlanDetail::getNumberOfPersonnelNeeded).orElse(null);
     }
     public String getTotalOutPersonalNeeds(long recruitmentPlanId) {
         return recruitmentPlanDetailRepository.findById(recruitmentPlanId).map(RecruitmentPlanDetail::getNumberOfOutputPersonnel).orElse(null);

@@ -81,32 +81,6 @@ public class RecruitmentRequestService implements IRecruitmentRequestService {
         return request;
     }
 
-//    public RecruitmentRequest createRecruitmentRequestGetReturn(RecruitmentFormDTO recruitmentFormDTO) {
-//        RecruitmentRequest request = recruitmentFormDTO.getRecruitmentRequest();
-//        request.setStatus("Đã gửi");
-//        Optional<Users> users = usersService.findById(recruitmentFormDTO.getIdUser());
-//        request.setUsers(users.get());
-//        LocalDateTime localDateTime = LocalDateTime.now();
-//        int day = localDateTime.getDayOfMonth();
-//        int month = localDateTime.getMonthValue();
-//        int year = localDateTime.getYear();
-//        int hour = localDateTime.getHour();
-//        int minute = localDateTime.getMinute();
-//
-//        LocalDateTime dateTime = LocalDateTime.of(year, month, day, hour, minute);
-//        request.setDateStart(dateTime);
-//        request = iRecruitmentRequestRepository.save(request);
-//
-//        createUserRecruitmentAction(recruitmentFormDTO.getIdUser(), request, UserAction.Demand.toString());
-//
-//        List<RecruitmentRequestDetail> requestDetails = recruitmentFormDTO.getDetails();
-//
-//        for (RecruitmentRequestDetail detail : requestDetails) {
-//            detail.setRecruitmentRequest(request);
-//            recruitmentRequestDetailService.saveDetail(detail);
-//        }
-//        return request;
-//    }
 
     public void deniedRequestRecruitment(long idRecruitment, long idUser, String status, String reason) {
         RecruitmentRequest recruitmentRequest = iRecruitmentRequestRepository.findById(idRecruitment).get();
@@ -234,5 +208,33 @@ public class RecruitmentRequestService implements IRecruitmentRequestService {
         }
 
     return processDTO;
+    }
+    
+    public List<Long> getAllIdRequestsNeedSendEmail() {
+        List<RecruitmentRequest> requests = iRecruitmentRequestRepository.findAll();
+        List<Long> idRequestNeedSendEmail = new ArrayList<>();
+        
+        for (RecruitmentRequest request : requests) {
+            String[] status = request.getStatus().split(" ");
+            if (status[0].equals("Bị")) {
+                continue;
+            } else if (!isTrueRequestSend(request.getDateEnd())) {
+                continue;
+            }
+            idRequestNeedSendEmail.add(request.getId());
+        }
+        return idRequestNeedSendEmail;
+    }
+
+    public static boolean isTrueRequestSend(LocalDate dateEnd) {
+        boolean isTrue = true;
+
+        LocalDate today = LocalDate.now();
+        LocalDate sixDaysAgo = today.minusDays(6);
+
+        if (dateEnd.isBefore(sixDaysAgo)) {
+            isTrue = false;
+        }
+        return isTrue;
     }
 }
