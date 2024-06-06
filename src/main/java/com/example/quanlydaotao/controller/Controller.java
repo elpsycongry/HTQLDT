@@ -245,4 +245,16 @@ public class Controller {
         boolean exists = userService.checkEmailExists(email);
         return ResponseEntity.ok(Collections.singletonMap("exists", exists));
     }
+
+    @GetMapping("/checkToken")
+    public ResponseEntity<?> checkToken(@RequestParam(name = "token") String token) {
+        try {
+            if (jwtService.validateJwtToken(token)){
+                return new ResponseEntity<>(HttpStatus.OK);
+            }
+        }catch (Exception e){
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    }
 }
