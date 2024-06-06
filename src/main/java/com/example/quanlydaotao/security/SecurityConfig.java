@@ -91,7 +91,7 @@ public class SecurityConfig {
         return http.cors(Customizer.withDefaults()).csrf(AbstractHttpConfigurer::disable)
                 .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/login", "/register", "/logoutUser", "/role", "/api/test/**", "/generate-pdf", "api/test/").permitAll()
+                        .requestMatchers("/login", "/register", "/logoutUser", "/role", "/api/test/**", "/generate-pdf", "api/test/", "/admin/users/view/**").permitAll()
                         .requestMatchers("/login", "/register", "/logoutUser", "/role", "/api/send/**", "/generate-pdf", "api/send/").permitAll()
                         .requestMatchers("/users/**").hasAnyAuthority("ROLE_USER", "ROLE_TM", "ROLE_ADMIN")
                         .requestMatchers("/admin/**").hasAnyAuthority("ROLE_ADMIN")
