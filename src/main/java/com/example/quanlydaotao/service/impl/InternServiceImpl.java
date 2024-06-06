@@ -20,6 +20,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.relational.core.sql.In;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -163,9 +164,9 @@ public class InternServiceImpl implements InternService {
     public void checkNumberOfRecruitment() {
         List<InternProfile> profileList = getListIntern();
         for (InternProfile profile : profileList) {
-            if (profile.getIsPass() != null && profile.getIsPass() == true){
+            if (profile.getIsPass() != null  && profile.getIsPass() == true){
                 if (isFullIntern(profile.getIntern().getRecruitmentPlan().getId()) == "enough"){
-                    profile.getIntern().getRecruitmentPlan().setStatus("Hoàn thành");
+                    profile.getIntern().getRecruitmentPlan().setStatus("Đã hoàn thành");
                     recruitmentPlanRepository.save(profile.getIntern().getRecruitmentPlan());
 
                     profile.getIntern().getRecruitmentPlan().getRecruitmentRequest().setStatus("Đã bàn giao");
@@ -182,6 +183,8 @@ public class InternServiceImpl implements InternService {
             if (profile.getIsPass() == null || profile.getIsPass() == false) {
                 if (isFullIntern(profile.getIntern().getRecruitmentPlan().getId()) == "enough"){
                     profile.setIsPass(false);
+                    profile.setTrainingState("trained");
+                    profile.setEndDate(LocalDate.now());
                     save(profile);
                 }
             }

@@ -24,7 +24,7 @@ public class DashBoardServiceIMPL implements DashBoardService {
         PersonnelNeedsDTO personnelNeedsDTO = new PersonnelNeedsDTO();
         personnelNeedsDTO.setPersonnelNeeds(recruitmentRequestRepository.findAll().size());
         personnelNeedsDTO.setAwaitingApproval(recruitmentRequestRepository.findByStatusEquals("Đã gửi").size());
-        personnelNeedsDTO.setApproved(recruitmentRequestRepository.findByStatusEquals("Đã xác nhận").size());
+        personnelNeedsDTO.setApproved(recruitmentRequestRepository.findByStatusEquals("Đã xác nhận").size() + recruitmentRequestRepository.findByStatusEquals("Đang tuyển dụng").size());
         personnelNeedsDTO.setHandedOver(recruitmentRequestRepository.findByStatusEquals("Đã bàn giao").size());
 
         return personnelNeedsDTO;
@@ -45,7 +45,7 @@ public class DashBoardServiceIMPL implements DashBoardService {
     public CandidateDTO getCandidateDTO() {
         CandidateDTO candidateDTO = new CandidateDTO();
         candidateDTO.setTotalCandidate(internRepository.findAll().size());
-        candidateDTO.setHaveNotInterviewedYet(internRepository.findByStatusEquals(null).size());
+        candidateDTO.setHaveNotInterviewedYet(internRepository.findByFinalResultEquals("").size());
         candidateDTO.setCandidatePass(internRepository.findByFinalResultEquals("true").size());
         candidateDTO.setCandidateFail(internRepository.findByFinalResultEquals("false").size());
         return candidateDTO;
