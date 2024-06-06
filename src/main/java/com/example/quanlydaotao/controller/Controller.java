@@ -201,9 +201,10 @@ public class Controller {
     public ResponseEntity<String> updateUserAccount(@PathVariable Long id, @RequestBody User user) {
         return userService.findById(id)
                 .map(existingUser -> {
+                    boolean statusRole = user.getRoles().isEmpty() ? false : true;
                     user.setId(existingUser.getId());
-                    user.setStatus(user.getRoles().isEmpty() ? false : true);
-                    user.setState(user.getRoles().isEmpty() ? false : true);
+                    user.setStatus(statusRole);
+                    user.setState(statusRole);
                     userService.save(user);
                     return new ResponseEntity<>("Updated!", HttpStatus.OK);
                 })
