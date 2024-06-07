@@ -127,6 +127,8 @@ public class UserServiceImpl implements UserService {
             users = findAll();
         }
 
+        users = findUsersByStateAndStatus(state, users);
+
         if (role_id != null) {
             Optional<Role> optionalRole = roleService.findById(role_id);
             if (optionalRole.isPresent()) {
@@ -138,7 +140,7 @@ public class UserServiceImpl implements UserService {
                 users = remoteRoleAdminDisplay(Collections.emptyList());
             }
         }
-        users = findUsersByStateAndStatus(state, users);
+
         return remoteRoleAdminDisplay(users);
     }
 

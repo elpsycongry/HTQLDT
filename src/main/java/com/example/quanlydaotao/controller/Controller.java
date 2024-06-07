@@ -88,8 +88,9 @@ public class Controller {
 
         List<User> users = (List<User>) userService.findAll();
 
-        for (int i = 0; i < users.size(); i++) {
-            User existingUser = users.get(i);
+        if (user.getPhone() != null) {
+            for (int i = 0; i < users.size(); i++) {
+                User existingUser = users.get(i);
                 if (existingUser.getName().equals(user.getName())) {
                     return ResponseEntity.ok(new Response("409", "Tên người dùng đã tồn tại", null));
                 }
@@ -99,6 +100,14 @@ public class Controller {
                 if (existingUser.getEmail().equals(user.getEmail())) {
                     return ResponseEntity.ok(new Response("409", "Địa chỉ email đã tồn tại", null));
                 }
+            }
+        } else {
+            for (int i = 0; i < users.size(); i++) {
+                User existingUser = users.get(i);
+                if (existingUser.getEmail().equals(user.getEmail())) {
+                    return ResponseEntity.ok(new Response("409", "Địa chỉ email đã tồn tại", null));
+                }
+            }
         }
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
@@ -121,15 +130,20 @@ public class Controller {
     public ResponseEntity<Response> login(@RequestBody User user) {
         try {
             Authentication authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(user.getName(), user.getPassword())
+                    new UsernamePasswordAuthenticationToken(user.getEmail(), user.getPassword())
             );
             SecurityContextHolder.getContext().setAuthentication(authentication);
             String jwt = jwtService.generateTokenLogin(authentication);
             if (jwt.equals("Tài khoản của bạn đã bị chặn")) {
                 return ResponseEntity.ok(new Response("202", "Tài khoản của bạn đã bị chặn", null));
             }
+
             UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-            User currentUser = userService.findByUsername(user.getName());
+            User currentUser = userService.findByUsername(user.getEmail());
+            if (jwt.equals("Tài khoản của bạn chưa được xác nhận")) {
+                return ResponseEntity.ok(new Response("202", "Tài khoản của bạn chưa được xác nhận",
+                        new JwtResponse(jwt, currentUser.getId(), userDetails.getUsername(), userDetails.getAuthorities())));
+            }
             return ResponseEntity.ok(new Response("200", "Đăng nhập thành công",
                     new JwtResponse(jwt, currentUser.getId(), userDetails.getUsername(), userDetails.getAuthorities())));
         } catch (Exception e) {

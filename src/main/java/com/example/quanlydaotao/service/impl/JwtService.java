@@ -36,6 +36,9 @@ public class JwtService {
         User user = userService.findById(((UserPrinciple) authentication.getPrincipal()).getId()).get();
         JwtToken jwtToken = tokenRepository.findByUser(user);
         if (!user.isStatus()){
+            if (!user.isState()) {
+                return "Tài khoản của bạn chưa được xác nhận";
+            }
             return "Tài khoản của bạn đã bị chặn";
         }
         if (jwtToken != null) {
