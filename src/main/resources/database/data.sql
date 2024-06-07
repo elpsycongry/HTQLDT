@@ -1,4 +1,4 @@
-    DROP DATABASE IF EXISTS training_management;
+DROP DATABASE IF EXISTS training_management;
 CREATE DATABASE training_management;
 use training_management;
 ;

@@ -49,14 +49,14 @@ public class InternDTO {
 
     public InternDTO(){}
 
-    public InternDTO(Long id, String internName, LocalDate startDate, LocalDate endDate, String trainingState, String finalScore, String scoreInTeam, RecruitmentPlanDTO recruitmentPlanDTO, List<InternSubjectDTO> internSubjectDTOList) {
+    public InternDTO(Long id, String internName, LocalDate startDate, LocalDate endDate, String trainingState, Boolean isPass, String finalScore, String scoreInTeam, RecruitmentPlanDTO recruitmentPlanDTO, List<InternSubjectDTO> internSubjectDTOList) {
         this.id = id;
         this.internName = internName;
         this.startDate = startDate;
         this.endDate = endDate;
         this.numberDate = countDay(startDate, endDate);
         this.trainingState = trainingState;
-        this.isPass = setIsPass(finalScore, scoreInTeam, startDate, endDate, trainingState);
+        this.isPass = isPass;
         this.finalScore = finalScore;
         this.scoreInTeam = scoreInTeam;
         this.recruitmentPlanDTO = recruitmentPlanDTO;

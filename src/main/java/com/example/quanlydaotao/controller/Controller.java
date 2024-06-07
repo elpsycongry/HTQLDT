@@ -211,6 +211,13 @@ public class Controller {
                 .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
+    @GetMapping("/roles/users/view/{id}")
+    public ResponseEntity<User> viewRoles(@PathVariable Long id) {
+        return userService.findById(id)
+                .map(user -> new ResponseEntity<>(user, HttpStatus.OK))
+                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
+
     @PutMapping("/admin/users/update/{id}")
     public ResponseEntity<String> updateUserAccount(@PathVariable Long id, @RequestBody User user) {
         return userService.findById(id)
@@ -299,5 +306,17 @@ public class Controller {
     public ResponseEntity<Map<String, Boolean>> checkEmail(@PathVariable String email) {
         boolean exists = userService.checkEmailExists(email);
         return ResponseEntity.ok(Collections.singletonMap("exists", exists));
+    }
+
+    @GetMapping("/checkToken")
+    public ResponseEntity<?> checkToken(@RequestParam(name = "token") String token) {
+        try {
+            if (jwtService.validateJwtToken(token)){
+                return new ResponseEntity<>(HttpStatus.OK);
+            }
+        }catch (Exception e){
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 }

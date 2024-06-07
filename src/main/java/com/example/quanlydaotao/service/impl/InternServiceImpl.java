@@ -21,6 +21,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.relational.core.sql.In;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -31,7 +32,6 @@ import java.util.stream.StreamSupport;
 
 @Service
 public class InternServiceImpl implements InternService {
-
     private static final Logger log = LoggerFactory.getLogger(InternServiceImpl.class);
     @Autowired
     private InternProfileRepository internProfileRepository;
@@ -47,6 +47,15 @@ public class InternServiceImpl implements InternService {
 
     @Autowired
     private SubjectCommentRepo subjectCommentRepo;
+
+    @Autowired
+    private RecruitmentPlanDetailService recruitmentPlanDetailService;
+
+    @Autowired
+    private IRecruitmentPlanRepository recruitmentPlanRepository;
+
+    @Autowired
+    private IRecruitmentRequestRepository recruitmentRequestRepository;
 
     @Override
     public List<InternProfile> getListIntern() {
@@ -129,6 +138,58 @@ public class InternServiceImpl implements InternService {
     @Override
     public Optional<Intern> findById(Long internID) {
         return iInternRepository.findById(internID) ;
+    }
+
+    @Override
+    public String isFullIntern(long recruitmentPlanId) {
+        int totalInternNeed = recruitmentPlanDetailService.getTotalResult(recruitmentPlanId);
+        int applicants = 0;
+        for (InternProfile internProfile : internProfileRepository.findAll()){
+            if (internProfile.getIsPass() != null && internProfile.getIntern().getRecruitmentPlan().getId() == recruitmentPlanId && internProfile.getIsPass()){
+                applicants++;
+            }
+        }
+        if (applicants == totalInternNeed) {
+            return "enough";
+        }
+        if (applicants < totalInternNeed) {
+            return "notEnough";
+        }
+        if (applicants > totalInternNeed) {
+            return "tooMany";
+        }
+        return null;
+    }
+
+    @Override
+    public void checkNumberOfRecruitment() {
+        List<InternProfile> profileList = getListIntern();
+        for (InternProfile profile : profileList) {
+            if (profile.getIsPass() != null  && profile.getIsPass() == true){
+                if (isFullIntern(profile.getIntern().getRecruitmentPlan().getId()) == "enough"){
+                    profile.getIntern().getRecruitmentPlan().setStatus("Đã hoàn thành");
+                    recruitmentPlanRepository.save(profile.getIntern().getRecruitmentPlan());
+
+                    profile.getIntern().getRecruitmentPlan().getRecruitmentRequest().setStatus("Đã bàn giao");
+                    recruitmentRequestRepository.save(profile.getIntern().getRecruitmentPlan().getRecruitmentRequest());
+                }
+                if (isFullIntern(profile.getIntern().getRecruitmentPlan().getId()) == "notEnough"){
+                    profile.getIntern().getRecruitmentPlan().setStatus("Đã xác nhận");
+                    recruitmentPlanRepository.save(profile.getIntern().getRecruitmentPlan());
+
+                    profile.getIntern().getRecruitmentPlan().getRecruitmentRequest().setStatus("Đang tuyển dụng");
+                    recruitmentRequestRepository.save(profile.getIntern().getRecruitmentPlan().getRecruitmentRequest());
+                }
+            }
+            if (profile.getIsPass() == null || profile.getIsPass() == false) {
+                if (isFullIntern(profile.getIntern().getRecruitmentPlan().getId()) == "enough"){
+                    profile.setIsPass(false);
+                    profile.setTrainingState("trained");
+                    profile.setEndDate(LocalDate.now());
+                    save(profile);
+                }
+            }
+        }
     }
 
 
@@ -239,6 +300,7 @@ public class InternServiceImpl implements InternService {
                     internProfile.getStartDate(),
                     internProfile.getEndDate(),
                     internProfile.getTrainingState(),
+                    internProfile.getIsPass(),
                     (checkFinalScore ? String.valueOf(finalScore) : "NA"),
                     internProfile.getScoreInTeam(),
                     recruitmentPlanDTO,

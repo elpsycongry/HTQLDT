@@ -34,7 +34,7 @@ public class TrainingStatsImpl implements TrainingStatsService {
         List<InternProfile> profilesPass = profileRepository.findByIsPassEquals(true);
         trainingStatsDTO.setGraduatingInterns(profilesPass.size());
 
-        List<InternProfile> profilesFailed = profileRepository.findByIsPassEqualsAndTrainingStateEquals(false, "trained");
+        List<InternProfile> profilesFailed = profileRepository.findByIsPassEquals(false);
         trainingStatsDTO.setInternsFailed(profilesFailed.size());
 
         List<InternProfile> profilesCurrent = profileRepository.findByTrainingStateEquals("training");
@@ -44,7 +44,7 @@ public class TrainingStatsImpl implements TrainingStatsService {
         trainingStatsDTO.setInternsQuitInternship(listInternQuitInternship.size());
 
         if (profilesFailed.size() > 0) {
-            trainingStatsDTO.setRate(Double.valueOf(newDf.format((Double.valueOf(profilesPass.size()) / (Double.valueOf(profilesFailed.size()) +  Double.valueOf(listInternQuitInternship.size()))))));
+            trainingStatsDTO.setRate(Double.valueOf(newDf.format((Double.valueOf(profilesPass.size()) / (Double.valueOf(profilesFailed.size()))))));
         }else {
             trainingStatsDTO.setRate(0.0);
         }
@@ -93,7 +93,7 @@ public class TrainingStatsImpl implements TrainingStatsService {
         }
         trainingStatsDTO.setGraduatingInterns(newProfilesPass.size());
 
-        List<InternProfile> profilesFailed = profileRepository.findByIsPassEqualsAndTrainingStateEquals(false, "trained");
+        List<InternProfile> profilesFailed = profileRepository.findByIsPassEquals(false);
         List<InternProfile> newProfilesFailed = new ArrayList<>();
         for (InternProfile profile : profilesFailed) {
             if (profile.getStartDate().getMonthValue() == month && profile.getStartDate().getYear() == year){
@@ -121,7 +121,7 @@ public class TrainingStatsImpl implements TrainingStatsService {
         trainingStatsDTO.setInternsQuitInternship(newProfilesQuitInternship.size());
 
         if (newProfilesFailed.size() > 0) {
-            trainingStatsDTO.setRate(Double.valueOf(newDf.format((Double.valueOf(newProfilesPass.size()) / (Double.valueOf(newProfilesFailed.size()) +  Double.valueOf(newProfilesQuitInternship.size()))))));
+            trainingStatsDTO.setRate(Double.valueOf(newDf.format((Double.valueOf(newProfilesPass.size()) / (Double.valueOf(newProfilesFailed.size()))))));
         }else {
             trainingStatsDTO.setRate(0.0);
         }
@@ -248,7 +248,7 @@ public class TrainingStatsImpl implements TrainingStatsService {
         }
         trainingStatsDTO.setGraduatingInterns(newProfilesPass.size());
 
-        List<InternProfile> profilesFailed = profileRepository.findByIsPassEqualsAndTrainingStateEquals(false, "trained");
+        List<InternProfile> profilesFailed = profileRepository.findByIsPassEquals(false);
         List<InternProfile> newProfilesFailed = new ArrayList<>();
         for (InternProfile profile : profilesFailed) {
             if ((profile.getStartDate().getMonthValue() /3 ) + 1 == quarter && profile.getStartDate().getYear() == year){
@@ -276,7 +276,7 @@ public class TrainingStatsImpl implements TrainingStatsService {
         trainingStatsDTO.setInternsQuitInternship(newProfilesQuitInternship.size());
 
         if (newProfilesFailed.size() > 0) {
-            trainingStatsDTO.setRate(Double.valueOf(newDf.format((Double.valueOf(newProfilesPass.size()) / (Double.valueOf(newProfilesFailed.size()) +  Double.valueOf(newProfilesQuitInternship.size()))))));
+            trainingStatsDTO.setRate(Double.valueOf(newDf.format((Double.valueOf(newProfilesPass.size()) / (Double.valueOf(newProfilesFailed.size()))))));
         }else {
             trainingStatsDTO.setRate(0.0);
         }
@@ -401,7 +401,7 @@ public class TrainingStatsImpl implements TrainingStatsService {
         }
         trainingStatsDTO.setGraduatingInterns(newProfilesPass.size());
 
-        List<InternProfile> profilesFailed = profileRepository.findByIsPassEqualsAndTrainingStateEquals(false, "trained");
+        List<InternProfile> profilesFailed = profileRepository.findByIsPassEquals(false);
         List<InternProfile> newProfilesFailed = new ArrayList<>();
         for (InternProfile profile : profilesFailed) {
             if (profile.getStartDate().getYear() == year){
@@ -429,7 +429,7 @@ public class TrainingStatsImpl implements TrainingStatsService {
         trainingStatsDTO.setInternsQuitInternship(newProfilesQuitInternship.size());
 
         if (newProfilesFailed.size() > 0) {
-            trainingStatsDTO.setRate(Double.valueOf(newDf.format((Double.valueOf(newProfilesPass.size()) / (Double.valueOf(newProfilesFailed.size()) +  Double.valueOf(newProfilesQuitInternship.size()))))));
+            trainingStatsDTO.setRate(Double.valueOf(newDf.format((Double.valueOf(newProfilesPass.size()) / (Double.valueOf(newProfilesFailed.size()))))));
         }else {
             trainingStatsDTO.setRate(0.0);
         }
