@@ -15,6 +15,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -97,22 +98,30 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Iterable<User> findUsersByStateAndStatus(String state, Iterable<User> userIterable) {
-        Iterable<User> users = userIterable;
-        switch (state) {
-            case "await":
-                users = userRepository.findUsersByState(false);
-                break;
-            case "action":
-                users = userRepository.findUsersByStatusAndState(true, true);
-                break;
-            case "block":
-                users = userRepository.findUsersByStatusAndState(false, true);
-                break;
-            default:
-                break;
+        List<User> filteredUsers = new ArrayList<>();
+        for (User user : userIterable) {
+            boolean match = false;
+            switch (state) {
+                case "await":
+                    match = !user.isState();
+                    break;
+                case "action":
+                    match = user.isStatus() && user.isState();
+                    break;
+                case "block":
+                    match = !user.isStatus() && user.isState();
+                    break;
+                default:
+                    break;
+            }
+            if (match) {
+                filteredUsers.add(user);
+            }
         }
-        return users;
+
+        return filteredUsers;
     }
+
     @Override
     public Iterable<User> filterWithFields(String keyword, Long role_id, String state) {
         Iterable<User> users;
@@ -127,7 +136,6 @@ public class UserServiceImpl implements UserService {
             users = findAll();
         }
 
-        users = findUsersByStateAndStatus(state, users);
 
         if (role_id != null) {
             Optional<Role> optionalRole = roleService.findById(role_id);
@@ -140,6 +148,8 @@ public class UserServiceImpl implements UserService {
                 users = remoteRoleAdminDisplay(Collections.emptyList());
             }
         }
+
+        users = findUsersByStateAndStatus(state, users);
 
         return remoteRoleAdminDisplay(users);
     }
