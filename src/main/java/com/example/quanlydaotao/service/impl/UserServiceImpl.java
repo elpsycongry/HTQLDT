@@ -97,61 +97,60 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public Iterable<User> filterWithFields(String keyword, Long roleId, String state) {
+        Iterable<User> users = findAll();
+
+        // Lọc người dùng dựa trên từ khóa
+        if (!keyword.isEmpty()) {
+            users = findAllByNameOrEmail(keyword);
+        }
+
+        // Lọc người dùng dựa trên vai trò
+        if (roleId != null && roleId != 0) {
+            Optional<Role> optionalRole = roleService.findById(roleId);
+            if (optionalRole.isPresent()) {
+                users = StreamSupport.stream(users.spliterator(), false)
+                        .filter(user -> user.getRoles().contains(optionalRole.get()))
+                        .collect(Collectors.toList());
+            } else {
+                users = Collections.emptyList();
+            }
+        }
+
+        // Lọc người dùng dựa trên trạng thái
+        if (state != null && !state.isEmpty()) {
+            users = findUsersByStateAndStatus(state, users);
+        }
+
+        return remoteRoleAdminDisplay(users);
+    }
+
+    @Override
     public Iterable<User> findUsersByStateAndStatus(String state, Iterable<User> userIterable) {
         List<User> filteredUsers = new ArrayList<>();
         for (User user : userIterable) {
-            boolean match = false;
-            switch (state) {
+            switch (state.toLowerCase()) {
                 case "await":
-                    match = !user.isState();
+                    if (!user.isState()) {
+                        filteredUsers.add(user);
+                    }
                     break;
                 case "action":
-                    match = user.isStatus() && user.isState();
+                    if (user.isState() && user.isStatus()) {
+                        filteredUsers.add(user);
+                    }
                     break;
                 case "block":
-                    match = !user.isStatus() && user.isState();
+                    if (user.isState() && !user.isStatus()) {
+                        filteredUsers.add(user);
+                    }
                     break;
                 default:
                     break;
             }
-            if (match) {
-                filteredUsers.add(user);
-            }
         }
 
         return filteredUsers;
-    }
-
-    @Override
-    public Iterable<User> filterWithFields(String keyword, Long role_id, String state) {
-        Iterable<User> users;
-
-        if (keyword.isEmpty() && role_id == 0 && (state == null || state.isEmpty())) {
-            return remoteRoleAdminDisplay(findAll());
-        }
-
-        if (!keyword.isEmpty()) {
-            users = findAllByNameOrEmail(keyword);
-        } else {
-            users = findAll();
-        }
-
-
-        if (role_id != null) {
-            Optional<Role> optionalRole = roleService.findById(role_id);
-            if (optionalRole.isPresent()) {
-                List<User> filteredUsers = StreamSupport.stream(users.spliterator(), false)
-                        .filter(user -> user.getRoles().contains(optionalRole.get()))
-                        .collect(Collectors.toList());
-                users = remoteRoleAdminDisplay(filteredUsers);
-            } else {
-                users = remoteRoleAdminDisplay(Collections.emptyList());
-            }
-        }
-
-        users = findUsersByStateAndStatus(state, users);
-
-        return remoteRoleAdminDisplay(users);
     }
 
     @Override

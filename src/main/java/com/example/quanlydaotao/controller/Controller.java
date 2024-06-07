@@ -57,24 +57,6 @@ public class Controller {
     @Autowired
     private InternService internService;
 
-//    @PostMapping("/register")
-//    public ResponseEntity<String> createUser(@RequestBody User user, BindingResult bindingResult) {
-//        if (bindingResult.hasFieldErrors()) {
-//            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-//        }
-//
-//
-//        if (user.getRoles() == null) {
-//            Role roleUser = roleService.findByName("ROLE_HR");
-//            user.setRoles(Collections.singletonList(roleUser));
-//            user.setStatus(true);
-//        }
-//
-//        user.setPassword(passwordEncoder.encode(user.getPassword()));
-//        user.setStatus(true);
-//        userService.save(user);
-//        return new ResponseEntity<>(HttpStatus.CREATED);
-//    }
     @GetMapping("/admin/users/findState")
     public ResponseEntity<Iterable<User>> findByState(@RequestParam(name = "state") String state){
         return new ResponseEntity<>(userService.findUsersByStateAndStatus(state, userService.findAll()), HttpStatus.OK);
