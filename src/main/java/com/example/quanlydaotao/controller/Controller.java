@@ -70,7 +70,7 @@ public class Controller {
 
         List<User> users = (List<User>) userService.findAll();
 
-        if (user.getPhone() != null) {
+        if (!Objects.equals(user.getPhone(), "")) {
             for (int i = 0; i < users.size(); i++) {
                 User existingUser = users.get(i);
                 if (existingUser.getName().equals(user.getName())) {
@@ -216,13 +216,13 @@ public class Controller {
 
     @GetMapping("/admin/users/check-phone/{phone}")
     public ResponseEntity<Map<String, Boolean>> checkPhoneExists(@PathVariable String phone) {
-        boolean exists = userService.checkPhoneExists(phone);
+        boolean exists = (phone.isEmpty() ? false : userService.checkPhoneExists(phone));
         return ResponseEntity.ok(Collections.singletonMap("exists", exists));
     }
 
     @GetMapping("/admin/users/check-phone-add/{phone}")
     public ResponseEntity<Map<String, Boolean>> checkAddPhoneExists(@PathVariable String phone) {
-        boolean exists = userService.checkAddPhoneExists(phone);
+        boolean exists = (phone.isEmpty() ? false : userService.checkAddPhoneExists(phone));
         return ResponseEntity.ok(Collections.singletonMap("exists", exists));
     }
 
