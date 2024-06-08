@@ -290,8 +290,9 @@ public class Controller {
         return ResponseEntity.ok(Collections.singletonMap("exists", exists));
     }
 
-    @GetMapping("/checkToken")
+    @PostMapping("/checkToken")
     public ResponseEntity<?> checkToken(@RequestParam(name = "token") String token) {
+        System.out.println("ok");
         try {
             if (jwtService.validateJwtToken(token)){
                 return new ResponseEntity<>(HttpStatus.OK);
