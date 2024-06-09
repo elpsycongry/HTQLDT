@@ -70,7 +70,14 @@ public class Controller {
 
         List<User> users = (List<User>) userService.findAll();
 
-        if (!Objects.equals(user.getPhone(), "")) {
+        if (user.getPhone().equals("PhoneEmail")) {
+            for (int i = 0; i < users.size(); i++) {
+                User existingUser = users.get(i);
+                if (existingUser.getEmail().equals(user.getEmail())) {
+                    return ResponseEntity.ok(new Response("409", "Địa chỉ email đã tồn tại", null));
+                }
+            }
+        } else {
             for (int i = 0; i < users.size(); i++) {
                 User existingUser = users.get(i);
                 if (existingUser.getName().equals(user.getName())) {
@@ -79,13 +86,6 @@ public class Controller {
                 if (existingUser.getPhone().equals(user.getPhone())) {
                     return ResponseEntity.ok(new Response("409", "Số điện thoại đã tồn tại", null));
                 }
-                if (existingUser.getEmail().equals(user.getEmail())) {
-                    return ResponseEntity.ok(new Response("409", "Địa chỉ email đã tồn tại", null));
-                }
-            }
-        } else {
-            for (int i = 0; i < users.size(); i++) {
-                User existingUser = users.get(i);
                 if (existingUser.getEmail().equals(user.getEmail())) {
                     return ResponseEntity.ok(new Response("409", "Địa chỉ email đã tồn tại", null));
                 }
