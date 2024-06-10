@@ -19,6 +19,9 @@ public class JWTController {
     @GetMapping("/checkToken")
     public ResponseEntity<?> checkToken(@RequestParam(name = "token") String token) {
         try {
+            if (token.equals("Tài khoản của bạn chưa được xác nhận")){
+                return new ResponseEntity<>(HttpStatus.OK);
+            }
             if (jwtService.validateJwtToken(token)){
                 return new ResponseEntity<>(HttpStatus.OK);
             }

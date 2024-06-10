@@ -136,7 +136,6 @@ public class Controller {
     @PostMapping("/logoutUser")
     public ResponseEntity<String> logout(@RequestHeader HttpHeaders headers) {
         String authorization = headers.getFirst(HttpHeaders.AUTHORIZATION);
-
         // Kiểm tra xem authorization có giá trị null không trước khi sử dụng
         if (authorization != null && authorization.startsWith("Bearer ")) {
             String token = authorization.substring(7);
@@ -292,7 +291,11 @@ public class Controller {
 
     @GetMapping("/checkToken")
     public ResponseEntity<?> checkToken(@RequestParam(name = "token") String token) {
+        System.out.println(token);
         try {
+            if (token.equals("Tài khoản của bạn chưa được xác nhận")){
+                return new ResponseEntity<>(HttpStatus.OK);
+            }
             if (jwtService.validateJwtToken(token)){
                 return new ResponseEntity<>(HttpStatus.OK);
             }
