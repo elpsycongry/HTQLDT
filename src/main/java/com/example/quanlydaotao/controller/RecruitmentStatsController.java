@@ -24,13 +24,15 @@ public class RecruitmentStatsController {
     private ExcelExportService excelExportService;
 
     @GetMapping("/month")
-    public ResponseEntity<RecruitmentStatsDTO> getRecruitmentStatsWithMonth(@RequestParam int month){
-        return new ResponseEntity<>(recruitmentStatsService.getRecruitmentStatsByMonth(month, 2024), HttpStatus.OK);
+    public ResponseEntity<RecruitmentStatsDTO> getRecruitmentStatsWithMonth(@RequestParam int month,
+                                                                            @RequestParam int year){
+        return new ResponseEntity<>(recruitmentStatsService.getRecruitmentStatsByMonth(month, year), HttpStatus.OK);
     }
 
     @GetMapping("/quarter")
-    public ResponseEntity<RecruitmentStatsDTO> getRecruitmentStatsWithQuarter(@RequestParam int quarter){
-        return new ResponseEntity<>(recruitmentStatsService.getRecruitmentStatsByQuarter(quarter, 2024), HttpStatus.OK);
+    public ResponseEntity<RecruitmentStatsDTO> getRecruitmentStatsWithQuarter(@RequestParam int quarter,
+                                                                              @RequestParam int year){
+        return new ResponseEntity<>(recruitmentStatsService.getRecruitmentStatsByQuarter(quarter, year), HttpStatus.OK);
     }
 
     @GetMapping("/year")

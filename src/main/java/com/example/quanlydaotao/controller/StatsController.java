@@ -99,13 +99,15 @@ public class StatsController {
     }
 
     @GetMapping("/getGrowthStatisticsWithMonth")
-    public ResponseEntity<TrainingStatsDTO> getGrowthStatisticsWithMonth(@RequestParam(name = "month") int month) {
-        return new ResponseEntity<>(trainingStatsService.getTrainingStatsWithMonth(month, 2024), HttpStatus.OK);
+    public ResponseEntity<TrainingStatsDTO> getGrowthStatisticsWithMonth(@RequestParam(name = "month") int month,
+                                                                         @RequestParam(name = "year") int year) {
+        return new ResponseEntity<>(trainingStatsService.getTrainingStatsWithMonth(month, year), HttpStatus.OK);
     }
 
     @GetMapping("/getGrowthStatisticsWithQuarter")
-    public ResponseEntity<TrainingStatsDTO> getGrowthStatisticsWithQuarter(@RequestParam(name = "quarter") int quarter) {
-        return new ResponseEntity<>(trainingStatsService.getTrainingStatsWithQuarter(quarter, 2024), HttpStatus.OK);
+    public ResponseEntity<TrainingStatsDTO> getGrowthStatisticsWithQuarter(@RequestParam(name = "quarter") int quarter,
+                                                                           @RequestParam(name = "year") int year) {
+        return new ResponseEntity<>(trainingStatsService.getTrainingStatsWithQuarter(quarter, year), HttpStatus.OK);
     }
 
     @GetMapping("/getMaxGrowthStatisticsWithYear")

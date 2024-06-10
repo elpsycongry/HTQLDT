@@ -98,7 +98,7 @@ public class RecruitmentStatsServiceIMPL implements RecruitmentStatsService {
         List<Intern> totalCandidates = internRepository.findAll();
         List<Intern> newTotalCandidates = new ArrayList<>();
         for (Intern intern : totalCandidates) {
-            if ((intern.getApplyCVTime().getMonthValue() / 3) + 1 == quarter && intern.getApplyCVTime().getYear() == year) {
+            if (((intern.getApplyCVTime().getMonthValue() -1)/ 3) + 1 == quarter && intern.getApplyCVTime().getYear() == year) {
                 newTotalCandidates.add(intern);
             }
         }
@@ -107,7 +107,7 @@ public class RecruitmentStatsServiceIMPL implements RecruitmentStatsService {
         List<Intern> candidatesInterview = internRepository.findByCheckInterviewEquals(true);
         List<Intern> newCandidatesInterview = new ArrayList<>();
         for (Intern intern : candidatesInterview) {
-            if ((intern.getApplyCVTime().getMonthValue() / 3) + 1 == quarter && intern.getApplyCVTime().getYear() == year) {
+            if (((intern.getApplyCVTime().getMonthValue() -1)/ 3) + 1 == quarter && intern.getApplyCVTime().getYear() == year) {
                 newCandidatesInterview.add(intern);
             }
         }
@@ -116,7 +116,7 @@ public class RecruitmentStatsServiceIMPL implements RecruitmentStatsService {
         List<Intern> candidatesDoNotInterview = internRepository.findByCheckInterviewEquals(false);
         List<Intern> newCandidatesDoNotInterview = new ArrayList<>();
         for (Intern intern : candidatesDoNotInterview) {
-            if ((intern.getApplyCVTime().getMonthValue() / 3) + 1 == quarter && intern.getApplyCVTime().getYear() == year) {
+            if (((intern.getApplyCVTime().getMonthValue() -1)/ 3) + 1 == quarter && intern.getApplyCVTime().getYear() == year) {
                 newCandidatesDoNotInterview.add(intern);
             }
         }
@@ -127,7 +127,7 @@ public class RecruitmentStatsServiceIMPL implements RecruitmentStatsService {
         List<Intern> candidatesPass = internRepository.findByFinalResultEquals("true");
         List<Intern> newCandidatesPass = new ArrayList<>();
         for (Intern intern : candidatesPass) {
-            if ((intern.getApplyCVTime().getMonthValue() / 3) + 1 == quarter && intern.getApplyCVTime().getYear() == year) {
+            if (((intern.getApplyCVTime().getMonthValue() -1)/ 3) + 1 == quarter && intern.getApplyCVTime().getYear() == year) {
                 newCandidatesPass.add(intern);
             }
         }
@@ -136,7 +136,7 @@ public class RecruitmentStatsServiceIMPL implements RecruitmentStatsService {
         List<Intern> candidatesNotPass = internRepository.findByFinalResultEquals("false");
         List<Intern> newCandidatesNotPass = new ArrayList<>();
         for (Intern intern : candidatesNotPass) {
-            if ((intern.getApplyCVTime().getMonthValue() / 3) + 1 == quarter && intern.getApplyCVTime().getYear() == year) {
+            if (((intern.getApplyCVTime().getMonthValue() -1)/ 3) + 1 == quarter && intern.getApplyCVTime().getYear() == year) {
                 newCandidatesNotPass.add(intern);
             }
         }
@@ -147,7 +147,7 @@ public class RecruitmentStatsServiceIMPL implements RecruitmentStatsService {
         List<Intern> candidatesAcceptJob = internRepository.findByStatusEquals("Đã nhận việc");
         List<Intern> newCandidatesAcceptJob = new ArrayList<>();
         for (Intern intern : candidatesAcceptJob) {
-            if ((intern.getApplyCVTime().getMonthValue() / 3) + 1 == quarter && intern.getApplyCVTime().getYear() == year) {
+            if (((intern.getApplyCVTime().getMonthValue() -1)/ 3) + 1 == quarter && intern.getApplyCVTime().getYear() == year) {
                 newCandidatesAcceptJob.add(intern);
             }
         }
@@ -156,7 +156,7 @@ public class RecruitmentStatsServiceIMPL implements RecruitmentStatsService {
         List<Intern> candidatesRejectJob = internRepository.findByStatusEquals("Không nhận việc");
         List<Intern> newCandidatesRejectJob = new ArrayList<>();
         for (Intern intern : candidatesRejectJob) {
-            if ((intern.getApplyCVTime().getMonthValue() / 3) + 1 == quarter && intern.getApplyCVTime().getYear() == year) {
+            if (((intern.getApplyCVTime().getMonthValue() -1)/ 3) + 1 == quarter && intern.getApplyCVTime().getYear() == year) {
                 newCandidatesRejectJob.add(intern);
             }
         }
