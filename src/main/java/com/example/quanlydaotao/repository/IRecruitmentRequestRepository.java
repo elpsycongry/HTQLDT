@@ -18,4 +18,6 @@ public interface IRecruitmentRequestRepository extends JpaRepository<Recruitment
     Iterable<RecruitmentRequest> getAll();
 
     List<RecruitmentRequest> findByStatusEquals(String status);
+
 }
+

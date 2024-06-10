@@ -13,6 +13,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/plansIntern")
 public class InternController {
@@ -67,4 +70,33 @@ public class InternController {
         Page<Intern> internPage = internService.findAllByNameOrEmail(paginateRequest, internDTO);
         return new ResponseEntity<>(internPage, HttpStatus.OK);
     }
+
+    @GetMapping("/isFull/{idRecruitmentPlan}")
+    public ResponseEntity isFullIntern(@PathVariable long idRecruitmentPlan) {
+
+        boolean isFull = internService.isFullIntern(idRecruitmentPlan);
+        return new ResponseEntity<>(isFull, HttpStatus.OK);
+    }
+    @GetMapping("/getAllInterns")
+    public ResponseEntity<List<String>> getAllInterns(){
+        Iterable<Intern> internIterable = internService.getAllInterns();
+        List<String> internList = new ArrayList<>();
+        for (Intern intern : internIterable) {
+            internList.add(intern.getPhone());
+        }
+        return new ResponseEntity<>(internList, HttpStatus.OK);
+    }
+    @GetMapping("/getAllInternsCheckUpdate/{id}")
+    public ResponseEntity<List<String>> getAllInterns(@PathVariable long id){
+        Iterable<Intern> internIterable = internService.getAllInterns();
+        List<String> internList = new ArrayList<>();
+        for (Intern intern : internIterable) {
+            if (intern.getId().equals(id)) {
+                continue;
+            }
+            internList.add(intern.getPhone());
+        }
+        return new ResponseEntity<>(internList, HttpStatus.OK);
+    }
+
 }

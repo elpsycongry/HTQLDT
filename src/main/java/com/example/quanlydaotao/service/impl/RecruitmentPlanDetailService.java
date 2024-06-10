@@ -52,4 +52,26 @@ public class RecruitmentPlanDetailService implements IRecruitmentPlanDetailServi
 
         return totalResult;
     }
+
+    public int getTotalInput(long recruitmentPlanId) {
+        int totalResult = 0;
+        Iterable<RecruitmentPlanDetail> planDetails = findByRecruitmentPlanId(recruitmentPlanId);
+
+        if (planDetails != null) {
+            for (RecruitmentPlanDetail planDetail : planDetails) {
+                totalResult += Integer.parseInt(planDetail.getNumberOfPersonnelNeeded());
+            }
+        }
+
+        return totalResult;
+    }
+    public String getTotalInPersonalNeeds(long recruitmentPlanDetailId) {
+        return recruitmentPlanDetailRepository.findById(recruitmentPlanDetailId).map(RecruitmentPlanDetail::getNumberOfPersonnelNeeded).orElse(null);
+    }
+    public String getTotalOutPersonalNeeds(long recruitmentPlanId) {
+        return recruitmentPlanDetailRepository.findById(recruitmentPlanId).map(RecruitmentPlanDetail::getNumberOfOutputPersonnel).orElse(null);
+    }
+    public long getIdRecruitmentNeeds(long recruitmentPlanId) {
+        return recruitmentPlanDetailRepository.findById(recruitmentPlanId).map(RecruitmentPlanDetail::getId).orElse(null);
+    }
 }
