@@ -80,7 +80,7 @@ public class NotificationController {
             notificationEntity.setCreator(userRepository.findById(notification.getCreatorId()).get());
         }
 
-        // Link chuển trang khi click vào notification
+        // Link chuyển trang khi click vào notification
         if (notification.getContent() != null){
             notificationEntity.setLink(notification.getLink());
         }
@@ -91,29 +91,43 @@ public class NotificationController {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
-        List<User> users = new ArrayList<>();
-        if (notification.getListReceiverId() != null){
-            for (Long id : notification.getListReceiverId()){
-                User user = userRepository.findById(id).get();
-                users.add(user);
-            }
-        }
+        // Xu ly sach nguoi nhan thong bao
+        List<User> receiverList = new ArrayList<>();
 
         List<String> roles = notification.getListRoleReceiver();
 
-        if (roles != null){;
-            users = userRepository.findAllByRoles(roleRepository.findByName(roles.get(0)));
+        // Lay danh sach theo id neu co
+        if (notification.getListReceiverId() != null){
+            for (Long id : notification.getListReceiverId()){
+                User user = userRepository.findById(id).get();
+                receiverList.add(user);
+            }
+        }
+
+        // Lay danh sach theo role neu co
+        else if (roles != null){;
+            receiverList = userRepository.findAllByRoles(roleRepository.findByName(roles.get(0)));
            for (int i = 1; i < roles.size(); i++){
                List<User> userList = userRepository.findAllByRoles(roleRepository.findByName(roles.get(i)));
                for (User user : userList){
-                   if (!users.contains(user)){
-                       users.add(user);
+                   if (!receiverList.contains(user)){
+                       receiverList.add(user);
                    }
                }
            }
         }
 
-        for (User user : users) {
+        else if (notification.getListReceiverEmail() != null) {
+            for (String email : notification.getListReceiverEmail()){
+                User user = userRepository.findByEmail(email);
+                if (!receiverList.contains(user)){
+                    receiverList.add(user);
+                }
+            }
+        }
+
+        // Gui thong bao
+        for (User user : receiverList) {
             NotificationToUser notificationToUser = new NotificationToUser();
             notificationToUser.setNotification(notificationEntity);
             notificationToUser.setUser(user);
