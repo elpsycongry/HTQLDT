@@ -116,12 +116,11 @@ public class Controller {
             );
             SecurityContextHolder.getContext().setAuthentication(authentication);
             String jwt = jwtService.generateTokenLogin(authentication);
+            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+            User currentUser = userService.findByUsername(user.getEmail());
             if (jwt.equals("Tài khoản của bạn đã bị chặn")) {
                 return ResponseEntity.ok(new Response("202", "Tài khoản của bạn đã bị chặn", null));
             }
-
-            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-            User currentUser = userService.findByUsername(user.getEmail());
             if (jwt.equals("Tài khoản của bạn chưa được xác nhận")) {
                 return ResponseEntity.ok(new Response("202", "Tài khoản của bạn chưa được xác nhận",
                         new JwtResponse(jwt, currentUser.getId(), userDetails.getUsername(), userDetails.getAuthorities())));
