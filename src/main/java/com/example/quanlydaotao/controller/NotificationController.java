@@ -75,7 +75,10 @@ public class NotificationController {
         Notification notificationEntity = new Notification();
         notificationEntity.setContent(notification.getContent());
         notificationEntity.setTimestamp(notification.getTimeCreate());
-        notificationEntity.setCreator(userRepository.findById(notification.getCreatorId()).get());
+
+        if (notification.getCreatorId() != null) {
+            notificationEntity.setCreator(userRepository.findById(notification.getCreatorId()).get());
+        }
 
         // Link chuển trang khi click vào notification
         if (notification.getContent() != null){
