@@ -96,7 +96,7 @@ public class InternService implements IInternService {
     public boolean isFullIntern(long recruitmentPlanId){
         boolean isFull = true;
         int training = trainingByPlan(recruitmentPlanId);
-        int total = recruitmentPlanDetailService.getTotalResult(recruitmentPlanId);
+        int total = recruitmentPlanDetailService.getTotalInput(recruitmentPlanId);
 
         if (training < total) {
             isFull = false;

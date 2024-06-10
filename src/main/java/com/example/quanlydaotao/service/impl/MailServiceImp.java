@@ -88,7 +88,7 @@ public class MailServiceImp implements MailService {
                 EmailData emailData = new EmailData();
                 emailData.setLinkProgress(Math.toIntExact(plan.getRecruitmentRequest().getId()))
                         .setToEmail(emailAndNameArr[0])
-                        .setToName(emailAndNameArr[1])`
+                        .setToName(emailAndNameArr[1])
                         .setNamePersonalNeeds(plan.getRecruitmentRequest().getName())
                         .setDateStart(plan.getRecruitmentRequest().getDateStart().toLocalDate().toString())
                         .setDateEnd(plan.getRecruitmentRequest().getDateEnd().toString())
