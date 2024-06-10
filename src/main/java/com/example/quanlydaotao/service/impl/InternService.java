@@ -227,5 +227,7 @@ public class InternService implements IInternService {
 
         return newProcess;
     }
-
+    public Iterable<Intern> getAllInterns() {
+        return iInternRepository.findAll();
+    }
 }
