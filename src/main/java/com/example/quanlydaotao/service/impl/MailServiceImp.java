@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -90,8 +91,8 @@ public class MailServiceImp implements MailService {
                         .setToEmail(emailAndNameArr[0])
                         .setToName(emailAndNameArr[1])
                         .setNamePersonalNeeds(plan.getRecruitmentRequest().getName())
-                        .setDateStart(plan.getRecruitmentRequest().getDateStart().toLocalDate().toString())
-                        .setDateEnd(plan.getRecruitmentRequest().getDateEnd().toString())
+                        .setDateStart(LocalDate.now().minusDays(6).toString())
+                        .setDateEnd(LocalDate.now().toString())
                         .setInternNeeds(planDetailService.getTotalIntern(plan.getId()))
                         .setHandOverIntern(planDetailService.getTotalResult(plan.getId()))
                         .setTotalIntern(internService.applicantsByPlan(plan.getId()))
@@ -115,18 +116,18 @@ public class MailServiceImp implements MailService {
     @Override
     public List<String> getEmailAndNameRoleDM(){
 
-        Long[] id = {2L,3L};
-        String[] name = {"ROLE_DM","ROLE_TM"};
-        String[] displayName = {"Trưởng bộ phận/nhóm", "Quản lí đào tạo"};
+        Long[] id = {2L};
+        String[] name = {"ROLE_DM"};
+        String[] displayName = {"Trưởng bộ phận/nhóm"};
 
         return getUserList(id, name, displayName,"TM");
     }
 
     public List<String> getEmailAndNameRoleHR(){
 
-        Long[] id = {2L,5L};
-        String[] name = {"ROLE_DM","ROLE_HR"};
-        String[] displayName = {"Trưởng bộ phận/nhóm","Nhân sự"};
+        Long[] id = {3L,5L};
+        String[] name = {"ROLE_HR","ROLE_TM"};
+        String[] displayName = {"Nhân sự", "Quản lí đào tạo"};
 
         return getUserList(id, name, displayName, "HR");
     }
@@ -134,7 +135,7 @@ public class MailServiceImp implements MailService {
     private List<String> getUserList(Long[] id, String[] name, String[] displayName, String userRole) {
         List<User> users = new ArrayList<>();
 
-        for (int i = 0; i < 2; i++) {
+        for (int i = 0; i < id.length; i++) {
             Role role = new Role();
 
             role.setId(id[i]);
