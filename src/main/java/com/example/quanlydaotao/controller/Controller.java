@@ -63,7 +63,7 @@ public class Controller {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<Response> createUser(@RequestBody User user, BindingResult bindingResult) {
+    public ResponseEntity<?> createUser(@RequestBody User user, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return ResponseEntity.badRequest().body(new Response("400", "Dữ liệu người dùng không hợp lệ", bindingResult.getFieldErrors()));
         }
@@ -103,9 +103,8 @@ public class Controller {
             msg = "Tài khoản quản trị viên đã được tạo.";
         }
 
-        userService.save(user);
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(new Response("201", msg, null));
+        User userResponse = userService.save(user);
+        return new ResponseEntity<>(userResponse,HttpStatus.OK);
     }
 
     @PostMapping("/login")
