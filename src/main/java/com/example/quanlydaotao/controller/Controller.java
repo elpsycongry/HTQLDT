@@ -115,11 +115,12 @@ public class Controller {
             );
             SecurityContextHolder.getContext().setAuthentication(authentication);
             String jwt = jwtService.generateTokenLogin(authentication);
-            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-            User currentUser = userService.findByUsername(user.getEmail());
             if (jwt.equals("Tài khoản của bạn đã bị chặn")) {
                 return ResponseEntity.ok(new Response("202", "Tài khoản của bạn đã bị chặn", null));
             }
+
+            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+            User currentUser = userService.findByUsername(user.getEmail());
             if (jwt.equals("Tài khoản của bạn chưa được xác nhận")) {
                 return ResponseEntity.ok(new Response("202", "Tài khoản của bạn chưa được xác nhận",
                         new JwtResponse(jwt, currentUser.getId(), userDetails.getUsername(), userDetails.getAuthorities())));
@@ -129,6 +130,29 @@ public class Controller {
         } catch (Exception e) {
             return ResponseEntity.ok(new Response("401", "Tài khoản hoặc mật khẩu không đúng", null));
         }
+    }
+
+    @PostMapping("/loginGoogle")
+    public ResponseEntity<?> loginGoogle(@RequestBody User user) {
+            User userFindByEmail = userService.findByUsername(user.getEmail());
+            if (userFindByEmail == null) {
+                List<User> users = (List<User>) userService.findAll();
+                User userSave = new User(
+                        user.getId(), user.getName(), user.getEmail(), user.getPassword(), user.getPhone(), user.getAvatar(), user.isStatus(), user.isState(), user.getRoles());
+                userSave.setPassword(passwordEncoder.encode(userSave.getPassword()));
+                if (users.isEmpty()) {
+                    Role roleUser = roleService.findByName("ROLE_ADMIN");
+                    userSave.setRoles(Collections.singletonList(roleUser));
+                    userSave.setStatus(true);
+                    userSave.setState(true);
+                }
+                 userService.save(userSave);
+            }
+            ResponseEntity<?> responseEntity = login(user);
+            if (responseEntity.getStatusCode().equals("401")) {
+                login(user);
+            }
+            return login(user);
     }
 
     @PostMapping("/logoutUser")

@@ -23,4 +23,5 @@ public interface UserRepository extends JpaRepository<User,Long> {
     Optional<User> findByNameOrPhoneOrAndEmail(String name, String phone, String email);
     Iterable<User> findUsersByStatusAndState(boolean status, boolean state);
     Iterable<User> findUsersByState(boolean state);
+    Iterable<User> findUserByEmail(String email);
 }
