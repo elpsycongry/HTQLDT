@@ -48,18 +48,32 @@ public class InternService implements IInternService {
     public void updateIntern(Intern intern) throws Exception {
         Optional<RecruitmentPlan> recruitmentPlan = recruitmentPlanService.findById(intern.getRecruitmentPlan().getId());
         intern.setRecruitmentPlan(recruitmentPlan.get());
+        Intern oldIntern = iInternRepository.findById(intern.getId()).get();
+
         if (intern.getStatus().equals("Đã nhận việc")) {
             InternProfile internProfile = new InternProfile(intern);
             internProfile.setIsPass(null);
-            internServiceImpl.save(internProfile);
+            Optional<InternProfile> internOptional = internServiceImpl.checkInternProfile(intern);
+            if (internOptional.isEmpty()) {
+                internServiceImpl.save(internProfile);
+            }
         }
-        if (internServiceImpl.isFullIntern(intern.getRecruitmentPlan().getId()).equals("notEnough")) {
+
+        if (intern.getRecruitmentPlan().getId() == oldIntern.getRecruitmentPlan().getId()) {
+            iInternRepository.saveAndFlush(intern);
+        } else if (!isFullIntern(intern.getRecruitmentPlan().getId())) {
+            iInternRepository.saveAndFlush(intern);
+        }else {
+            throw new Exception("số lượng của kế hoạch này đã đủ");
+        }
+        if (!isFullIntern(intern.getRecruitmentPlan().getId())) {
             iInternRepository.saveAndFlush(intern);
         }else {
             throw new Exception("số lượng của kế hoạch này đã đủ");
         }
 
     }
+
 
     @Override
     public Optional<Intern> getIntern(long id) {
@@ -71,6 +85,7 @@ public class InternService implements IInternService {
         RecruitmentPlan plan = recruitmentPlanService.findById(intern.getRecruitmentPlan().getId()).get();
         intern.setApplyCVTime(LocalDateTime.now());
         intern.setRecruitmentPlan(plan);
+
         if (!isFullIntern(intern.getRecruitmentPlan().getId())) {
             iInternRepository.save(intern);
         }else {
@@ -80,10 +95,10 @@ public class InternService implements IInternService {
 
     public boolean isFullIntern(long recruitmentPlanId){
         boolean isFull = true;
+        int training = trainingByPlan(recruitmentPlanId);
+        int total = recruitmentPlanDetailService.getTotalInput(recruitmentPlanId);
 
-        int totalInternNeed = recruitmentPlanDetailService.getTotalIntern(recruitmentPlanId);
-        int applicants = applicantsByPlan(recruitmentPlanId);
-        if (applicants < totalInternNeed) {
+        if (training < total) {
             isFull = false;
         }
         return isFull;
@@ -106,6 +121,28 @@ public class InternService implements IInternService {
         return applicants;
     }
 
+    public int applicantsPassByPlan(long planId) {
+        Iterable<Intern> interns = iInternRepository.findByRecruitmentPlanId(planId);
+        int pass = 0;
+        for (Intern intern : interns) {
+            if (intern.getFinalResult().equals("true")) {
+                pass++;
+            }
+        }
+        return pass;
+    }
+
+    public int applicantsFailByPlan(long planId) {
+        Iterable<Intern> interns = iInternRepository.findByRecruitmentPlanId(planId);
+        int fails = 0;
+        for (Intern intern : interns) {
+            if (intern.getFinalResult().equals("false")) {
+                fails++;
+            }
+        }
+        return fails;
+    }
+
     public int trainingByPlan(long planId) {
         Iterable<Intern> interns = iInternRepository.findByRecruitmentPlanId(planId);
         int training = 0;
@@ -116,6 +153,19 @@ public class InternService implements IInternService {
         }
         return training;
     }
+
+    public int notTrainingByPlan(long planId) {
+        Iterable<Intern> interns = iInternRepository.findByRecruitmentPlanId(planId);
+        int NotTraining = 0;
+        for (Intern intern : interns) {
+            if (intern.getStatus().equals("Không nhận việc")) {
+                NotTraining++;
+            }
+        }
+        return NotTraining;
+    }
+
+
     public int internPass(long planId) {
         List<Long> interns = new ArrayList<>();
         for (Intern intern : iInternRepository.findByRecruitmentPlanId(planId)) {
@@ -126,7 +176,25 @@ public class InternService implements IInternService {
 
         int resultIntern = 0;
         for (InternProfile internProfile : internProfiles) {
+            if (internProfile.getIsPass() == null) {
+                continue;
+            }
             if (internProfile.getIsPass()) {
+                resultIntern++;
+            }
+        }
+        return resultIntern;
+    }
+    public int internFail(long planId) {
+        List<Long> internsFail = new ArrayList<>();
+        for (Intern intern : iInternRepository.findByRecruitmentPlanId(planId)) {
+            internsFail.add(intern.getId());
+        }
+        List<InternProfile> internProfiles = internProfileRepository.findByInternIdIn(internsFail);
+
+        int resultIntern = 0;
+        for (InternProfile internProfile : internProfiles) {
+            if (!internProfile.getIsPass()) {
                 resultIntern++;
             }
         }
@@ -137,6 +205,8 @@ public class InternService implements IInternService {
         ProcessDTO newProcess = process;
         int applicants = applicantsByPlan(process.getPlanId());
         int training = trainingByPlan(process.getPlanId());
+        int totalIntern = recruitmentPlanDetailService.getTotalResult(newProcess.getPlanId());
+        int intern = internPass(process.getPlanId());
 
         if (applicants > 0) {
             newProcess.setApplicants(applicants)
@@ -148,10 +218,16 @@ public class InternService implements IInternService {
                     .setStep(4);
         }
 
-        newProcess.setTotalIntern(recruitmentPlanDetailService.getTotalResult(newProcess.getPlanId()));
-        newProcess.setIntern(internPass(process.getPlanId()));
+        if (intern > 0) {
+            newProcess.setIntern(intern)
+                    .setStep(5);
+        }
+
+        newProcess.setTotalIntern(totalIntern);
 
         return newProcess;
     }
-
+    public Iterable<Intern> getAllInterns() {
+        return iInternRepository.findAll();
+    }
 }

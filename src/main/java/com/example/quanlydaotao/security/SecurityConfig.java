@@ -91,7 +91,7 @@ public class SecurityConfig {
         return http.cors(Customizer.withDefaults()).csrf(AbstractHttpConfigurer::disable)
                 .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/login", "/register", "/loginGoogle", "/logoutUser", "/role", "/api/test/**", "/generate-pdf", "api/test/", "/api/tokens/**").permitAll()
+                        .requestMatchers("/login", "/register", "/loginGoogle", "/logoutUser", "/role", "/api/test/**", "/api/send/**", "/generate-pdf", "api/send/", "api/test/", "/api/tokens/**", "/admin/users/view/**").permitAll()
                         .requestMatchers("/users/**").hasAnyAuthority("ROLE_USER", "ROLE_TM", "ROLE_ADMIN")
                         .requestMatchers("/admin/**").hasAnyAuthority("ROLE_ADMIN")
                         .requestMatchers("/api/interns/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_TM")
@@ -103,8 +103,8 @@ public class SecurityConfig {
                         .requestMatchers("/api/recruitmentStats/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_QC")
                         .requestMatchers("/api/dashboard/**").permitAll()
                         .requestMatchers("/api/notifications/**").permitAll()
-                        .requestMatchers("/process/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_QC")
                         .requestMatchers("/roles/users/view/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_DM", "ROLE_HR", "ROLE_TM", "ROLE_QC")
+                        .requestMatchers("/process/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_QC", "ROLE_TM", "ROLE_HR", "ROLE_DM")
                 )
                 .exceptionHandling(customizer -> customizer.accessDeniedHandler(customAccessDeniedHandler()))
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

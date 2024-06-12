@@ -116,7 +116,7 @@ public class Controller {
             SecurityContextHolder.getContext().setAuthentication(authentication);
             String jwt = jwtService.generateTokenLogin(authentication);
             if (jwt.equals("Tài khoản của bạn đã bị chặn")) {
-                return ResponseEntity.ok(new Response("202", "Tài khoản của bạn đã bị chặn", null));
+                return ResponseEntity.ok(new Response("203", "Tài khoản của bạn đã bị chặn", null));
             }
 
             UserDetails userDetails = (UserDetails) authentication.getPrincipal();
@@ -301,6 +301,8 @@ public class Controller {
     public ResponseEntity<String> addUser(@RequestBody User user) {
         // Save the new user
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setState(true);
+        user.setStatus(true);
         userService.save(user);
         return new ResponseEntity<>("User added!", HttpStatus.CREATED);
     }
@@ -309,21 +311,5 @@ public class Controller {
     public ResponseEntity<Map<String, Boolean>> checkEmail(@PathVariable String email) {
         boolean exists = userService.checkEmailExists(email);
         return ResponseEntity.ok(Collections.singletonMap("exists", exists));
-    }
-
-    @GetMapping("/checkToken")
-    public ResponseEntity<?> checkToken(@RequestParam(name = "token") String token) {
-        System.out.println(token);
-        try {
-            if (token.equals("Tài khoản của bạn chưa được xác nhận")){
-                return new ResponseEntity<>(HttpStatus.OK);
-            }
-            if (jwtService.validateJwtToken(token)){
-                return new ResponseEntity<>(HttpStatus.OK);
-            }
-        }catch (Exception e){
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 }

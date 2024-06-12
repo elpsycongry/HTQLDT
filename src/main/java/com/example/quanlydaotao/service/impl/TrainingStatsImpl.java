@@ -233,7 +233,7 @@ public class TrainingStatsImpl implements TrainingStatsService {
         List<InternProfile> profiles = profileRepository.findAll();
         List<InternProfile> newProfiels = new ArrayList<>();
         for (InternProfile profile : profiles) {
-            if ((profile.getStartDate().getMonthValue() /3 ) + 1 == quarter && profile.getStartDate().getYear() == year){
+            if (((profile.getStartDate().getMonthValue() -1)/ 3 ) + 1 == quarter && profile.getStartDate().getYear() == year){
                 newProfiels.add(profile);
             }
         }
@@ -242,7 +242,7 @@ public class TrainingStatsImpl implements TrainingStatsService {
         List<InternProfile> profilesPass = profileRepository.findByIsPassEquals(true);
         List<InternProfile> newProfilesPass = new ArrayList<>();
         for (InternProfile profile : profilesPass) {
-            if ((profile.getStartDate().getMonthValue() /3 ) + 1 == quarter && profile.getStartDate().getYear() == year){
+            if (((profile.getStartDate().getMonthValue() -1)/ 3 ) + 1 == quarter && profile.getStartDate().getYear() == year){
                 newProfilesPass.add(profile);
             }
         }
@@ -251,7 +251,7 @@ public class TrainingStatsImpl implements TrainingStatsService {
         List<InternProfile> profilesFailed = profileRepository.findByIsPassEquals(false);
         List<InternProfile> newProfilesFailed = new ArrayList<>();
         for (InternProfile profile : profilesFailed) {
-            if ((profile.getStartDate().getMonthValue() /3 ) + 1 == quarter && profile.getStartDate().getYear() == year){
+            if (((profile.getStartDate().getMonthValue() -1)/ 3 ) + 1 == quarter && profile.getStartDate().getYear() == year){
                 newProfilesFailed.add(profile);
             }
         }
@@ -260,7 +260,7 @@ public class TrainingStatsImpl implements TrainingStatsService {
         List<InternProfile> profilesCurrent = profileRepository.findByTrainingStateEquals("training");
         List<InternProfile> newProfilesCurrent = new ArrayList<>();
         for (InternProfile profile : profilesCurrent) {
-            if ((profile.getStartDate().getMonthValue() /3 ) + 1 == quarter && profile.getStartDate().getYear() == year){
+            if (((profile.getStartDate().getMonthValue() -1)/ 3 ) + 1 == quarter && profile.getStartDate().getYear() == year){
                 newProfilesCurrent.add(profile);
             }
         }
@@ -269,7 +269,7 @@ public class TrainingStatsImpl implements TrainingStatsService {
         List<InternProfile> listInternQuitInternship = profileRepository.findByTrainingStateEquals("stop_training");
         List<InternProfile> newProfilesQuitInternship = new ArrayList<>();
         for (InternProfile profile : listInternQuitInternship) {
-            if ((profile.getStartDate().getMonthValue() /3 ) + 1 == quarter && profile.getStartDate().getYear() == year){
+            if (((profile.getStartDate().getMonthValue() -1)/ 3 ) + 1 == quarter && profile.getStartDate().getYear() == year){
                 newProfilesQuitInternship.add(profile);
             }
         }
@@ -310,7 +310,7 @@ public class TrainingStatsImpl implements TrainingStatsService {
         Iterable<InternDTO> internDTOIterable = internService.findListInterWithNameInternAndTrainingState("", "trained");
         internDTOIterable.forEach(
                 internDTO -> {
-                    if (internDTO.getPass() && (internDTO.getStartDate().getMonthValue() / 3 ) + 1 == quarter && internDTO.getStartDate().getYear() == year){
+                    if (internDTO.getPass() && ((internDTO.getStartDate().getMonthValue() -1)/ 3 ) + 1 == quarter && internDTO.getStartDate().getYear() == year){
                         Double score = (Double.valueOf(internDTO.getFinalScore()) + Double.valueOf(internDTO.getScoreInTeam())) / 2;
                         listScore.add(score);
                         internDTO.getInternSubjectDTOList().forEach(
