@@ -96,7 +96,7 @@ public class InternService implements IInternService {
     public boolean isFullIntern(long recruitmentPlanId){
         boolean isFull = true;
         int training = trainingByPlan(recruitmentPlanId);
-        int total = recruitmentPlanDetailService.getTotalResult(recruitmentPlanId);
+        int total = recruitmentPlanDetailService.getTotalInput(recruitmentPlanId);
 
         if (training < total) {
             isFull = false;
@@ -121,6 +121,28 @@ public class InternService implements IInternService {
         return applicants;
     }
 
+    public int applicantsPassByPlan(long planId) {
+        Iterable<Intern> interns = iInternRepository.findByRecruitmentPlanId(planId);
+        int pass = 0;
+        for (Intern intern : interns) {
+            if (intern.getFinalResult().equals("true")) {
+                pass++;
+            }
+        }
+        return pass;
+    }
+
+    public int applicantsFailByPlan(long planId) {
+        Iterable<Intern> interns = iInternRepository.findByRecruitmentPlanId(planId);
+        int fails = 0;
+        for (Intern intern : interns) {
+            if (intern.getFinalResult().equals("false")) {
+                fails++;
+            }
+        }
+        return fails;
+    }
+
     public int trainingByPlan(long planId) {
         Iterable<Intern> interns = iInternRepository.findByRecruitmentPlanId(planId);
         int training = 0;
@@ -131,6 +153,19 @@ public class InternService implements IInternService {
         }
         return training;
     }
+
+    public int notTrainingByPlan(long planId) {
+        Iterable<Intern> interns = iInternRepository.findByRecruitmentPlanId(planId);
+        int NotTraining = 0;
+        for (Intern intern : interns) {
+            if (intern.getStatus().equals("Không nhận việc")) {
+                NotTraining++;
+            }
+        }
+        return NotTraining;
+    }
+
+
     public int internPass(long planId) {
         List<Long> interns = new ArrayList<>();
         for (Intern intern : iInternRepository.findByRecruitmentPlanId(planId)) {
@@ -145,6 +180,21 @@ public class InternService implements IInternService {
                 continue;
             }
             if (internProfile.getIsPass()) {
+                resultIntern++;
+            }
+        }
+        return resultIntern;
+    }
+    public int internFail(long planId) {
+        List<Long> internsFail = new ArrayList<>();
+        for (Intern intern : iInternRepository.findByRecruitmentPlanId(planId)) {
+            internsFail.add(intern.getId());
+        }
+        List<InternProfile> internProfiles = internProfileRepository.findByInternIdIn(internsFail);
+
+        int resultIntern = 0;
+        for (InternProfile internProfile : internProfiles) {
+            if (!internProfile.getIsPass()) {
                 resultIntern++;
             }
         }

@@ -1,6 +1,5 @@
 package com.example.quanlydaotao.model;
 
-import com.example.quanlydaotao.dto.UserAction;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
@@ -28,7 +27,6 @@ public class RecruitmentRequest {
     private String reason;
     private String division;
     private String status;
-
     @Override
     public String toString() {
         return "RecruitmentRequest{" +
