@@ -19,6 +19,22 @@ public class User {
     private String name;
     private String email;
     private String password;
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                ", phone='" + phone + '\'' +
+                ", avatar='" + avatar + '\'' +
+                ", status=" + status +
+                ", state=" + state +
+                ", roles=" + roles +
+                '}';
+    }
+
     private String phone;
     private String avatar;
     private boolean status;

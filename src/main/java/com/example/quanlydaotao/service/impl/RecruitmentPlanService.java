@@ -183,7 +183,8 @@ public class RecruitmentPlanService implements IRecruitmentPlanService {
             ProcessDTO newProcessDTO = processDTO;
             newProcessDTO.setPlanId(plan.getId())
                     .setPlanName(plan.getName())
-                    .setStep(2);
+                    .setStep(2)
+                    .setDecanAccept("true");
 
             String[] status = plan.getStatus().split(" ");
             if (status[0].equals("Bị")) {

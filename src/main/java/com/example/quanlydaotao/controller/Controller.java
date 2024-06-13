@@ -132,6 +132,29 @@ public class Controller {
         }
     }
 
+    @PostMapping("/loginGoogle")
+    public ResponseEntity<?> loginGoogle(@RequestBody User user) {
+            User userFindByEmail = userService.findByUsername(user.getEmail());
+            if (userFindByEmail == null) {
+                List<User> users = (List<User>) userService.findAll();
+                User userSave = new User(
+                        user.getId(), user.getName(), user.getEmail(), user.getPassword(), user.getPhone(), user.getAvatar(), user.isStatus(), user.isState(), user.getRoles());
+                userSave.setPassword(passwordEncoder.encode(userSave.getPassword()));
+                if (users.isEmpty()) {
+                    Role roleUser = roleService.findByName("ROLE_ADMIN");
+                    userSave.setRoles(Collections.singletonList(roleUser));
+                    userSave.setStatus(true);
+                    userSave.setState(true);
+                }
+                 userService.save(userSave);
+            }
+            ResponseEntity<?> responseEntity = login(user);
+            if (responseEntity.getStatusCode().equals("401")) {
+                login(user);
+            }
+            return login(user);
+    }
+
     @PostMapping("/logoutUser")
     public ResponseEntity<String> logout(@RequestHeader HttpHeaders headers) {
         String authorization = headers.getFirst(HttpHeaders.AUTHORIZATION);

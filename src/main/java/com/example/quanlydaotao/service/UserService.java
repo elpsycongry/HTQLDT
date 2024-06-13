@@ -47,4 +47,5 @@ public interface UserService extends UserDetailsService {
     boolean checkEmailExists(String email);
     Optional<User> findByNameOrPhoneOrAndEmail(String name, String phone, String email);
 
+
 }
