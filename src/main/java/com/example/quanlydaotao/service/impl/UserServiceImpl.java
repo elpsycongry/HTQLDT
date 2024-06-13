@@ -9,15 +9,13 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -30,6 +28,7 @@ public class UserServiceImpl implements UserService {
     private UserRepository userRepository;
     @Autowired
     private RoleServiceImpl roleService;
+
     @Override
     @Transactional
     public UserDetails loadUserByUsername(String email) {
@@ -51,8 +50,8 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public void save(User user) {
-        userRepository.save(user);
+    public User save(User user) {
+        return userRepository.save(user);
     }
 
     @Override
@@ -69,6 +68,15 @@ public class UserServiceImpl implements UserService {
     public Iterable<User> remoteRoleAdminDisplay(Iterable<User> users) {
         List<User> userList = (List<User>) users;
         userList.removeIf(user -> user.getRoles().stream().anyMatch(role -> role.getName().equals("ROLE_ADMIN")));
+//        userList.removeIf(user -> user.getRoles().stream().anyMatch(role -> role.getName().equals("ROLE_HR")));
+        users = userList;
+        return users;
+    }
+
+    public Iterable<User> remoteRoleDisplay(Iterable<User> users) {
+        List<User> userList = (List<User>) users;
+        userList.removeIf(user -> user.getRoles().stream().anyMatch(role -> role.getName().equals("ROLE_TM")));
+        userList.removeIf(user -> user.getRoles().stream().anyMatch(role -> role.getName().equals("ROLE_DM")));
         users = userList;
         return users;
     }
@@ -76,7 +84,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public Iterable<User> findAllUserWithRoles() {
         Iterable<User> userIterable = userRepository.findAll();
-        userIterable = remoteRoleAdminDisplay(userIterable);
+        userIterable = remoteRoleDisplay(userIterable);
         return userIterable;
     }
 
@@ -95,30 +103,61 @@ public class UserServiceImpl implements UserService {
         return userIterable;
     }
 
+    @Override
+    public Iterable<User> filterWithFields(String keyword, Long roleId, String state) {
+        Iterable<User> users = findAll();
+
+        // Lọc người dùng dựa trên từ khóa
+        if (!keyword.isEmpty()) {
+            users = findAllByNameOrEmail(keyword);
+        }
+
+        // Lọc người dùng dựa trên vai trò
+        if (roleId != null && roleId != 0) {
+            Optional<Role> optionalRole = roleService.findById(roleId);
+            if (optionalRole.isPresent()) {
+                users = StreamSupport.stream(users.spliterator(), false)
+                        .filter(user -> user.getRoles().contains(optionalRole.get()))
+                        .collect(Collectors.toList());
+            } else {
+                users = Collections.emptyList();
+            }
+        }
+
+        // Lọc người dùng dựa trên trạng thái
+        if (state != null && !state.isEmpty()) {
+            users = findUsersByStateAndStatus(state, users);
+        }
+
+        return remoteRoleAdminDisplay(users);
+    }
 
     @Override
-    public Iterable<User> filterWithFields(String keyword, Long role_id) {
-        if (keyword.isEmpty()) {
-            return remoteRoleAdminDisplay(findUsersByRoles(roleService.findById(role_id).orElseThrow()));
+    public Iterable<User> findUsersByStateAndStatus(String state, Iterable<User> userIterable) {
+        List<User> filteredUsers = new ArrayList<>();
+        for (User user : userIterable) {
+            switch (state.toLowerCase()) {
+                case "await":
+                    if (!user.isState()) {
+                        filteredUsers.add(user);
+                    }
+                    break;
+                case "action":
+                    if (user.isState() && user.isStatus()) {
+                        filteredUsers.add(user);
+                    }
+                    break;
+                case "block":
+                    if (user.isState() && !user.isStatus()) {
+                        filteredUsers.add(user);
+                    }
+                    break;
+                default:
+                    break;
+            }
         }
 
-        if (keyword.isEmpty() && role_id == 0) {
-            return remoteRoleAdminDisplay(findAll());
-        }
-
-        Iterable<User> users = findAllByNameOrEmail(keyword);
-
-        if (role_id == null) {
-            return remoteRoleAdminDisplay(users);
-        }
-
-        Optional<Role> optionalRole = roleService.findById(role_id);
-
-        return optionalRole
-                .map(role -> remoteRoleAdminDisplay(StreamSupport.stream(users.spliterator(), false)
-                        .filter(user -> user.getRoles().contains(role))
-                        .collect(Collectors.toList())))
-                .orElseGet(() -> remoteRoleAdminDisplay(Collections.emptyList()));
+        return filteredUsers;
     }
 
     @Override
@@ -179,8 +218,31 @@ public class UserServiceImpl implements UserService {
         return isCorrectUser;
     }
 
+
     public Page<User> getAllUsers(Pageable pageable) {
         return userRepository.findAll(pageable);
     }
 
+    @Override
+    public boolean checkPhoneExists(String phone) {
+        long numberOfPhone = userRepository.countByPhone(phone);
+        return numberOfPhone >= 2;
+    }
+
+    @Override
+    public boolean checkAddPhoneExists(String phone) {
+        long numberOfPhone = userRepository.countByPhone(phone);
+        return numberOfPhone >= 1;
+    }
+
+    @Override
+    public boolean checkEmailExists(String email) {
+        User user = userRepository.findByEmail(email);
+        return user != null;
+    }
+
+    @Override
+    public Optional<User> findByNameOrPhoneOrAndEmail(String name, String phone, String email) {
+        return userRepository.findByNameOrPhoneOrAndEmail(name, phone, email);
+    }
 }

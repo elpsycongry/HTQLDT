@@ -15,10 +15,12 @@ public class InternScore {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
+    @JoinColumn(name = "intern_id")
+    private Intern intern;
+
     private String value;
     private String type;
+
     @ManyToOne
     @JoinColumn(name = "subject_id")
     private InternSubject internSubject;

@@ -5,16 +5,37 @@ import com.example.quanlydaotao.model.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+import java.util.Optional;
+
 @Repository
-public interface UserRepository extends JpaRepository<User,Long> {
+public interface UserRepository extends JpaRepository<User, Long> {
     User findByEmail(String email);
 
     Page<User> findAll(Pageable pageable);
-//    Page<User> findAllUserByNameContainingIgnoreCaseOrEmailContainingIgnoreCase(String name, String email, Pageable pageable);
-//    Page<User> findUsersByRoles(Role role, Pageable pageable);
+
     Iterable<User> findAllUserByNameContainingIgnoreCaseOrEmailContainingIgnoreCase(String name, String email);
+
     Iterable<User> findUsersByRoles(Role role);
 
+    boolean existsByPhone(String phone);
+
+    long countByPhone(String phone);
+
+    List<User> findAllByRoles(Role role);
+    Optional<User> findByNameOrPhoneOrAndEmail(String name, String phone, String email);
+    Iterable<User> findUsersByStatusAndState(boolean status, boolean state);
+    Iterable<User> findUsersByState(boolean state);
+
+
+    //    @Query(select from noti)
+//    List<User> findAllByRoles(Role role);
+
+//    @Query("SELECT u.name FROM User u JOIN u.roles r WHERE r.name IN ('ROLE_DM', 'ROLE_TM')")
+//    List<String> findAllUserNamesByRoles();
+//    @Query("SELECT u.email FROM User u JOIN u.roles r WHERE r.name IN ('ROLE_DM', 'ROLE_TM')")
+//    List<String> findAllUserEmailByRoles();
 }

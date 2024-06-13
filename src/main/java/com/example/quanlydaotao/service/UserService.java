@@ -12,20 +12,18 @@ import java.util.List;
 import java.util.Optional;
 
 public interface UserService extends UserDetailsService {
-    void save(User user);
+    User save(User user);
 
     Iterable<User> findAll();
 
     Page<User> findAllUserWithRoles(Pageable pageable);
 
-//    Page<User> findAllByNameOrEmail(Pageable pageable, String keyword);
-//
-//    Page<User> findUsersByRoles(Pageable pageable, Role role);
     Iterable<User> findAllUserWithRoles();
     Iterable<User> findAllByNameOrEmail(String keyword);
 
     Iterable<User> findUsersByRoles(Role role);
-    Iterable<User> filterWithFields(String keyword, Long role_id);
+    Iterable<User> findUsersByStateAndStatus(String state, Iterable<User> users);
+    Iterable<User> filterWithFields(String keyword, Long role_id, String state);
 
     Page<User> convertToPage(Iterable<User> users, Pageable pageable);
     User findByUsername(String username);
@@ -41,5 +39,13 @@ public interface UserService extends UserDetailsService {
     Page<User> getAllUsers(Pageable pageable);
 
     boolean checkLogin(User user);
+
+    boolean checkPhoneExists(String phone);
+
+    boolean checkAddPhoneExists(String phone);
+
+    boolean checkEmailExists(String email);
+    Optional<User> findByNameOrPhoneOrAndEmail(String name, String phone, String email);
+
 
 }
