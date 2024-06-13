@@ -188,7 +188,8 @@ public class RecruitmentRequestService implements IRecruitmentRequestService {
         processDTO.setRequestId(request.getId())
                 .setRequestCreator(request.getUsers().getName() + "khởi tạo nhu cầu nhân sự:")
                 .setRequestName(request.getName())
-                .setStep(2);
+                .setStep(2)
+                .setDetAccept("true");
 
         if (request.getStatus().equals("Đã gửi")) {
             processDTO.setStep(1)
