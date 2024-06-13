@@ -34,8 +34,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
     //    @Query(select from noti)
 //    List<User> findAllByRoles(Role role);
 
-    @Query("SELECT u.name FROM User u JOIN u.roles r WHERE r.name IN ('ROLE_DM', 'ROLE_TM')")
-    List<String> findAllUserNamesByRoles();
-    @Query("SELECT u.email FROM User u JOIN u.roles r WHERE r.name IN ('ROLE_DM', 'ROLE_TM')")
-    List<String> findAllUserEmailByRoles();
+//    @Query("SELECT u.name FROM User u JOIN u.roles r WHERE r.name IN ('ROLE_DM', 'ROLE_TM')")
+//    List<String> findAllUserNamesByRoles();
+//    @Query("SELECT u.email FROM User u JOIN u.roles r WHERE r.name IN ('ROLE_DM', 'ROLE_TM')")
+//    List<String> findAllUserEmailByRoles();
 }
