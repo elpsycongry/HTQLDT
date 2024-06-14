@@ -15,6 +15,7 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.TimeZone;
 
 @Service
 public class NotificationServiceImp implements NotificationService {
@@ -36,32 +37,31 @@ public class NotificationServiceImp implements NotificationService {
 
     @Override
     public String getTimestamp(LocalDateTime localDateTime) {
-        LocalDateTime currentTimeInICT = LocalDateTime.now();
-        ZonedDateTime currentTime = currentTimeInICT.atZone(ZoneId.of("America/Phoenix"));
+        LocalDateTime time = LocalDateTime.now();
+        LocalDateTime currentTime = LocalDateTime.of(time.getYear(),time.getMonth(),time.getDayOfMonth(),time.getHour()+7,time.getMinute(),time.getSecond());
         Duration duration = Duration.between(localDateTime, currentTime);
         long seconds = duration.getSeconds();
 
-        return currentTime.toString();
-//        if (seconds < 0){
-//            return "0 giây trước";
-//        } else if (seconds < 60) {
-//            return seconds + " giây trước";
-//        } else if (seconds < 3600) {
-//            long minutes = seconds / 60;
-//            return minutes + " phút trước";
-//        } else if (seconds < 86400) {
-//            long hours = seconds / 3600;
-//            return hours + " giờ trước";
-//        } else if (seconds < 2592000) { // 30 ngày
-//            long days = seconds / 86400;
-//            return days + " ngày trước";
-//        } else if (seconds < 31536000) { // 365 ngày
-//            long months = seconds / 2592000;
-//            return months + " tháng trước";
-//        } else {
-//            long years = seconds / 31536000;
-//            return years + " năm trước";
-//        }
+        if (seconds < 0){
+            return "0 giây trước";
+        } else if (seconds < 60) {
+            return seconds + " giây trước";
+        } else if (seconds < 3600) {
+            long minutes = seconds / 60;
+            return minutes + " phút trước";
+        } else if (seconds < 86400) {
+            long hours = seconds / 3600;
+            return hours + " giờ trước";
+        } else if (seconds < 2592000) { // 30 ngày
+            long days = seconds / 86400;
+            return days + " ngày trước";
+        } else if (seconds < 31536000) { // 365 ngày
+            long months = seconds / 2592000;
+            return months + " tháng trước";
+        } else {
+            long years = seconds / 31536000;
+            return years + " năm trước";
+        }
     }
 
     @Override
