@@ -11,6 +11,8 @@ import org.springframework.stereotype.Service;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -34,13 +36,13 @@ public class NotificationServiceImp implements NotificationService {
 
     @Override
     public String getTimestamp(LocalDateTime localDateTime) {
-        LocalDateTime currentTime = LocalDateTime.now();
+        LocalDateTime currentTimeInICT = LocalDateTime.now();
+        ZonedDateTime currentTime = currentTimeInICT.atZone(ZoneId.of("Asia/Ho_Chi_Minh"));
         Duration duration = Duration.between(localDateTime, currentTime);
         long seconds = duration.getSeconds();
 
         if (seconds < 0){
-//            return "12 giây trước";
-            return String.valueOf(currentTime.getHour());
+            return "0 giây trước";
         } else if (seconds < 60) {
             return seconds + " giây trước";
         } else if (seconds < 3600) {
