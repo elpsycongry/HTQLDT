@@ -48,6 +48,7 @@ public class JwtService {
                     .setExpiration(new Date((new Date()).getTime() + EXPIRE_TIME * 1000))
                     .signWith(SECRET_KEY, SignatureAlgorithm.HS512)
                     .compact(), true));
+            return tokenRepository.findByUser(user).getToken();
         }else {
             tokenRepository.save(new JwtToken(user, Jwts.builder()
                     .setSubject((userPrincipal.getUsername()))
@@ -55,13 +56,8 @@ public class JwtService {
                     .setExpiration(new Date((new Date()).getTime() + EXPIRE_TIME * 1000))
                     .signWith(SECRET_KEY, SignatureAlgorithm.HS512)
                     .compact(), true));
+            return tokenRepository.findByUser(user).getToken();
         }
-        return Jwts.builder()
-                .setSubject((userPrincipal.getUsername()))
-                .setIssuedAt(new Date())
-                .setExpiration(new Date((new Date()).getTime() + EXPIRE_TIME * 1000))
-                .signWith(SECRET_KEY, SignatureAlgorithm.HS512)
-                .compact();
     }
 
 
