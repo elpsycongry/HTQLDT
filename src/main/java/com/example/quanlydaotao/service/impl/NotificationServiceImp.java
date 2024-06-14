@@ -40,7 +40,7 @@ public class NotificationServiceImp implements NotificationService {
 
         if (seconds < 0){
 //            return "12 giây trước";
-            return String.valueOf(seconds);
+            return String.valueOf(currentTime.getHour());
         } else if (seconds < 60) {
             return seconds + " giây trước";
         } else if (seconds < 3600) {
