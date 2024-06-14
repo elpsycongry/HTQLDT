@@ -1,5 +1,7 @@
 package com.example.quanlydaotao.controller;
 
+import com.example.quanlydaotao.model.JwtToken;
+import com.example.quanlydaotao.repository.JwtTokenRepository;
 import com.example.quanlydaotao.service.impl.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -12,6 +14,8 @@ import org.springframework.web.bind.annotation.*;
 public class JWTController {
     @Autowired
     private JwtService jwtService;
+    @Autowired
+    JwtTokenRepository tokenRepository;
     @GetMapping
     public ResponseEntity<?> testCode (){
         return new ResponseEntity<>(HttpStatus.OK);
@@ -22,11 +26,12 @@ public class JWTController {
             if (token.equals("Tài khoản của bạn chưa được xác nhận")){
                 return new ResponseEntity<>(HttpStatus.OK);
             }
-            if (jwtService.validateJwtToken(token)){
+            JwtToken jwtToken = tokenRepository.findByTokenEquals(token);
+            if (jwtService.validateJwtToken(token) && jwtToken != null){
                 return new ResponseEntity<>(HttpStatus.OK);
             }
         }catch (Exception e){
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
