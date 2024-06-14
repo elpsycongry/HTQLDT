@@ -39,7 +39,8 @@ public class NotificationServiceImp implements NotificationService {
         long seconds = duration.getSeconds();
 
         if (seconds < 0){
-            return "0 giây trước";
+//            return "12 giây trước";
+            return String.valueOf(seconds);
         } else if (seconds < 60) {
             return seconds + " giây trước";
         } else if (seconds < 3600) {
