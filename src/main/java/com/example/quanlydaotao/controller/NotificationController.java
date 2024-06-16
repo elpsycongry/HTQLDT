@@ -14,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -74,7 +75,8 @@ public class NotificationController {
     public ResponseEntity<?> addNotification(@RequestBody NotificationDTO notification){
         Notification notificationEntity = new Notification();
         notificationEntity.setContent(notification.getContent());
-        notificationEntity.setTimestamp(notification.getTimeCreate());
+        notificationEntity.setTimestamp(LocalDateTime.now());
+
 
         if (notification.getCreatorId() != null) {
             notificationEntity.setCreator(userRepository.findById(notification.getCreatorId()).get());

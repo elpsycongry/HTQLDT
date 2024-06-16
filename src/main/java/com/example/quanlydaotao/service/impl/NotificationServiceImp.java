@@ -48,8 +48,8 @@ public class NotificationServiceImp implements NotificationService {
 
     @Override
     public String getTimestamp(LocalDateTime localDateTime) {
-        LocalDateTime time = LocalDateTime.now();
-        LocalDateTime currentTime = LocalDateTime.of(time.getYear(),time.getMonth(),time.getDayOfMonth(),time.getHour()+7,time.getMinute(),time.getSecond());
+        LocalDateTime currentTime = LocalDateTime.now();
+//        LocalDateTime currentTime = LocalDateTime.of(time.getYear(),time.getMonth(),time.getDayOfMonth(),time.getHour()+7,time.getMinute(),time.getSecond());
         Duration duration = Duration.between(localDateTime, currentTime);
         long seconds = duration.getSeconds();
 
