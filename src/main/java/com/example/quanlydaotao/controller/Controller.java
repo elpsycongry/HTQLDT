@@ -149,9 +149,10 @@ public class Controller {
                     userSave.setStatus(true);
                     userSave.setState(true);
                 }
-                 userService.save(userSave);
+                Long idUser = userService.save(userSave).getId();
+
                 Notification notification = new Notification();
-                notification.setLink("user/");
+                notification.setLink("users/idUser="+idUser);
                 notification.setContent("Có người dùng mới đăng ký với email <b>" + user.getEmail() + "</b>");
                 LocalDateTime time = LocalDateTime.now();
                 LocalDateTime currentTime = LocalDateTime.of(time.getYear(),time.getMonth(),time.getDayOfMonth(),time.getHour()+7,time.getMinute(),time.getSecond());
