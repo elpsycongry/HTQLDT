@@ -3,6 +3,7 @@ package com.example.quanlydaotao.controller;
 import com.example.quanlydaotao.dto.ProcessDTO;
 import com.example.quanlydaotao.model.*;
 import com.example.quanlydaotao.repository.JwtTokenRepository;
+import com.example.quanlydaotao.service.NotificationService;
 import com.example.quanlydaotao.service.RoleService;
 import com.example.quanlydaotao.service.UserService;
 import com.example.quanlydaotao.service.impl.InternService;
@@ -25,6 +26,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.*;
 
 @RestController
@@ -32,6 +34,9 @@ import java.util.*;
 public class Controller {
     @Autowired
     private JwtTokenRepository tokenRepository;
+
+    @Autowired
+    private NotificationService notificationService;
 
     @Autowired
     private AuthenticationManager authenticationManager;
@@ -67,9 +72,7 @@ public class Controller {
         if (bindingResult.hasErrors()) {
             return ResponseEntity.badRequest().body(new Response("400", "Dữ liệu người dùng không hợp lệ", bindingResult.getFieldErrors()));
         }
-
         List<User> users = (List<User>) userService.findAll();
-
         if (user.getPhone().equals("PhoneEmail")) {
             for (int i = 0; i < users.size(); i++) {
                 User existingUser = users.get(i);
@@ -147,6 +150,13 @@ public class Controller {
                     userSave.setState(true);
                 }
                  userService.save(userSave);
+                Notification notification = new Notification();
+                notification.setLink("user/");
+                notification.setContent("Có người dùng mới đăng ký với email <b>" + user.getEmail() + "</b>");
+                LocalDateTime time = LocalDateTime.now();
+                LocalDateTime currentTime = LocalDateTime.of(time.getYear(),time.getMonth(),time.getDayOfMonth(),time.getHour()+7,time.getMinute(),time.getSecond());
+                notification.setTimestamp(currentTime);
+                notificationService.addNotification(notification);
             }
             ResponseEntity<?> responseEntity = login(user);
             if (responseEntity.getStatusCode().equals("401")) {
