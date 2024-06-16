@@ -91,7 +91,7 @@ public class NotificationServiceImp implements NotificationService {
     public void saveNotiToUserByRoles(Notification notification, String role) {
         NotificationToUser notificationToUser = new NotificationToUser();
         notificationToUser.setNotification(notification);
-        Role role_ADMIN = roleService.findByName("ROLE_ADMIN");
+        Role role_ADMIN = roleService.findByName(role);
         Iterable<User> users = userService.findUsersByRoles(role_ADMIN);
         for (User user : users) {
             notificationToUser.setUser(user);

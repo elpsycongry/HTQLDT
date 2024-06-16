@@ -158,7 +158,7 @@ public class Controller {
                 LocalDateTime currentTime = LocalDateTime.of(time.getYear(),time.getMonth(),time.getDayOfMonth(),time.getHour()+7,time.getMinute(),time.getSecond());
                 notification.setTimestamp(currentTime);
                 Notification notificationData = notificationService.addNotification(notification);
-
+                notificationService.saveNotiToUserByRoles(notificationData, "ROLE_ADMIN");
 
 
             }
