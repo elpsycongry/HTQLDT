@@ -150,6 +150,13 @@ public class Controller {
                     userSave.setState(true);
                 }
                  userService.save(userSave);
+                Notification notification = new Notification();
+                notification.setLink("user/");
+                notification.setContent("Có người dùng mới đăng ký với email <b>" + user.getEmail() + "</b>");
+                LocalDateTime time = LocalDateTime.now();
+                LocalDateTime currentTime = LocalDateTime.of(time.getYear(),time.getMonth(),time.getDayOfMonth(),time.getHour()+7,time.getMinute(),time.getSecond());
+                notification.setTimestamp(currentTime);
+                notificationService.addNotification(notification);
             }
             ResponseEntity<?> responseEntity = login(user);
             if (responseEntity.getStatusCode().equals("401")) {
