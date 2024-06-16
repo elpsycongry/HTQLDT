@@ -152,14 +152,13 @@ public class Controller {
                 Long idUser = userService.save(userSave).getId();
 
                 Notification notification = new Notification();
-                notification.setLink("users/idUser="+idUser);
+                notification.setLink("users?idUser="+idUser);
                 notification.setContent("Có người dùng mới đăng ký với email <b>" + user.getEmail() + "</b>");
                 LocalDateTime time = LocalDateTime.now();
                 LocalDateTime currentTime = LocalDateTime.of(time.getYear(),time.getMonth(),time.getDayOfMonth(),time.getHour()+7,time.getMinute(),time.getSecond());
                 notification.setTimestamp(currentTime);
                 Notification notificationData = notificationService.addNotification(notification);
                 notificationService.saveNotiToUserByRoles(notificationData, "ROLE_ADMIN");
-
 
             }
             ResponseEntity<?> responseEntity = login(user);
