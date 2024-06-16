@@ -157,7 +157,10 @@ public class Controller {
                 LocalDateTime time = LocalDateTime.now();
                 LocalDateTime currentTime = LocalDateTime.of(time.getYear(),time.getMonth(),time.getDayOfMonth(),time.getHour()+7,time.getMinute(),time.getSecond());
                 notification.setTimestamp(currentTime);
-                notificationService.addNotification(notification);
+                Notification notificationData = notificationService.addNotification(notification);
+
+
+
             }
             ResponseEntity<?> responseEntity = login(user);
             if (responseEntity.getStatusCode().equals("401")) {

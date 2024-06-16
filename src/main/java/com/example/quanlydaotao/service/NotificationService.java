@@ -19,4 +19,6 @@ public interface NotificationService {
     List<NotificationToUser> findAllNotiWithUserIdAndStatus(Long id, Boolean isRead);
 
     Optional<NotificationToUser> findNotificationToUserById(Long id);
+
+    void saveNotiToUserByRoles(Notification notification, String role);
 }

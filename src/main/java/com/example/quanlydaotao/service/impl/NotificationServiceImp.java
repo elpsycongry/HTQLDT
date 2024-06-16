@@ -2,10 +2,14 @@ package com.example.quanlydaotao.service.impl;
 
 import com.example.quanlydaotao.model.Notification;
 import com.example.quanlydaotao.model.NotificationToUser;
+import com.example.quanlydaotao.model.Role;
+import com.example.quanlydaotao.model.User;
 import com.example.quanlydaotao.repository.INotificationRepository;
 import com.example.quanlydaotao.repository.INotificationToUserRepository;
 import com.example.quanlydaotao.repository.UserRepository;
 import com.example.quanlydaotao.service.NotificationService;
+import com.example.quanlydaotao.service.RoleService;
+import com.example.quanlydaotao.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,6 +29,10 @@ public class NotificationServiceImp implements NotificationService {
     private INotificationToUserRepository notiToUserRepository;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private UserService userService;
+    @Autowired
+    private RoleService roleService;
     @Override
     public Notification addNotification(Notification notification) {
         return notificationRepository.save(notification);
@@ -77,5 +85,18 @@ public class NotificationServiceImp implements NotificationService {
     @Override
     public Optional<NotificationToUser> findNotificationToUserById(Long id) {
         return notiToUserRepository.findById(id);
+    }
+
+    @Override
+    public void saveNotiToUserByRoles(Notification notification, String role) {
+        NotificationToUser notificationToUser = new NotificationToUser();
+        notificationToUser.setNotification(notification);
+        Role role_ADMIN = roleService.findByName("ROLE_ADMIN");
+        Iterable<User> users = userService.findUsersByRoles(role_ADMIN);
+        for (User user : users) {
+            notificationToUser.setUser(user);
+            notificationToUser.setIsRead(false);
+            notiToUserRepository.save(notificationToUser);
+        }
     }
 }
