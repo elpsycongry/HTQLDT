@@ -21,13 +21,8 @@ public class TestRestController {
     private RecruitmentPlanDetailService recruitmentPlanDetailService;
     @Autowired
     private InternService internService;
-
     @GetMapping("/api/test/")
     public ResponseEntity<?> getAllIntern(@RequestParam(value = "id", required = false) Long id) {
-        MailStructure mailStructure = new MailStructure();
-        mailStructure.setSubject("Subject");
-        mailStructure.setText("Text");
-        mailService.sendMailHtml("mimun0407@gmail.com", mailStructure);
         return new ResponseEntity<>(true, HttpStatus.OK);
     }
 
