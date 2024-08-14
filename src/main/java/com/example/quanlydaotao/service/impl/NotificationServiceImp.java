@@ -11,8 +11,11 @@ import org.springframework.stereotype.Service;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.TimeZone;
 
 @Service
 public class NotificationServiceImp implements NotificationService {
@@ -34,7 +37,8 @@ public class NotificationServiceImp implements NotificationService {
 
     @Override
     public String getTimestamp(LocalDateTime localDateTime) {
-        LocalDateTime currentTime = LocalDateTime.now();
+        LocalDateTime time = LocalDateTime.now();
+        LocalDateTime currentTime = LocalDateTime.of(time.getYear(),time.getMonth(),time.getDayOfMonth(),time.getHour()+7,time.getMinute(),time.getSecond());
         Duration duration = Duration.between(localDateTime, currentTime);
         long seconds = duration.getSeconds();
 
